@@ -14,7 +14,7 @@
 
           </li>
           <li class="nav-item">
-            <RouterLink class="nav-link active" :to="{ name: 'threads' }">Threads</RouterLink>
+            <RouterLink class="nav-link active" :to="{ name: 'posts' }">Post</RouterLink>
 
           </li>
 

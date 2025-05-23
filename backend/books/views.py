@@ -5,19 +5,20 @@ from django.views.decorators.http import (
     require_POST,
 )
 from django.contrib.auth.decorators import login_required
-from rest_framework.decorators import api_view
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 
 from accounts.models import Category
-from .models import Book, Thread, Comment
-from .forms import ThreadForm, CommentForm
+from .models import Book, Post, Comment
+from .forms import PostForm, CommentForm
 from .utils import (
     generate_image_with_openai,
 )
 from django.http import JsonResponse
 from django.core.exceptions import PermissionDenied
-from .serializers import BookSerializer, CategorySerializer
+from .serializers import BookSerializer, CategorySerializer, PostDetailSerializer, PostCreateSerializer, PostListSerializer, BookSimpleSerializer
 
 # 책 전체 조회
 @api_view(['GET'])
@@ -33,25 +34,19 @@ def category_list(request):
     serializer = CategorySerializer(categories, many=True)
     return Response(serializer.data)
 
-# 장르별 필터링
-def filter_category(request):
-    # ajax 호출: ?category=장르이름
-    category_name = request.GET.get('category')
-    if category_name:
-        qs = Book.objects.filter(category__name=category_name)
-    else:
-        qs = Book.objects.all()
+# 장르별 필터링 - 책
+@api_view(['GET'])
+def filter_books_by_category(request, category_id):
+    books = Book.objects.filter(category__id=category_id)
+    serializer = BookSimpleSerializer(books, many=True)
+    return Response({'books': serializer.data})
 
-    # json 직렬화
-    data = [{
-        'id'         : b.pk,
-        'title'      : b.title,
-        'description': b.description[:180],
-        'cover'      : b.cover or '',
-    } for b in qs]
-
-    return JsonResponse({'books': data})
-
+# 장르별 필터링 - 리뷰
+@api_view(['GET'])
+def filter_posts_by_category(request, category_id):
+    posts = Post.objects.filter(book__category__id=category_id)
+    serializer = PostListSerializer(posts, many=True)
+    return Response({'posts': serializer.data})
 
 # 도서 상세 정보
 @require_safe
@@ -66,50 +61,54 @@ def detail(request, book_pk):
     return Response(serializer.data)
 
 
-# 쓰레드 생성
-@login_required
-@require_http_methods(["POST"])
-def thread_create(request, book_pk):
-    book = Book.objects.get(pk=book_pk)
-    form = ThreadForm(request.POST, request.FILES)
-    if form.is_valid():
-        thread = form.save(commit=False)
-        thread.book = book
-        thread.user = request.user
-        thread.save()
-
-        generated_image_path = generate_image_with_openai(thread.title, thread.content, book.title, book.author)
-        if generated_image_path:
-            thread.cover_img = generated_image_path
-            thread.save()
-
-        return JsonResponse({
-            "id": thread.id,
-            "title": thread.title,
-            "content": thread.content,
-            "cover_img": thread.cover_img,
-        })
-    return JsonResponse({'error': '유효하지 않은 입력입니다.'}, status=400)
-
-
-# 쓰레드 상세
-@login_required
-@require_safe
-def thread_detail(request, book_pk, thread_pk):
+# 포스트 생성
+@api_view(['POST'])
+# @permission_classes([IsAuthenticated])
+def post_create(request, book_pk):
     try:
-        thread = Thread.objects.get(pk=thread_pk, book_id=book_pk)
-        return JsonResponse({
-            "id": thread.id,
-            "title": thread.title,
-            "content": thread.content,
-            "user": thread.user.username,
-            "book_id": thread.book.id,
-            "cover_img": thread.cover_img,
-            "created_at": thread.created_at,
-        })
-    except Thread.DoesNotExist:
-        return JsonResponse({'error': '쓰레드를 찾을 수 없습니다.'}, status=404)
+        book = Book.objects.get(pk=book_pk)
+    except Book.DoesNotExist:
+        return Response({'error': '책을 찾을 수 없습니다.'}, status=status.HTTP_404_NOT_FOUND)
 
+    serializer = PostCreateSerializer(data=request.data)
+    if serializer.is_valid():
+        user = request.user if request.user.is_authenticated else None
+        post = serializer.save(book=book, user=user)
+
+        # OpenAI 이미지 생성
+        generated_image_path = generate_image_with_openai(post.title, post.content, book.title, book.author)
+        if generated_image_path:
+            post.cover_img = generated_image_path
+            post.save()
+
+        return Response(PostCreateSerializer(post).data, status=status.HTTP_201_CREATED)
+
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+# 포스트 상세
+@api_view(['GET'])
+# @permission_classes([IsAuthenticated])  ← 로그인 제한이 필요하면 유지
+def post_detail(request, book_pk, post_pk):
+    try:
+        post = Post.objects.get(pk=post_pk, book_id=book_pk)
+    except Post.DoesNotExist:
+        return Response({'error': '포스트를 찾을 수 없습니다.'}, status=404)
+
+    serializer = PostDetailSerializer(post)
+    return Response(serializer.data)
+
+# 포스트 목록
+@api_view(['GET'])
+def post_list(request):
+    posts = Post.objects.all().order_by('-created_at')
+    serializer = PostDetailSerializer(posts, many=True)
+    return Response(serializer.data)
+
+# 카테고리 불러오기
+def categories_list(request):
+    return
 
 # 쓰레드 수정
 @login_required

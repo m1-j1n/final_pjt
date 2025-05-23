@@ -6,7 +6,7 @@
     <!-- 쓰레드 작성 버튼 -->
     <div class="mt-4 text-end">
       <router-link
-        :to="{ name: 'threads-write', params: { bookId: book.id } }"
+        :to="{ name: 'posts-write', params: { bookId: book.id } }"
         class="btn btn-success"
       >
       + thread 

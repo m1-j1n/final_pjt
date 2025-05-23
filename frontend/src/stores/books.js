@@ -13,7 +13,6 @@ export const useBookStore = defineStore('book', () => {
   const fetchBooks = () => {
     axios.get(`${BASE_API_URL}/api/v1/books/`)
       .then(res => {
-        console.log('📚 API 응답:', res.data)
         books.value = res.data
       })
       .catch(err => {
@@ -39,20 +38,32 @@ export const useBookStore = defineStore('book', () => {
   }
 
 
-  // 🔹 선택된 카테고리로 필터링
-  const filteredBooks = computed(() => {
-    if (selectedCategory.value === 0) return books.value
-    return books.value.filter(book => book.category.id === selectedCategory.value)
-  })
+  // // 🔹 선택된 카테고리로 필터링
+  // const filteredBooks = computed(() => {
+  //   return books.value.filter(book =>
+  //     book.category && book.category.id === selectedCategory.value
+  //   )
+  // })
+
+  // 🔹 bookId로 책 찾기
+  const fetchBookDetail = (bookId) => {
+    return axios.get(`${BASE_API_URL}/api/v1/books/${bookId}/`)
+      .then(res => res.data)
+      .catch(err => {
+        console.error('도서 상세 정보 요청 실패:', err)
+        return null
+      })
+  }
 
 
   return {
     books,
     categories,
     selectedCategory,
-    filteredBooks,
+    // filteredBooks,
     fetchBooks,
     fetchCategories,
     getCategoryNameById,
+    fetchBookDetail,
   }
 })

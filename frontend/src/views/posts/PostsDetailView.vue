@@ -1,12 +1,11 @@
 <template>
   <div>
-    <ThreadItem />
+    <PostDetail />
   </div>
 </template>
 
 <script setup>
-import ThreadItem from '@/components/threads/ThreadItem.vue'
-
+import PostDetail from '@/components/posts/PostDetail.vue';
 </script>
 
 <style scoped></style>

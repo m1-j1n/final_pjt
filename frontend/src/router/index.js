@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import LandingView from '@/views/LandingView.vue'
-import ThreadsListView from '@/views/threads/ThreadsListView.vue'
-import ThreadsDeatilView from '@/views/threads/ThreadsDeatilView.vue'
-import ThreadsWriteView from '@/views/threads/ThreadsWriteView.vue'
+import PostsListView from '@/views/posts/PostsListView.vue'
+import PostsDetailView from '@/views/posts/PostsDetailView.vue'
+import PostsWriteView from '@/views/posts/PostsWriteView.vue'
 import BooksListView from '@/views/book/BooksListView.vue'
 import BookDetailView from '@/views/book/BookDetailView.vue'
 
@@ -15,19 +15,19 @@ const router = createRouter({
       component: LandingView,
     },
     {
-      path: '/threads',
-      name: 'threads',
-      component: ThreadsListView,
+      path: '/posts',
+      name: 'posts',
+      component: PostsListView,
     },
     {
-      path: '/threads/:threadId',
-      name: 'threads-detail',
-      component: ThreadsDeatilView,
+      path: '/posts/:postId',
+      name: 'posts-detail',
+      component: PostsDetailView,
     },
     {
-      path: '/threads/:bookId/write',
-      name: 'threads-write',
-      component: ThreadsWriteView,
+      path: '/posts/:bookId/write',
+      name: 'posts-write',
+      component: PostsWriteView,
     },
     {
       path: '/books',

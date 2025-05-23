@@ -52,11 +52,11 @@ def generate_image_with_openai(thread_title, thread_content, book_title, book_au
     
     response_img = requests.get(image_url)
     if response_img.status_code == 200:
-        output_dir = Path(settings.MEDIA_ROOT) / "thread_cover_img"
+        output_dir = Path(settings.MEDIA_ROOT) / "post_cover_img"
         output_dir.mkdir(parents=True, exist_ok=True)
         file_name = f"{uuid.uuid4()}.png"
         file_path = output_dir / file_name
         file_path.write_bytes(response_img.content)
-        return str(Path("thread_cover_img") / file_name)
+        return str(Path("post_cover_img") / file_name)
 
     return None
