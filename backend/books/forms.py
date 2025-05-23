@@ -1,7 +1,7 @@
 from django import forms
-from .models import Thread, Comment
+from .models import Post, Comment
 
-class ThreadForm(forms.ModelForm):
+class PostForm(forms.ModelForm):
     reading_date = forms.DateField(
         label='독서일',
         required=True,
@@ -10,10 +10,10 @@ class ThreadForm(forms.ModelForm):
         })
     )
     class Meta:
-        model = Thread
+        model = Post
         exclude = ["cover_img", "likes", "user", "book", "created_at", "updated_at"]
 
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
-        exclude = ('user', 'thread', "created_at", "updated_at")
+        exclude = ('user', 'post', "created_at", "updated_at")

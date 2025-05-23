@@ -10,7 +10,7 @@
             :key="cat.id"
             class="list-group-item"
             :class="{ active: bookStore.selectedCategory === cat.id }"
-            @click="bookStore.selectedCategory = cat.id"
+            @click="fetchBooksByCategory(cat.id)"
           >
             {{ cat.name }}
           </li>
@@ -20,7 +20,7 @@
       <!-- 도서 카드 리스트 -->
       <div class="col-9">
         <div class="row">
-          <div class="col" v-for="book in bookStore.filteredBooks" :key="book.id">
+          <div class="col" v-for="book in bookStore.books" :key="book.id">
             <BookCard :book="book" />
           </div>
         </div>
@@ -30,17 +30,32 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
 import { useBookStore } from '@/stores/books.js'
 import BookCard from '@/components/books/BookCard.vue'
 
+const BASE_API_URL = 'http://localhost:8000'
 const bookStore = useBookStore()
 
 onMounted(() => {
   bookStore.fetchBooks()
   bookStore.fetchCategories()
-  console.log('📘 첫 번째 book 데이터:', bookStore.books[0])
-
 })
 
+// 카테고리별 도서 요청
+const fetchBooksByCategory = async (categoryId) => {
+  bookStore.selectedCategory = categoryId
+  const url = categoryId === 0
+    ? `${BASE_API_URL}/api/v1/books/`
+    : `${BASE_API_URL}/api/v1/books/category/${categoryId}/`
+
+  try {
+    const res = await axios.get(url)
+    bookStore.books = res.data.books
+
+  } catch (err) {
+    console.error('도서 목록 요청 실패:', err)
+  }
+}
 </script>

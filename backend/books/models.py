@@ -28,17 +28,17 @@ class Book(models.Model):
     def __str__(self):
         return self.title
 
-class Thread(models.Model):
+class Post(models.Model):
     title = models.CharField(max_length=100)
     content = models.TextField()
     reading_date = models.DateField(default=datetime.date.today)
-    cover_img = models.ImageField(upload_to="thread_cover_img/", blank=True)
+    cover_img = models.ImageField(upload_to="post_cover_img/", blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     book = models.ForeignKey('Book', on_delete=models.CASCADE)
-    likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="liked_threads", blank=True)
+    likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="liked_posts", blank=True)
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True
     )
 
     def __str__(self):
@@ -46,7 +46,7 @@ class Thread(models.Model):
     
 class Comment(models.Model):
     content = models.CharField(max_length=100)
-    thread = models.ForeignKey(Thread, on_delete=models.CASCADE, related_name='comments')
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE
     )

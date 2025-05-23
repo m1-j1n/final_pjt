@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Book, Thread, Comment
+from .models import Book, Post, Comment
 from accounts.models import Category
 from django.contrib.auth import get_user_model
 
@@ -33,15 +33,40 @@ class BookSerializer(serializers.ModelSerializer):
             'author_info',
         ]
 
+# 🔹 BookSimpleSerializer : 간단 데이터만 보내기 위해서
+class BookSimpleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Book
+        fields = ['id', 'title', 'description', 'cover']
 
-# 🔹 Thread Serializer
-class ThreadSerializer(serializers.ModelSerializer):
-    user = serializers.StringRelatedField(read_only=True)  # username 보여주기
-    book = serializers.PrimaryKeyRelatedField(read_only=True)
+# 🔹 PostCreateSerializer : 포스트 생성 시리얼라이저
+class PostCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Post
+        fields = ['id', 'title', 'content', 'created_at', 'cover_img']
+        read_only_fields = ['id', 'cover_img']
+
+# 🔹 PostDetailSerializer : 포스트 상세 조회 시리얼라이저
+class PostDetailSerializer(serializers.ModelSerializer):
+    user = serializers.CharField(source='user.username', read_only=True)
+    book_id = serializers.IntegerField(source='book.id', read_only=True)
 
     class Meta:
-        model = Thread
-        fields = ['id', 'title', 'content', 'cover_img', 'user', 'book', 'created_at']
+        model = Post
+        fields = [
+            'id', 'title', 'content', 'created_at', 'cover_img',
+            'user', 'book_id' 
+        ]
+        read_only_fields = ['id', 'cover_img', 'user', 'book_id']
+
+# 🔹 PostListSerializer : 포스트 상세 조회 시리얼라이저
+class PostListSerializer(serializers.ModelSerializer):
+    category_id = serializers.IntegerField(source='book.category.id', read_only=True)
+    book_cover = serializers.ImageField(source='book.cover', read_only=True)
+
+    class Meta:
+        model = Post
+        fields = ['id', 'title', 'content', 'created_at', 'book_cover', 'category_id']
 
 
 # 🔹 Comment Serializer
@@ -50,4 +75,4 @@ class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment
-        fields = ['id', 'content', 'user', 'thread', 'created_at']
+        fields = ['id', 'content', 'user', 'post', 'created_at']
