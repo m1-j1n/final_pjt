@@ -3,6 +3,7 @@ import LandingView from '@/views/LandingView.vue'
 import PostsListView from '@/views/posts/PostsListView.vue'
 import PostsDetailView from '@/views/posts/PostsDetailView.vue'
 import PostsWriteView from '@/views/posts/PostsWriteView.vue'
+import PostUpdateView from '@/views/posts/PostUpdateView.vue'
 import BooksListView from '@/views/book/BooksListView.vue'
 import BookDetailView from '@/views/book/BookDetailView.vue'
 import SignUpView from '@/views/account/SignUpView.vue'
@@ -30,6 +31,11 @@ const router = createRouter({
       path: '/posts/:bookId/write',
       name: 'posts-write',
       component: PostsWriteView,
+    },
+    {
+      path: '/books/:bookId/posts/:postId/update',
+      name: 'post-update',
+      component: PostUpdateView,
     },
     {
       path: '/books',

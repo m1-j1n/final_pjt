@@ -12,7 +12,7 @@ from rest_framework import status
 
 from accounts.models import Category
 from .models import Book, Post, Comment
-from .forms import PostForm, CommentForm
+from .forms import CommentForm
 from .utils import (
     generate_image_with_openai,
 )
@@ -86,7 +86,6 @@ def post_create(request, book_pk):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-
 # 포스트 상세
 @api_view(['GET'])
 # @permission_classes([IsAuthenticated])  ← 로그인 제한이 필요하면 유지
@@ -110,29 +109,39 @@ def post_list(request):
 def categories_list(request):
     return
 
-# 쓰레드 수정
-@login_required
-@require_http_methods(["POST"])
-def thread_update(request, book_pk, thread_pk):
-    thread = Thread.objects.get(pk=thread_pk)
-    if thread.user != request.user:
-        raise PermissionDenied
+# 포스트 수정
+@api_view(['PUT'])
+# @permission_classes([IsAuthenticated])
+def post_update(request, book_pk, post_pk):
+    try:
+        post = Post.objects.get(pk=post_pk, book_id=book_pk)
+    except Post.DoesNotExist:
+        return Response({'error': '게시글을 찾을 수 없습니다.'}, status=status.HTTP_404_NOT_FOUND)
 
-    form = ThreadForm(request.POST, request.FILES, instance=thread)
-    if form.is_valid():
-        form.save()
-        return JsonResponse({'success': True})
-    return JsonResponse({'error': '수정 실패'}, status=400)
+    # if post.user != request.user:
+    #     raise PermissionDenied('수정 권한이 없습니다.')
 
-# 쓰레드 삭제
-@login_required
-@require_POST
-def thread_delete(request, book_pk, thread_pk):
-    thread = Thread.objects.get(pk=thread_pk)
-    if thread.user == request.user:
-        thread.delete()
-        return JsonResponse({'success': True})
-    return JsonResponse({'error': '삭제 권한 없음'}, status=403)
+    serializer = PostCreateSerializer(post, data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# 포스트 삭제
+@api_view(['DELETE'])
+# @permission_classes([IsAuthenticated])
+def post_delete(request, book_pk, post_pk):
+    try:
+        post = Post.objects.get(pk=post_pk, book_id=book_pk)
+    except Post.DoesNotExist:
+        return Response({'error': '존재하지 않는 게시글입니다.'}, status=status.HTTP_404_NOT_FOUND)
+
+    # 글을 작성한 사용자만 삭제 가능
+    # if post.user != request.user:
+    #     return Response({'error': '삭제 권한이 없습니다.'}, status=status.HTTP_403_FORBIDDEN)
+
+    post.delete()
+    return Response({'success': True}, status=status.HTTP_204_NO_CONTENT)
 
 
 # 쓰레드 좋아요 처리

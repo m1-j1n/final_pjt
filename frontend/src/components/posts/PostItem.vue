@@ -30,7 +30,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watchEffect } from 'vue'
 import { RouterLink } from 'vue-router'
 import { usePostStore } from '@/stores/post'
 import { useBookStore } from '@/stores/books'
@@ -44,7 +44,7 @@ const categories = computed(() => bookStore.categories)
 const selectedPosts = ref([])
 const selectedCategory = ref(0)
 
-// 카테고리 선택 시
+// 카테고리 선택 시 이동
 const fetchPostsByCategory = async (categoryId) => {
   selectedCategory.value = categoryId
 
@@ -71,6 +71,13 @@ onMounted(async () => {
   }
 
   selectedPosts.value = posts.value 
+})
+
+
+watchEffect(() => {
+  if (selectedCategory.value === 0) {
+    selectedPosts.value = posts.value
+  }
 })
 </script>
 

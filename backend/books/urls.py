@@ -14,8 +14,8 @@ urlpatterns = [
     # 포스트
     path('books/<int:book_pk>/posts/create/', views.post_create, name='post_create'),
     path('books/<int:book_pk>/posts/<int:post_pk>/', views.post_detail, name='post_detail'),
-    path('books/<int:book_pk>/posts/<int:thread_pk>/update/', views.thread_update, name='post_update'),
-    path('books/<int:book_pk>/posts/<int:thread_pk>/delete/', views.thread_delete, name='post_delete'),
+    path('books/<int:book_pk>/posts/<int:post_pk>/update/', views.post_update, name='post_update'),
+    path('books/<int:book_pk>/posts/<int:post_pk>/delete/', views.post_delete, name='post_delete'),
     path('posts/category/<int:category_id>/', views.filter_posts_by_category, name='filter_posts_by_category'),
 
     path('posts/', views.post_list, name='post_list'),
