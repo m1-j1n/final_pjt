@@ -102,7 +102,7 @@ const topBooks = ref([])
 onMounted(() => {
   axios.get('http://127.0.0.1:8000/api/v1/books/')
     .then(res => {
-      const books = res.data
+      const books = res.data.results
       topBooks.value = books
         .filter(book => book.customer_review_rank !== undefined)
         .sort((a, b) => b.customer_review_rank - a.customer_review_rank)

@@ -169,7 +169,6 @@ def post_delete(request, book_pk, post_pk):
 
 @api_view(['POST'])
 def book_like_toggle(request, book_pk):
-    
     User = get_user_model()
 
     book = get_object_or_404(Book, pk=book_pk)
