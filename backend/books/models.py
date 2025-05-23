@@ -2,13 +2,14 @@ import datetime
 from django.db import models
 from django.conf import settings
 
+# 카테고리 테이블
 class Category(models.Model):
     name = models.CharField(max_length=50)
 
     def __str__(self):
         return self.name
 
-
+# 도서 테이블
 class Book(models.Model):
     category = models.ForeignKey(
         Category, on_delete=models.PROTECT, related_name='books'
@@ -28,6 +29,17 @@ class Book(models.Model):
     def __str__(self):
         return self.title
 
+# 도서 좋아요 테이블
+class BookLike(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='book_likes')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'book') 
+
+
+# 포스트 테이블
 class Post(models.Model):
     title = models.CharField(max_length=100)
     content = models.TextField()
@@ -43,7 +55,8 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
-    
+
+# 댓글 테이블
 class Comment(models.Model):
     content = models.CharField(max_length=100)
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')

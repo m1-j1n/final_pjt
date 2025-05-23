@@ -1,17 +1,20 @@
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 from django.views.decorators.http import (
     require_http_methods,
     require_safe,
     require_POST,
 )
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import get_user_model
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 
 from accounts.models import Category
-from .models import Book, Post, Comment
+from .models import Book, Post, Comment, BookLike
 from .forms import CommentForm
 from .utils import (
     generate_image_with_openai,
@@ -23,9 +26,13 @@ from .serializers import BookSerializer, CategorySerializer, PostDetailSerialize
 # 책 전체 조회
 @api_view(['GET'])
 def book_list(request):
+    paginator = PageNumberPagination()
+    paginator.page_size = 12
+
     books = Book.objects.all()
-    serializer = BookSerializer(books, many=True)
-    return Response(serializer.data)
+    result_page = paginator.paginate_queryset(books, request)
+    serializer = BookSerializer(result_page, many=True)
+    return paginator.get_paginated_response(serializer.data)
 
 # 카테고리 조회
 @api_view(['GET'])
@@ -35,11 +42,16 @@ def category_list(request):
     return Response(serializer.data)
 
 # 장르별 필터링 - 책
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 12  # 페이지당 도서 수
+
 @api_view(['GET'])
 def filter_books_by_category(request, category_id):
     books = Book.objects.filter(category__id=category_id)
-    serializer = BookSimpleSerializer(books, many=True)
-    return Response({'books': serializer.data})
+    paginator = StandardResultsSetPagination()
+    paginated_qs = paginator.paginate_queryset(books, request)
+    serializer = BookSimpleSerializer(paginated_qs, many=True)
+    return paginator.get_paginated_response(serializer.data)
 
 # 장르별 필터링 - 리뷰
 @api_view(['GET'])
@@ -142,6 +154,36 @@ def post_delete(request, book_pk, post_pk):
 
     post.delete()
     return Response({'success': True}, status=status.HTTP_204_NO_CONTENT)
+
+# 도서 좋아요 처리
+# @api_view(['POST'])
+# # @permission_classes([IsAuthenticated])
+# def book_like_toggle(request, book_pk):
+#     book = get_object_or_404(Book, pk=book_pk)
+#     like, created = BookLike.objects.get_or_create(user=request.user, book=book)
+    
+#     if not created:
+#         like.delete()
+#         return Response({'liked': False, 'like_count': book.book_likes.count()})
+#     return Response({'liked': True, 'like_count': book.book_likes.count()})
+
+@api_view(['POST'])
+def book_like_toggle(request, book_pk):
+    
+    User = get_user_model()
+
+    book = get_object_or_404(Book, pk=book_pk)
+
+    # ⚠️ 임시로 user ID 1번으로 강제 설정
+    user = User.objects.get(pk=1)
+
+    like, created = BookLike.objects.get_or_create(user=user, book=book)
+    
+    if not created:
+        like.delete()
+        return Response({'liked': False, 'like_count': book.book_likes.count()})
+    
+    return Response({'liked': True, 'like_count': book.book_likes.count()})
 
 
 # 쓰레드 좋아요 처리

@@ -10,6 +10,7 @@ urlpatterns = [
     # path('books/filter/', views.filter_category, name='filter_category'),
     path('books/<int:book_pk>/', views.detail, name='book_detail'),
     path('books/category/<int:category_id>/', views.filter_books_by_category, name='filter_books_by_category'),
+    path('books/<int:book_pk>/like/', views.book_like_toggle, name='book_like_toggle'),
 
     # 포스트
     path('books/<int:book_pk>/posts/create/', views.post_create, name='post_create'),
