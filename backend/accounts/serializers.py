@@ -3,11 +3,10 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from books.models import Category
 
-print("✅ CustomRegisterSerializer 모듈 로드됨")  # 이게 뜨는지 확인!
-
 
 User = get_user_model()
 
+# 회원가입용
 class CustomRegisterSerializer(RegisterSerializer):
     name = serializers.CharField()
     gender = serializers.CharField(allow_null=True, required=False)
@@ -20,7 +19,7 @@ class CustomRegisterSerializer(RegisterSerializer):
     )
 
     def save(self, request):
-        print('호출됨!!!')
+        # print('호출됨!!!')
         user = super().save(request)
 
         user.name = self.validated_data.get('name')
@@ -36,3 +35,26 @@ class CustomRegisterSerializer(RegisterSerializer):
             user.interested_genres.set(genres)
 
         return user
+
+
+
+# 마이페이지용
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ['id', 'name']
+
+class CustomUserDetailSerializer(serializers.ModelSerializer):
+    interested_genres = CategorySerializer(many=True)
+
+    class Meta:
+        model = User
+        fields = [
+            'username',
+            'name',
+            'gender',
+            'age',
+            'weekly_avg_reading_time',
+            'annual_reading_amount',
+            'interested_genres',
+        ]

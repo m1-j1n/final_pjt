@@ -32,14 +32,14 @@ const bookId = parseInt(route.params.bookId)
 
 // 도서 정보 가져오기
 onMounted(async () => {
-  if (!bookStore.books.length) {
+  if (!bookStore.books.results || bookStore.books.results.length === 0) {
     await bookStore.fetchBooks()
   }
 })
 
 // 해당 bookId의 도서 찾기
 const book = computed(() => {
-  return bookStore.books.find(b => b.id === bookId)
+  return (bookStore.books.results || []).find(b => b.id === bookId)
 })
 </script>
 

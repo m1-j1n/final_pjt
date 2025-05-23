@@ -40,6 +40,7 @@
 </template>
 
 <script setup>
+
 defineProps({
   book: Object
 })

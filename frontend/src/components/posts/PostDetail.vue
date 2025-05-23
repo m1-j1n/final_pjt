@@ -15,7 +15,17 @@
 
       <!-- 스레드 내용 -->
       <div class="col-md-8">
-        <h2 class="mb-3">{{ post.title }}</h2>
+        <div class="row d-flex justify-content-between align-items-center">
+          <h2 class="col mb-3">{{ post.title }}</h2>
+          <div class="col-auto">
+            <button class="btn btn-outline-primary me-2"
+            @click="goToEdit(book.id, post.id)"
+            >수정</button>
+            <button class="btn btn-outline-danger"
+            @click="deleteThread(book.id, post.id)"
+            >삭제</button>
+          </div>
+        </div>
         <p class="lead">{{ post.content }}</p>
         <hr />
         <p class="text-muted">작성 시각: {{ formatDate(post.created_at) }}</p>
@@ -31,19 +41,21 @@
 </template>
 
 <script setup>
-import { useRoute } from 'vue-router'
+import axios from 'axios'
+import { useRoute, useRouter } from 'vue-router'
 import { usePostStore } from '@/stores/post'
 import { useBookStore } from '@/stores/books'
 import { ref, computed, onMounted } from 'vue'
 
 const route = useRoute()
+const router = useRouter()
 const postStore = usePostStore()
 const bookStore = useBookStore()
 
 const book = ref(null)
 const postId  = Number(route.params.postId )
 const post  = computed(() =>
-  postStore.posts.find(t => t.id === postId)
+postStore.posts.find(t => t.id === postId)
 )
 
 // bookId를 기반으로 책 정보 찾기
@@ -51,7 +63,7 @@ onMounted(async () => {
   if (postStore.posts.length === 0) {
     await postStore.fetchPosts()
   }
-
+  
   const target = postStore.posts.find(t => t.id === postId)
   if (target?.book_id) {
     post.value = target
@@ -60,6 +72,31 @@ onMounted(async () => {
     })
   }
 })
+
+// 수정 페이지 이동 이벤트 
+const goToEdit = (bookId, postId) => {
+  router.push({
+    name: 'post-update',
+    params: { bookId, postId }
+  })
+}
+
+// 삭제 이벤트
+const deleteThread = (bookId, postId) => {
+  if (!confirm('정말 삭제하시겠습니까?')) return
+
+  axios.delete(`http://localhost:8000/api/v1/books/${bookId}/posts/${postId}/delete/`)
+    .then(() => {
+      return postStore.fetchPosts()           
+    })
+    .then(() => {
+      router.push({ name: 'posts' })         
+    })
+    .catch((err) => {
+      console.error('❌ 삭제 실패:', err)
+      alert('삭제에 실패했습니다.')
+    })
+}
 
 const formatDate = (iso) => {
   return new Date(iso).toLocaleString()
