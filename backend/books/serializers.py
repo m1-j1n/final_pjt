@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Book, Post, Comment
+from .models import Book, Post, Comment, BookLike
 from accounts.models import Category
 from django.contrib.auth import get_user_model
 
@@ -14,30 +14,44 @@ class CategorySerializer(serializers.ModelSerializer):
 
 # 🔹 Book Serializer
 class BookSerializer(serializers.ModelSerializer):
-    category = CategorySerializer(read_only=True)  
+    category = CategorySerializer(read_only=True)
+    like_count = serializers.SerializerMethodField()
+    liked = serializers.SerializerMethodField()
 
     class Meta:
         model = Book
         fields = [
-            'id',
-            'title',
-            'description',
-            'author',
-            'cover',
-            'category',
-            'publisher',
-            'pub_date',
-            'isbn',
-            'customer_review_rank',
-            'author_photo',
-            'author_info',
+            'id', 'title', 'description', 'author', 'cover', 'category',
+            'publisher', 'pub_date', 'isbn', 'customer_review_rank',
+            'author_photo', 'author_info', 'like_count', 'liked'
         ]
+
+    def get_like_count(self, obj):
+        return obj.book_likes.count()
+
+    def get_liked(self, obj):
+        user = self.context['request'].user
+        if user.is_authenticated:
+            return obj.book_likes.filter(user=user).exists()
+        return False
 
 # 🔹 BookSimpleSerializer : 간단 데이터만 보내기 위해서
 class BookSimpleSerializer(serializers.ModelSerializer):
+    like_count = serializers.SerializerMethodField()
+    liked = serializers.SerializerMethodField()
+
     class Meta:
         model = Book
-        fields = ['id', 'title', 'description', 'cover']
+        fields = ['id', 'title', 'description', 'cover', 'author', 'like_count', 'liked']
+
+    def get_like_count(self, obj):
+        return obj.book_likes.count()
+
+    def get_liked(self, obj):
+        user = self.context['request'].user
+        if user.is_authenticated:
+            return obj.book_likes.filter(user=user).exists()
+        return False
 
 # 🔹 PostCreateSerializer : 포스트 생성 시리얼라이저
 class PostCreateSerializer(serializers.ModelSerializer):
@@ -68,11 +82,11 @@ class PostListSerializer(serializers.ModelSerializer):
         model = Post
         fields = ['id', 'title', 'content', 'created_at', 'book_cover', 'category_id']
 
-
 # 🔹 Comment Serializer
 class CommentSerializer(serializers.ModelSerializer):
-    user = serializers.StringRelatedField(read_only=True)  # username
+    user = serializers.StringRelatedField(read_only=True)  # 유저 이름만 보여줄 경우
 
     class Meta:
         model = Comment
-        fields = ['id', 'content', 'user', 'post', 'created_at']
+        fields = ['id', 'content', 'user', 'created_at', 'updated_at', 'post']
+        read_only_fields = ['user', 'created_at', 'updated_at', 'post']

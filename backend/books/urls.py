@@ -27,6 +27,7 @@ urlpatterns = [
     path('books/<int:book_pk>/threads/<int:thread_pk>/likes/', views.likes, name='likes'),
 
     # 댓글
-    path('books/<int:book_pk>/threads/<int:thread_pk>/comments/create/', views.create_comment, name='create_comment'),
-    path('books/<int:book_pk>/comments/<int:comment_pk>/delete/', views.delete_comment, name='delete_comment'),
+    path('posts/<int:post_pk>/comments/', views.comments_list, name='comments_list'),
+    path('posts/<int:post_pk>/comments/create/', views.create_comment, name='create_comment'),
+    path('comments/<int:comment_pk>/delete/', views.delete_comment, name='delete_comment'),
 ]
