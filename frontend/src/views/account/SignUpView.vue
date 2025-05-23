@@ -58,6 +58,9 @@
         </select>
       </div>
 
+      <!-- 에러 메시지 표시 -->
+      <p v-if="errorMessage" style="color: red;">{{ errorMessage }}</p>
+
       <div class="form-group">
         <input type="submit" value="회원가입" />
       </div>
@@ -65,58 +68,69 @@
   </div>
 </template>
 
-
 <script setup>
-import { onMounted, ref } from "vue";
-import { useUserStore } from '@/stores/users.js'
-import axios from "axios";
+  import { onMounted, ref } from 'vue'
+  import { useUserStore } from '@/stores/users.js'
+  import axios from 'axios'
+  import { useRouter } from 'vue-router'
 
-const userStore = useUserStore()
+  const router = useRouter()
+  const userStore = useUserStore()
 
-const username = ref('')
-const name = ref('')
-const password1 = ref('')
-const password2 = ref('')
-const gender = ref('')
-const age = ref(null)
-const weekly_avg_reading_time = ref(null)
-const annual_reading_amount = ref(null)
-const interested_genres = ref([])
+  const username = ref('')
+  const name = ref('')
+  const password1 = ref('')
+  const password2 = ref('')
+  const gender = ref('')
+  const age = ref(null)
+  const weekly_avg_reading_time = ref(null)
+  const annual_reading_amount = ref(null)
+  const interested_genres = ref([])
+  const errorMessage = ref('')
 
-const categories = ref([])
-const BOOK_API_URL = 'http://127.0.0.1:8000/api/v1'
+  const categories = ref([])
+  const BOOK_API_URL = 'http://127.0.0.1:8000/api/v1'
 
-const onSignUp = function () {
-   console.log("✅ 선택된 관심 장르 (원본):", interested_genres.value)       
-  console.log("✅ 필터링 후 장르:", (interested_genres.value || []).filter(Boolean))  
-  const userInfo = {
-    username: username.value,
-    name: name.value,
-    password1: password1.value,
-    password2: password2.value,
-    gender: gender.value,
-    age: age.value,
-    weekly_avg_reading_time: weekly_avg_reading_time.value,
-    annual_reading_amount: annual_reading_amount.value,
-    interested_genres: (interested_genres.value || []).filter(Boolean),
+  const onSignUp = async function () {
+    // 1. 비밀번호 일치 확인
+    if (password1.value !== password2.value) {
+      errorMessage.value = '❌ 비밀번호가 일치하지 않습니다.'
+      return
+    }
+
+    // 2. 회원가입 요청
+    const userInfo = {
+      username: username.value,
+      name: name.value,
+      password1: password1.value,
+      password2: password2.value,
+      gender: gender.value,
+      age: age.value,
+      weekly_avg_reading_time: weekly_avg_reading_time.value,
+      annual_reading_amount: annual_reading_amount.value,
+      interested_genres: (interested_genres.value || []).filter(Boolean),
+    }
+
+    try {
+      await userStore.signUp(userInfo)
+      alert('✅ 회원가입이 완료되었습니다.')
+      router.push({ name: 'login' })
+    } catch (err) {
+      errorMessage.value = '❌ 회원가입에 실패했습니다. 다시 확인해주세요.'
+    }
   }
-  userStore.signUp(userInfo)  
-}
 
-onMounted(() => {
-  axios.get(`${BOOK_API_URL}/categories/`)
-  .then(res => {
-    categories.value = res.data
-    console.log("📚 카테고리 목록 도착:", categories.value) 
+  // 3. 카테고리 데이터 불러오기
+  onMounted(() => {
+    axios.get(`${BOOK_API_URL}/categories/`)
+      .then(res => {
+        categories.value = res.data
+        console.log("📚 카테고리 목록 도착:", categories.value) 
+      })
+      .catch(err => {
+        console.log("❌ 카테고리 로드 실패:", err)
+      })
   })
-  .catch(err => {
-      console.log("❌ 카테고리 로드 실패:", err)
-    })
-  
-})
-  
-
-
 </script>
 
 <style scoped>

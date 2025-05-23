@@ -2,15 +2,24 @@
 
 from dj_rest_auth.registration.views import RegisterView
 from .serializers import CustomRegisterSerializer
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from .serializers import CustomUserDetailSerializer
 
 class CustomRegisterView(RegisterView):
     serializer_class = CustomRegisterSerializer
 
     def get_serializer_class(self):
-        print("💥 실제 사용되는 serializer:", self.serializer_class)
+        # print("💥 실제 사용되는 serializer:", self.serializer_class)
         return self.serializer_class
 
-
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def user_profile(request):
+    user = request.user
+    serializer = CustomUserDetailSerializer(user)
+    return Response(serializer.data)
 
 
 # from django.http.response import JsonResponse
