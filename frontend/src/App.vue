@@ -1,5 +1,10 @@
 <template>
-
+  <header>
+    <nav>
+      <RouterLink :to="{name: 'signup'}">SingUp</RouterLink> |
+      <RouterLink :to="{name: 'login'}">Login</RouterLink>
+    </nav>
+  </header>
 
   <!--NavBar-->
   <NavBar />

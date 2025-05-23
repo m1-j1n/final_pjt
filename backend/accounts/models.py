@@ -5,6 +5,9 @@ from books.models import Category
 
 
 class User(AbstractUser):
+    # 이름
+    name = models.CharField(max_length=100)
+
     # 성별
     GENDER_CHOICES = (
         ('M', '남성'),
