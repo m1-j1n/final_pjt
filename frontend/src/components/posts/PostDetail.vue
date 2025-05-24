@@ -28,7 +28,7 @@
         </div>
         <p class="lead">{{ post.content }}</p>
         <hr />
-        <p class="text-muted">작성 시각: {{ formatDate(post.created_at) }}</p>
+        <p class="text-muted">작성자 : {{ post.user }} | 작성 시각: {{ formatDate(post.created_at) }}</p>
       </div>      
     </div>
 
