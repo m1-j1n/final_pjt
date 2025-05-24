@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Book, Post, Comment, BookLike
+from .models import Book, Post, Comment, BookLike, ReadingStatus
 from accounts.models import Category
 from django.contrib.auth import get_user_model
 
@@ -53,6 +53,19 @@ class BookSimpleSerializer(serializers.ModelSerializer):
         if user.is_authenticated:
             return obj.book_likes.filter(user=user).exists()
         return False
+
+# 🔹 ReadingStatusSerializer : 책 상태 데이터 처리를 위해서
+class ReadingStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ReadingStatus
+        fields = [
+            'status',
+            'start_date',
+            'end_date',
+            'comment',
+            'progress',
+            'stop_reason',
+        ]
 
 # 🔹 PostCreateSerializer : 포스트 생성 시리얼라이저
 class PostCreateSerializer(serializers.ModelSerializer):

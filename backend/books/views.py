@@ -15,15 +15,16 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from accounts.models import Category
-from .models import Book, Post, Comment, BookLike
+from .models import Book, Post, Comment, BookLike, Book, ReadingStatus
 from .forms import CommentForm
 from .utils import (
     generate_image_with_openai,
 )
 from django.http import JsonResponse
 from django.core.exceptions import PermissionDenied
-from .serializers import BookSerializer, CategorySerializer, PostDetailSerializer, PostCreateSerializer, PostListSerializer, BookSimpleSerializer, CommentSerializer
+from .serializers import BookSerializer, CategorySerializer, PostDetailSerializer, PostCreateSerializer, PostListSerializer, BookSimpleSerializer, CommentSerializer, ReadingStatusSerializer
 
+### 도서 ###
 # 책 전체 조회
 @api_view(['GET'])
 def book_list(request):
@@ -77,13 +78,9 @@ def detail(request, book_pk):
 @api_view(['GET'])
 def book_search(request):
     query = request.query_params.get('query', '').strip()
-
     if not query:
         return Response({'message': '검색어를 입력해 주세요'}, status=status.HTTP_400_BAD_REQUEST)
-
-    # 공백 기준으로 단어 분리
     keywords = query.split()
-
     # Q 객체 조합: 각 단어가 title, author, publisher 중 하나에라도 포함되도록 함
     q = Q()
     for word in keywords:
@@ -92,15 +89,35 @@ def book_search(request):
             Q(author__icontains=word) |
             Q(publisher__icontains=word)
         )
-
     books = Book.objects.filter(q)
-
     if not books.exists():
         return Response({'message': '검색 결과가 없습니다'}, status=status.HTTP_200_OK)
-
     serializer = BookSerializer(books, many=True, context={'request': request})
     return Response(serializer.data)
 
+# 도서 상태 기록
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def reading_status_create_or_update(request, book_id):
+    try:
+        book = Book.objects.get(pk=book_id)
+    except Book.DoesNotExist:
+        return Response({'error': '책을 찾을 수 없습니다.'}, status=status.HTTP_404_NOT_FOUND)
+
+    # 기존 상태가 있다면 수정, 없으면 생성
+    instance, created = ReadingStatus.objects.get_or_create(user=request.user, book=book)
+
+    serializer = ReadingStatusSerializer(instance, data=request.data, partial=True)
+    # if serializer.is_valid():
+    #     serializer.save()
+    #     return Response(serializer.data, status=status.HTTP_200_OK if not created else status.HTTP_201_CREATED)
+    # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK if not created else status.HTTP_201_CREATED)
+    else:
+        print(serializer.errors)  
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # 포스트 생성
 @api_view(['POST'])

@@ -4,15 +4,20 @@ from . import views
 
 app_name = "books"
 urlpatterns = [
-    # 도서
+    ### 도서 ###
     path('categories/', views.category_list, name='category_list'),
     path('books/', views.book_list, name='book_list'),
     # path('books/filter/', views.filter_category, name='filter_category'),
     path('books/<int:book_pk>/', views.detail, name='book_detail'),
     path('books/category/<int:category_id>/', views.filter_books_by_category, name='filter_books_by_category'),
     path('books/<int:book_pk>/like/', views.book_like_toggle, name='book_like_toggle'),
+    path('books/<int:book_id>/reading-status/', views.reading_status_create_or_update, name='reading_status_create_or_update'),
 
-    # 포스트
+    # 검색
+    path('books/search/', views.book_search, name='book_search'),
+
+
+    ### 포스트 ###
     path('posts/', views.post_list, name='post_list'),
     path('books/<int:book_pk>/posts/create/', views.post_create, name='post_create'),
     path('books/<int:book_pk>/posts/<int:post_pk>/', views.post_detail, name='post_detail'),
@@ -28,7 +33,4 @@ urlpatterns = [
     path('posts/<int:post_pk>/comments/create/', views.create_comment, name='create_comment'),
     path('comments/<int:comment_pk>/delete/', views.delete_comment, name='delete_comment'),
 
-    # 검색
-    path('books/search/', views.book_search, name='book_search'),
-    
 ]
