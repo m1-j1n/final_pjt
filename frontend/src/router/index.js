@@ -10,6 +10,7 @@ import BookDetailView from '@/views/book/BookDetailView.vue'
 import SignUpView from '@/views/account/SignUpView.vue'
 import LoginView from '@/views/account/LoginView.vue'
 import MyPageView from '@/views/account/MyPageView.vue'
+import ReadingStateView from '@/views/recommend/ReadingStateView.vue'
 
 const requireAuth = async (to, from, next) => {
   try {
@@ -79,6 +80,11 @@ const router = createRouter({
       name: 'mypage',
       component: MyPageView,
       beforeEnter: requireAuth,
+    },
+    {
+      path: '/recommend/reading',
+      name: 'recommend-reading',
+      component: ReadingStateView,
     },
   ],
 })

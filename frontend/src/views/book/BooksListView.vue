@@ -27,7 +27,10 @@
       <!-- 도서 카드 리스트 -->
       <div class="col-9">
         <div class="d-flex flex-column gap-3">
-          <div v-for="book in bookStore.books" :key="book.id">
+          <div
+            v-for="book in searched ? results : bookStore.books"
+            :key="book.id"
+          >
             <BookCard :book="book" />
           </div>
         </div>
@@ -85,8 +88,15 @@ const searched = ref(false)
 
 const doSearch = async () => {
   if (!searchQuery.value.trim()) return
+
+  // 검색 결과 요청
   results.value = await searchBooks(searchQuery.value)
+
+  // 검색 모드로 전환
   searched.value = true
+
+  // 선택된 카테고리 초기화
+  bookStore.selectedCategory = 0
 }
 
 // 페이지네이션 관련 변수

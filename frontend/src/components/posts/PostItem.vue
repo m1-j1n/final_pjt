@@ -19,8 +19,18 @@
           <div class="card h-100" style="cursor: pointer;">
             <img :src="getImageUrl(post.cover_img)" class="card-img-top post-image" :alt="post.title" />
             <div class="card-body">
+              
+              <!-- 유저명 + 작성 시간 -->
+              <p class="text-muted mb-1">
+                <strong>{{ post.user }}</strong> · 
+                {{ formatTimeAgo(post.created_at) }}
+              </p>
+
               <h5 class="card-title">{{ post.title }}</h5>
               <p class="card-text">{{ post.content }}</p>
+
+              <!-- 댓글 개수 -->
+              <p class="text-muted mt-2 small">💬 댓글 {{ post.comment_count || 0 }}개</p>
             </div>
           </div>
         </RouterLink>
@@ -35,6 +45,13 @@ import { RouterLink } from 'vue-router'
 import { usePostStore } from '@/stores/post'
 import { useBookStore } from '@/stores/books'
 import axios from 'axios'
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+dayjs.extend(relativeTime)
+
+const formatTimeAgo = (isoString) => {
+  return dayjs(isoString).fromNow()
+}
 
 const postStore = usePostStore()
 const bookStore = useBookStore()

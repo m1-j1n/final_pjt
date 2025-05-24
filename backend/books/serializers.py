@@ -78,14 +78,17 @@ class PostCreateSerializer(serializers.ModelSerializer):
 class PostDetailSerializer(serializers.ModelSerializer):
     user = serializers.CharField(source='user.username', read_only=True)
     book_id = serializers.IntegerField(source='book.id', read_only=True)
+    comment_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
         fields = [
             'id', 'title', 'content', 'created_at', 'cover_img',
-            'user', 'book_id' 
+            'user', 'book_id', 'comment_count'
         ]
-        read_only_fields = ['id', 'cover_img', 'user', 'book_id']
+
+    def get_comment_count(self, obj):
+        return obj.comments.count()
 
 # 🔹 PostListSerializer : 포스트 상세 조회 시리얼라이저
 class PostListSerializer(serializers.ModelSerializer):

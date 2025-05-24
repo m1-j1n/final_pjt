@@ -218,22 +218,31 @@ def book_like_toggle(request, book_pk):
         'book': serializer.data
     })
 
-# @api_view(['POST'])
-# def book_like_toggle(request, book_pk):
-#     User = get_user_model()
+# 도서 상태 (콘텐츠 기반) 추천
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def recommend_similar_books(request):
+    user = request.user
 
-#     book = get_object_or_404(Book, pk=book_pk)
+    # 현재 읽고 있는 책 상태 조회
+    reading_books = ReadingStatus.objects.filter(user=user, status='reading').select_related('book')
 
-#     # ⚠️ 임시로 user ID 1번으로 강제 설정
-#     user = User.objects.get(pk=1)
+    # 읽는 책이 없다면 완독한 책 기반 추천 시도
+    if not reading_books.exists():
+        reading_books = ReadingStatus.objects.filter(user=user, status='done').select_related('book')
 
-#     like, created = BookLike.objects.get_or_create(user=user, book=book)
-    
-#     if not created:
-#         like.delete()
-#         return Response({'liked': False, 'like_count': book.book_likes.count()})
-    
-#     return Response({'liked': True, 'like_count': book.book_likes.count()})
+    if not reading_books.exists():
+        return Response([], status=200)
+
+    # 읽고 있는 (또는 완독한) 책들의 카테고리, id 추출
+    categories = [rs.book.category for rs in reading_books]
+    book_ids = [rs.book.id for rs in reading_books]
+
+    # 동일한 카테고리의 다른 책 중 추천 (내가 이미 읽은 책은 제외)
+    similar_books = Book.objects.filter(category__in=categories).exclude(id__in=book_ids).distinct()[:10]
+
+    serializer = BookSimpleSerializer(similar_books, many=True, context={'request': request})
+    return Response(serializer.data)
 
 
 # 쓰레드 좋아요 처리

@@ -11,7 +11,10 @@ urlpatterns = [
     path('books/<int:book_pk>/', views.detail, name='book_detail'),
     path('books/category/<int:category_id>/', views.filter_books_by_category, name='filter_books_by_category'),
     path('books/<int:book_pk>/like/', views.book_like_toggle, name='book_like_toggle'),
+    # 독서 상태 기록
     path('books/<int:book_id>/reading-status/', views.reading_status_create_or_update, name='reading_status_create_or_update'),
+    # 독서 상태 기반 추천
+    path('recommend/content-based/', views.recommend_similar_books, name='recommend_similar_books'),
 
     # 검색
     path('books/search/', views.book_search, name='book_search'),

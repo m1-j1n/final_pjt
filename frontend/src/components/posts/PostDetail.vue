@@ -1,43 +1,49 @@
 <template>
-  <div class="container mt-5" v-if="post && book">
+  <div class="container mt-4" v-if="post && book">
+    <!-- 포스트 영역 -->
     <div class="row">
-      <!-- 책 정보 -->
+      <div class="col-md-8 mb-4">
+        <div class="card shadow-sm">
+          <img
+            v-if="post.cover_img"
+            :src="getImageUrl(post.cover_img)"
+            class="card-img-top"
+            :alt="post.title"
+            style="max-height: 400px; object-fit: cover;"
+          />
+          <div class="card-body">
+            <h2 class="card-title">{{ post.title }}</h2>
+            <p class="text-muted mb-2">✍️ {{ post.user }} · 🕒 {{ formatDate(post.created_at) }}</p>
+            <p class="lead">{{ post.content }}</p>
+            <div class="d-flex justify-content-end">
+              <button class="btn btn-outline-primary me-2" @click="goToEdit(book.id, post.id)">수정</button>
+              <button class="btn btn-outline-danger" @click="deleteThread(book.id, post.id)">삭제</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 댓글 컴포넌트 -->
+        <div class="mt-4">
+          <PostComments :postId="postId" />
+        </div>
+      </div>
+
+      <!-- 도서 정보 요약 -->
       <div class="col-md-4">
-        <div class="card">
+        <div class="card shadow-sm h-100">
           <img :src="book.cover" class="card-img-top" :alt="book.title" />
           <div class="card-body">
             <h5 class="card-title">{{ book.title }}</h5>
-            <p class="card-text text-muted">{{ book.author }}</p>
-            <p class="card-text small">{{ book.publisher }} / {{ book.pub_date }}</p>
+            <p class="text-muted mb-1">{{ book.author }}</p>
+            <p class="small mb-1">{{ book.publisher }} · {{ book.pub_date }}</p>
+            <p class="small text-muted">📚 평점: {{ book.customer_review_rank }}</p>
           </div>
         </div>
-      </div>
-
-      <!-- 스레드 내용 -->
-      <div class="col-md-8">
-        <div class="row d-flex justify-content-between align-items-center">
-          <h2 class="col mb-3">{{ post.title }}</h2>
-          <div class="col-auto">
-            <button class="btn btn-outline-primary me-2"
-            @click="goToEdit(book.id, post.id)"
-            >수정</button>
-            <button class="btn btn-outline-danger"
-            @click="deleteThread(book.id, post.id)"
-            >삭제</button>
-          </div>
-        </div>
-        <p class="lead">{{ post.content }}</p>
-        <hr />
-        <p class="text-muted">작성자 : {{ post.user }} | 작성 시각: {{ formatDate(post.created_at) }}</p>
-      </div>      
-    </div>
-
-    <div class="row mt-5">
-      <div class="col-md-12">
-        <PostComments :postId="postId" />
       </div>
     </div>
   </div>
+
+  <!-- 에러 메시지 -->
   <div v-else class="container mt-5">
     <p>❗ 해당 스레드를 찾을 수 없습니다.</p>
   </div>
@@ -58,48 +64,38 @@ const postStore = usePostStore()
 const bookStore = useBookStore()
 const userStore = useUserStore()
 
-// 책 정보
+const postId = Number(route.params.postId)
+const post = computed(() => postStore.posts.find(p => p.id === postId))
 const book = ref(null)
-const postId  = Number(route.params.postId )
-const post  = computed(() =>
-postStore.posts.find(t => t.id === postId)
-)
 
-// bookId를 기반으로 책 정보 찾기
+const getImageUrl = (path) => {
+  return `http://localhost:8000${path}`
+}
+
 onMounted(async () => {
   if (postStore.posts.length === 0) {
     await postStore.fetchPosts()
   }
 
-  const target = postStore.posts.find(t => t.id === postId)
+  const target = postStore.posts.find(p => p.id === postId)
   if (target?.book_id) {
     post.value = target
     bookStore.fetchBookDetail(target.book_id).then(res => {
       book.value = res
     })
   }
-
 })
 
-// 수정 페이지 이동 이벤트 
 const goToEdit = (bookId, postId) => {
-  router.push({
-    name: 'post-update',
-    params: { bookId, postId }
-  })
+  router.push({ name: 'post-update', params: { bookId, postId } })
 }
 
-// 포스트 삭제 이벤트
 const deleteThread = (bookId, postId) => {
   if (!confirm('정말 삭제하시겠습니까?')) return
 
   axios.delete(`http://localhost:8000/api/v1/books/${bookId}/posts/${postId}/delete/`)
-    .then(() => {
-      return postStore.fetchPosts()           
-    })
-    .then(() => {
-      router.push({ name: 'posts' })         
-    })
+    .then(() => postStore.fetchPosts())
+    .then(() => router.push({ name: 'posts' }))
     .catch((err) => {
       console.error('❌ 삭제 실패:', err)
       alert('삭제에 실패했습니다.')
@@ -112,12 +108,11 @@ const formatDate = (iso) => {
 </script>
 
 <style scoped>
-p.lead {
-  font-size: 1.2rem;
+.card-title {
+  font-size: 1.5rem;
+  font-weight: bold;
 }
-
 .card-img-top {
-  max-height: 280px;
-  object-fit: cover;
+  border-bottom: 1px solid #eee;
 }
 </style>
