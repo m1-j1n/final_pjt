@@ -181,7 +181,7 @@ def post_delete(request, book_pk, post_pk):
 
 # 도서 좋아요 처리
 @api_view(['POST'])
-# @permission_classes([IsAuthenticated])  
+@permission_classes([IsAuthenticated])  
 def book_like_toggle(request, book_pk):
     book = get_object_or_404(Book, pk=book_pk)
     user = request.user

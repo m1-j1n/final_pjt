@@ -25,13 +25,14 @@
     <!-- 버튼 영역 -->
     <div class="button-column ms-2">
       <button class="btn btn-outline-danger mb-1" @click.stop.prevent="toggleLike">
-        ❤️ {{ likeCount }}
+        <span class="fs-6">
+          ❤️ 읽고싶어요 {{ likeCount }}
+        </span>
       </button>
       <button class="btn btn-outline-success mb-1" @click.stop.prevent="markAsRead">
-        ✅ 읽었어요
-      </button>
-      <button class="btn btn-outline-primary" @click.stop.prevent="markAsReading">
-        📖 읽고있어요
+        <span class="fs-6">
+          ✏️ 독서 기록하기
+        </span>
       </button>
     </div>
   </router-link>
@@ -39,7 +40,9 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import axios from 'axios';
+import { useUserStore } from '@/stores/users.js'
+import axios from 'axios'
+
 
 const props = defineProps({
   book: Object
@@ -49,10 +52,19 @@ const book = props.book
 // 좋아요 처리 
 const liked = ref(false)
 const likeCount = ref(0)
+const userStore = useUserStore()
 
 const toggleLike = async () => {
   try {
-    const res = await axios.post(`http://localhost:8000/api/v1/books/${book.id}/like/`)
+    const res = await axios.post(
+      `http://localhost:8000/api/v1/books/${book.id}/like/`,
+      {},
+      {
+        headers: {
+          Authorization: `Token ${userStore.token}`
+        }
+      }
+    )
     
     const updatedBook = res.data.book
     liked.value = updatedBook.liked
@@ -64,6 +76,8 @@ const toggleLike = async () => {
     console.error('좋아요 실패:', err)
   }
 }
+
+// 
 
 onMounted(() => {
   if (book && book.id) {
