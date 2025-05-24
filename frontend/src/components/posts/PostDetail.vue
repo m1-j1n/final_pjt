@@ -28,16 +28,19 @@
         </div>
         <p class="lead">{{ post.content }}</p>
         <hr />
-        <p class="text-muted">작성 시각: {{ formatDate(post.created_at) }}</p>
-      </div>
+        <p class="text-muted">작성자 : {{ post.user }} | 작성 시각: {{ formatDate(post.created_at) }}</p>
+      </div>      
+    </div>
 
+    <div class="row mt-5">
+      <div class="col-md-12">
+        <PostComments :postId="postId" />
+      </div>
     </div>
   </div>
-
   <div v-else class="container mt-5">
     <p>❗ 해당 스레드를 찾을 수 없습니다.</p>
   </div>
-
 </template>
 
 <script setup>
@@ -45,13 +48,17 @@ import axios from 'axios'
 import { useRoute, useRouter } from 'vue-router'
 import { usePostStore } from '@/stores/post'
 import { useBookStore } from '@/stores/books'
+import { useUserStore } from '@/stores/users'
 import { ref, computed, onMounted } from 'vue'
+import PostComments from '@/components/posts/PostComments.vue'
 
 const route = useRoute()
 const router = useRouter()
 const postStore = usePostStore()
 const bookStore = useBookStore()
+const userStore = useUserStore()
 
+// 책 정보
 const book = ref(null)
 const postId  = Number(route.params.postId )
 const post  = computed(() =>
@@ -63,7 +70,7 @@ onMounted(async () => {
   if (postStore.posts.length === 0) {
     await postStore.fetchPosts()
   }
-  
+
   const target = postStore.posts.find(t => t.id === postId)
   if (target?.book_id) {
     post.value = target
@@ -71,6 +78,7 @@ onMounted(async () => {
       book.value = res
     })
   }
+
 })
 
 // 수정 페이지 이동 이벤트 
@@ -81,7 +89,7 @@ const goToEdit = (bookId, postId) => {
   })
 }
 
-// 삭제 이벤트
+// 포스트 삭제 이벤트
 const deleteThread = (bookId, postId) => {
   if (!confirm('정말 삭제하시겠습니까?')) return
 

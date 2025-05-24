@@ -1,8 +1,15 @@
 <template>
   <div class="container">
+    <h3 class="mb-3">📚 카테고리별 도서 보기</h3>
     <div class="row">
-      <!-- 카테고리 사이드바 -->
       <div class="col-3">
+        <!-- 검색바 -->
+        <div class="input-group mb-3">
+          <input v-model="searchQuery" @keyup.enter="doSearch" class="form-control" placeholder="검색어를 입력하세요" />
+          <button class="btn btn-outline-secondary" @click="doSearch">검색</button>
+        </div>
+
+        <!-- 카테고리 사이드바 -->
         <h5>카테고리</h5>
         <ul class="list-group">
           <li
@@ -19,8 +26,8 @@
 
       <!-- 도서 카드 리스트 -->
       <div class="col-9">
-        <div class="row">
-          <div class="col" v-for="book in bookStore.books" :key="book.id">
+        <div class="d-flex flex-column gap-3">
+          <div v-for="book in bookStore.books" :key="book.id">
             <BookCard :book="book" />
           </div>
         </div>
@@ -29,6 +36,7 @@
       <!-- 도서 카드 리스트 하단 -->
       <nav class="mt-4 d-flex justify-content-center">
         <ul class="pagination">
+
           <!-- 이전 그룹 버튼 -->
           <li class="page-item" :class="{ disabled: pageGroupStart === 1 }">
             <button class="page-link" @click="goToPrevGroup">이전</button>
@@ -63,10 +71,23 @@
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import { useBookStore } from '@/stores/books.js'
+import { searchBooks } from '@/stores/search.js'
 import BookCard from '@/components/books/BookCard.vue'
 
 const BASE_API_URL = 'http://localhost:8000'
 const bookStore = useBookStore()
+
+// 검색 관련 변수
+const mode = ref('category')
+const searchQuery = ref('')
+const results = ref([])
+const searched = ref(false)
+
+const doSearch = async () => {
+  if (!searchQuery.value.trim()) return
+  results.value = await searchBooks(searchQuery.value)
+  searched.value = true
+}
 
 // 페이지네이션 관련 변수
 const currentPage = ref(1)
@@ -108,6 +129,11 @@ onMounted(() => {
 
 // 카테고리별 도서 요청
 const fetchBooksByCategory = async (categoryId, page = 1) => {
+  mode.value = 'category'
+  currentPage.value = page
+  searched.value = false
+  results.value = []
+
   bookStore.selectedCategory = categoryId
   currentPage.value = page
 

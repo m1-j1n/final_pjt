@@ -43,5 +43,5 @@ export const useUserStore = defineStore('user', () => {
     return token.value !== ''
   })
 
-  return { signUp, logIn, logOut, isLogin }
+  return { signUp, logIn, logOut, isLogin, token }
 }, { persist: true })

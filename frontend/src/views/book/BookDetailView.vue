@@ -9,7 +9,7 @@
         :to="{ name: 'posts-write', params: { bookId: book.id } }"
         class="btn btn-success"
       >
-      +   
+      + thread 
       </router-link>
       
     </div> -->

@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views.decorators.http import (
@@ -21,17 +22,17 @@ from .utils import (
 )
 from django.http import JsonResponse
 from django.core.exceptions import PermissionDenied
-from .serializers import BookSerializer, CategorySerializer, PostDetailSerializer, PostCreateSerializer, PostListSerializer, BookSimpleSerializer
+from .serializers import BookSerializer, CategorySerializer, PostDetailSerializer, PostCreateSerializer, PostListSerializer, BookSimpleSerializer, CommentSerializer
 
 # 책 전체 조회
 @api_view(['GET'])
 def book_list(request):
     paginator = PageNumberPagination()
-    paginator.page_size = 12
+    paginator.page_size = 10
 
     books = Book.objects.all()
     result_page = paginator.paginate_queryset(books, request)
-    serializer = BookSerializer(result_page, many=True)
+    serializer = BookSerializer(result_page, many=True, context={'request': request})
     return paginator.get_paginated_response(serializer.data)
 
 # 카테고리 조회
@@ -50,10 +51,10 @@ def filter_books_by_category(request, category_id):
     books = Book.objects.filter(category__id=category_id)
     paginator = StandardResultsSetPagination()
     paginated_qs = paginator.paginate_queryset(books, request)
-    serializer = BookSimpleSerializer(paginated_qs, many=True)
+    serializer = BookSimpleSerializer(paginated_qs, many=True, context={'request': request})
     return paginator.get_paginated_response(serializer.data)
 
-# 장르별 필터링 - 리뷰
+# 장르별 필터링 - 포스트
 @api_view(['GET'])
 def filter_posts_by_category(request, category_id):
     posts = Post.objects.filter(book__category__id=category_id)
@@ -69,13 +70,41 @@ def detail(request, book_pk):
     except Book.DoesNotExist:
         return Response({'error': '도서를 찾을 수 없습니다.'}, status=status.HTTP_404_NOT_FOUND)
     
-    serializer = BookSerializer(book)
+    serializer = BookSerializer(book, context={'request': request})
+    return Response(serializer.data)
+
+# 도서 검색
+@api_view(['GET'])
+def book_search(request):
+    query = request.query_params.get('query', '').strip()
+
+    if not query:
+        return Response({'message': '검색어를 입력해 주세요'}, status=status.HTTP_400_BAD_REQUEST)
+
+    # 공백 기준으로 단어 분리
+    keywords = query.split()
+
+    # Q 객체 조합: 각 단어가 title, author, publisher 중 하나에라도 포함되도록 함
+    q = Q()
+    for word in keywords:
+        q &= (
+            Q(title__icontains=word) |
+            Q(author__icontains=word) |
+            Q(publisher__icontains=word)
+        )
+
+    books = Book.objects.filter(q)
+
+    if not books.exists():
+        return Response({'message': '검색 결과가 없습니다'}, status=status.HTTP_200_OK)
+
+    serializer = BookSerializer(books, many=True, context={'request': request})
     return Response(serializer.data)
 
 
 # 포스트 생성
 @api_view(['POST'])
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def post_create(request, book_pk):
     try:
         book = Book.objects.get(pk=book_pk)
@@ -87,16 +116,15 @@ def post_create(request, book_pk):
         user = request.user if request.user.is_authenticated else None
         post = serializer.save(book=book, user=user)
 
-        # OpenAI 이미지 생성
-        generated_image_path = generate_image_with_openai(post.title, post.content, book.title, book.author)
-        if generated_image_path:
-            post.cover_img = generated_image_path
-            post.save()
+        # # OpenAI 이미지 생성
+        # generated_image_path = generate_image_with_openai(post.title, post.content, book.title, book.author)
+        # if generated_image_path:
+        #     post.cover_img = generated_image_path
+        #     post.save()
 
         return Response(PostCreateSerializer(post).data, status=status.HTTP_201_CREATED)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 # 포스트 상세
 @api_view(['GET'])
@@ -117,12 +145,8 @@ def post_list(request):
     serializer = PostDetailSerializer(posts, many=True)
     return Response(serializer.data)
 
-# 카테고리 불러오기
-def categories_list(request):
-    return
-
 # 포스트 수정
-@api_view(['PUT'])
+@api_view(['PATCH'])
 # @permission_classes([IsAuthenticated])
 def post_update(request, book_pk, post_pk):
     try:
@@ -156,33 +180,43 @@ def post_delete(request, book_pk, post_pk):
     return Response({'success': True}, status=status.HTTP_204_NO_CONTENT)
 
 # 도서 좋아요 처리
-# @api_view(['POST'])
-# # @permission_classes([IsAuthenticated])
-# def book_like_toggle(request, book_pk):
-#     book = get_object_or_404(Book, pk=book_pk)
-#     like, created = BookLike.objects.get_or_create(user=request.user, book=book)
-    
-#     if not created:
-#         like.delete()
-#         return Response({'liked': False, 'like_count': book.book_likes.count()})
-#     return Response({'liked': True, 'like_count': book.book_likes.count()})
-
 @api_view(['POST'])
+# @permission_classes([IsAuthenticated])  
 def book_like_toggle(request, book_pk):
-    User = get_user_model()
-
     book = get_object_or_404(Book, pk=book_pk)
-
-    # ⚠️ 임시로 user ID 1번으로 강제 설정
-    user = User.objects.get(pk=1)
+    user = request.user
 
     like, created = BookLike.objects.get_or_create(user=user, book=book)
     
     if not created:
         like.delete()
-        return Response({'liked': False, 'like_count': book.book_likes.count()})
+        liked = False
+    else:
+        liked = True
+
+    serializer = BookSimpleSerializer(book, context={'request': request})
+    return Response({
+        'liked': liked,
+        'like_count': book.book_likes.count(),
+        'book': serializer.data
+    })
+
+# @api_view(['POST'])
+# def book_like_toggle(request, book_pk):
+#     User = get_user_model()
+
+#     book = get_object_or_404(Book, pk=book_pk)
+
+#     # ⚠️ 임시로 user ID 1번으로 강제 설정
+#     user = User.objects.get(pk=1)
+
+#     like, created = BookLike.objects.get_or_create(user=user, book=book)
     
-    return Response({'liked': True, 'like_count': book.book_likes.count()})
+#     if not created:
+#         like.delete()
+#         return Response({'liked': False, 'like_count': book.book_likes.count()})
+    
+#     return Response({'liked': True, 'like_count': book.book_likes.count()})
 
 
 # 쓰레드 좋아요 처리
@@ -205,30 +239,34 @@ def likes(request, book_pk, thread_pk):
     })
 
 
-# 쓰레드 댓글 생성
-@login_required
-def create_comment(request, book_pk, thread_pk):
-    thread = Thread.objects.get(pk=thread_pk)
-    comment_form = CommentForm(request.POST)
-    if comment_form.is_valid():
-        comment = comment_form.save(commit=False)
-        comment.thread = thread
-        comment.user = request.user
-        comment_form.save()
-        return JsonResponse({
-            'id': comment.id,
-            'content': comment.content,
-            'username': comment.user.username,
-            'is_owner': comment.user == request.user
-        })
-    return JsonResponse({'error': 'Invalid form'}, status=400)
+# 포스트 댓글 생성
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_comment(request, post_pk):
+    post = get_object_or_404(Post, pk=post_pk)
+    serializer = CommentSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save(user=request.user, post=post)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+# 포스트 댓글 리스트 조회
+@api_view(['GET'])
+def comments_list(request, post_pk):
+    post = get_object_or_404(Post, pk=post_pk)
+    comments = post.comments.all().order_by('-created_at') 
+    serializer = CommentSerializer(comments, many=True)
+    return Response(serializer.data)
 
-# 쓰레드 댓글 삭제
-@login_required
-def delete_comment(request, book_pk, comment_pk):
-    comment = Comment.objects.get(pk=comment_pk)
-    if request.user == comment.user:
-        comment.delete()
-        return JsonResponse({'success': True})
-    return JsonResponse({'error': '권한 없음'}, status=403)
+# 포스트 댓글 삭제
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_comment(request, comment_pk):
+    comment = get_object_or_404(Comment, pk=comment_pk)
+
+    if request.user != comment.user:
+        return Response({'error': '댓글 작성자만 삭제할 수 있습니다.'}, status=status.HTTP_403_FORBIDDEN)
+
+    comment.delete()
+    return Response({'message': '댓글이 삭제되었습니다.'}, status=status.HTTP_204_NO_CONTENT)
+
