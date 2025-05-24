@@ -11,9 +11,6 @@ export const searchBooks = async (query) => {
       method: 'GET',
       url: `${BASE_API_URL}/api/v1/books/search/`,
       params: { query },
-    //   headers: {
-    //     Authorization: `Token ${userStore.token}`  
-    //   }
     })
 
     return response.data

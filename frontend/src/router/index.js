@@ -13,6 +13,7 @@ import SignUpView from '@/views/account/SignUpView.vue'
 import LoginView from '@/views/account/LoginView.vue'
 import MyPageView from '@/views/account/MyPageView.vue'
 import OnboardingSurveyView from '@/views/account/OnboardingSurveyView.vue'
+import ReadingStateView from '@/views/recommend/ReadingStateView.vue'
 
 const routes = [
   {
@@ -77,7 +78,65 @@ const routes = [
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes
+  routes: [
+    {
+      path: '/',
+      name: 'landing',
+      component: LandingView,
+    },
+    {
+      path: '/posts',
+      name: 'posts',
+      component: PostsListView,
+    },
+    {
+      path: '/posts/:postId',
+      name: 'posts-detail',
+      component: PostsDetailView,
+    },
+    {
+      path: '/posts/:bookId/write',
+      name: 'posts-write',
+      component: PostsWriteView,
+      beforeEnter: requireAuth,
+    },
+    {
+      path: '/books/:bookId/posts/:postId/update',
+      name: 'post-update',
+      component: PostUpdateView,
+    },
+    {
+      path: '/books',
+      name: 'books',
+      component: BooksListView,
+    },
+    {
+      path: '/books/:bookId',
+      name: 'books-detail',
+      component: BookDetailView,
+    },
+    {
+      path: '/signup',
+      name: 'signup',
+      component: SignUpView,
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: LoginView,
+    },
+    {
+      path: '/mypage',
+      name: 'mypage',
+      component: MyPageView,
+      beforeEnter: requireAuth,
+    },
+    {
+      path: '/recommend/reading',
+      name: 'recommend-reading',
+      component: ReadingStateView,
+    },
+  ],
 })
 
 // 전역 가드: meta.requiresAuth 체크

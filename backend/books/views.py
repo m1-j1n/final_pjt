@@ -15,15 +15,16 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from accounts.models import Category
-from .models import Book, Post, Comment, BookLike
+from .models import Book, Post, Comment, BookLike, Book, ReadingStatus
 from .forms import CommentForm
 from .utils import (
     generate_image_with_openai,
 )
 from django.http import JsonResponse
 from django.core.exceptions import PermissionDenied
-from .serializers import BookSerializer, CategorySerializer, PostDetailSerializer, PostCreateSerializer, PostListSerializer, BookSimpleSerializer, CommentSerializer
+from .serializers import BookSerializer, CategorySerializer, PostDetailSerializer, PostCreateSerializer, PostListSerializer, BookSimpleSerializer, CommentSerializer, ReadingStatusSerializer
 
+### 도서 ###
 # 책 전체 조회
 @api_view(['GET'])
 def book_list(request):
@@ -78,13 +79,9 @@ def detail(request, book_pk):
 @api_view(['GET'])
 def book_search(request):
     query = request.query_params.get('query', '').strip()
-
     if not query:
         return Response({'message': '검색어를 입력해 주세요'}, status=status.HTTP_400_BAD_REQUEST)
-
-    # 공백 기준으로 단어 분리
     keywords = query.split()
-
     # Q 객체 조합: 각 단어가 title, author, publisher 중 하나에라도 포함되도록 함
     q = Q()
     for word in keywords:
@@ -93,15 +90,35 @@ def book_search(request):
             Q(author__icontains=word) |
             Q(publisher__icontains=word)
         )
-
     books = Book.objects.filter(q)
-
     if not books.exists():
         return Response({'message': '검색 결과가 없습니다'}, status=status.HTTP_200_OK)
-
     serializer = BookSerializer(books, many=True, context={'request': request})
     return Response(serializer.data)
 
+# 도서 상태 기록
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def reading_status_create_or_update(request, book_id):
+    try:
+        book = Book.objects.get(pk=book_id)
+    except Book.DoesNotExist:
+        return Response({'error': '책을 찾을 수 없습니다.'}, status=status.HTTP_404_NOT_FOUND)
+
+    # 기존 상태가 있다면 수정, 없으면 생성
+    instance, created = ReadingStatus.objects.get_or_create(user=request.user, book=book)
+
+    serializer = ReadingStatusSerializer(instance, data=request.data, partial=True)
+    # if serializer.is_valid():
+    #     serializer.save()
+    #     return Response(serializer.data, status=status.HTTP_200_OK if not created else status.HTTP_201_CREATED)
+    # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK if not created else status.HTTP_201_CREATED)
+    else:
+        print(serializer.errors)  
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # 포스트 생성
 @api_view(['POST'])
@@ -182,7 +199,7 @@ def post_delete(request, book_pk, post_pk):
 
 # 도서 좋아요 처리
 @api_view(['POST'])
-# @permission_classes([IsAuthenticated])  
+@permission_classes([IsAuthenticated])  
 def book_like_toggle(request, book_pk):
     book = get_object_or_404(Book, pk=book_pk)
     user = request.user
@@ -202,22 +219,31 @@ def book_like_toggle(request, book_pk):
         'book': serializer.data
     })
 
-# @api_view(['POST'])
-# def book_like_toggle(request, book_pk):
-#     User = get_user_model()
+# 도서 상태 (콘텐츠 기반) 추천
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def recommend_similar_books(request):
+    user = request.user
 
-#     book = get_object_or_404(Book, pk=book_pk)
+    # 현재 읽고 있는 책 상태 조회
+    reading_books = ReadingStatus.objects.filter(user=user, status='reading').select_related('book')
 
-#     # ⚠️ 임시로 user ID 1번으로 강제 설정
-#     user = User.objects.get(pk=1)
+    # 읽는 책이 없다면 완독한 책 기반 추천 시도
+    if not reading_books.exists():
+        reading_books = ReadingStatus.objects.filter(user=user, status='done').select_related('book')
 
-#     like, created = BookLike.objects.get_or_create(user=user, book=book)
-    
-#     if not created:
-#         like.delete()
-#         return Response({'liked': False, 'like_count': book.book_likes.count()})
-    
-#     return Response({'liked': True, 'like_count': book.book_likes.count()})
+    if not reading_books.exists():
+        return Response([], status=200)
+
+    # 읽고 있는 (또는 완독한) 책들의 카테고리, id 추출
+    categories = [rs.book.category for rs in reading_books]
+    book_ids = [rs.book.id for rs in reading_books]
+
+    # 동일한 카테고리의 다른 책 중 추천 (내가 이미 읽은 책은 제외)
+    similar_books = Book.objects.filter(category__in=categories).exclude(id__in=book_ids).distinct()[:10]
+
+    serializer = BookSimpleSerializer(similar_books, many=True, context={'request': request})
+    return Response(serializer.data)
 
 
 # 쓰레드 좋아요 처리
