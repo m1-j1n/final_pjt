@@ -1,0 +1,12 @@
+[
+  { "model": "accounts.lifestylekeyword", "pk": 1, "fields": { "name": "집순이" } },
+  { "model": "accounts.lifestylekeyword", "pk": 2, "fields": { "name": "맥시멀리즘" } },
+  { "model": "accounts.lifestylekeyword", "pk": 3, "fields": { "name": "미니멀리즘" } },
+  { "model": "accounts.lifestylekeyword", "pk": 4, "fields": { "name": "야근러" } },
+  { "model": "accounts.lifestylekeyword", "pk": 5, "fields": { "name": "야외활동파" } },
+  { "model": "accounts.lifestylekeyword", "pk": 6, "fields": { "name": "감성러" } },
+  { "model": "accounts.lifestylekeyword", "pk": 7, "fields": { "name": "정보탐색형" } },
+  { "model": "accounts.lifestylekeyword", "pk": 8, "fields": { "name": "여행매니아" } },
+  { "model": "accounts.lifestylekeyword", "pk": 9, "fields": { "name": "계획러" } },
+  { "model": "accounts.lifestylekeyword", "pk": 10, "fields": { "name": "즉흥러" } }
+]

@@ -1,0 +1,11 @@
+[
+  { "model": "accounts.readingstyle", "pk": 1, "fields": { "name": "몰입해서 한 번에 읽어요" } },
+  { "model": "accounts.readingstyle", "pk": 2, "fields": { "name": "틈틈이 나눠 읽어요" } },
+  { "model": "accounts.readingstyle", "pk": 3, "fields": { "name": "필기하면서 읽어요" } },
+  { "model": "accounts.readingstyle", "pk": 4, "fields": { "name": "오디오북을 선호해요" } },
+  { "model": "accounts.readingstyle", "pk": 5, "fields": { "name": "스킵하면서 읽어요" } },
+  { "model": "accounts.readingstyle", "pk": 6, "fields": { "name": "매일 꾸준히 읽어요" } },
+  { "model": "accounts.readingstyle", "pk": 7, "fields": { "name": "밤에 몰아서 읽어요" } },
+  { "model": "accounts.readingstyle", "pk": 8, "fields": { "name": "종이책만 읽어요" } },
+  { "model": "accounts.readingstyle", "pk": 9, "fields": { "name": "전자책을 즐겨요" } }
+]

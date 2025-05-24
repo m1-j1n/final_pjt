@@ -16,7 +16,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from accounts.views import CustomRegisterView, user_profile  
+from accounts.views import (
+    CustomRegisterView, 
+    MyPageView, 
+    UserPreferenceView,
+     lifestyle_list,           # 
+    readingstyle_list 
+    )
 from django.conf.urls.static import static
 from django.conf import settings
 
@@ -26,5 +32,9 @@ urlpatterns = [
     path('api/v1/', include('books.urls')),
     path('accounts/', include('dj_rest_auth.urls')),
     path('accounts/signup/', CustomRegisterView.as_view(), name='custom_signup'),
-    path('accounts/profile/', user_profile, name='user_profile'),
+    path('accounts/profile/', MyPageView, name='mypage'),
+    path('accounts/preference/', UserPreferenceView, name='user_preference'),
+     path('accounts/lifestyles/', lifestyle_list, name='lifestyle_list'),
+    path('accounts/readingstyles/', readingstyle_list, name='readingstyle_list'),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
