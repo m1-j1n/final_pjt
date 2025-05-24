@@ -34,29 +34,7 @@
 
     <div class="row mt-5">
       <div class="col-md-12">
-        <!-- 댓글 입력 & 목록 -->
-        <div class="mt-5">
-          <h5>💬 댓글</h5>
-
-          <form @submit.prevent="submitComment" class="mb-3">
-            <textarea v-model="newComment" class="form-control mb-2" rows="2" placeholder="댓글을 입력하세요" />
-            <button class="btn btn-sm btn-primary" :disabled="!newComment.trim()">작성</button>
-          </form>
-
-          <ul class="list-group">
-            <li
-              v-for="comment in comments"
-              :key="comment.id"
-              class="list-group-item d-flex justify-content-between align-items-start"
-            >
-              <div>
-                <strong>{{ comment.user }}</strong><br />
-                {{ comment.content }}
-              </div>
-              <small class="text-muted">{{ formatDate(comment.created_at) }}</small>
-            </li>
-          </ul>
-        </div>
+        <PostComments :postId="postId" />
       </div>
     </div>
   </div>
@@ -72,6 +50,7 @@ import { usePostStore } from '@/stores/post'
 import { useBookStore } from '@/stores/books'
 import { useUserStore } from '@/stores/users'
 import { ref, computed, onMounted } from 'vue'
+import PostComments from '@/components/posts/PostComments.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -85,39 +64,6 @@ const postId  = Number(route.params.postId )
 const post  = computed(() =>
 postStore.posts.find(t => t.id === postId)
 )
-
-// 댓글 정보
-const newComment = ref('')
-const comments = ref([])
-
-// 댓글 정보 가져오기
-const fetchComments = async () => {
-  try {
-    const res = await axios.get(`http://localhost:8000/api/v1/posts/${postId}/comments/`)
-    comments.value = res.data
-  } catch (err) {
-    console.error('댓글 불러오기 실패:', err)
-  }
-}
-
-// 댓글 정보 제출
-const submitComment = async () => {
-  try {
-      await axios.post(
-      `http://localhost:8000/api/v1/posts/${postId}/comments/create/`,
-      { content: newComment.value },
-      {
-        headers: {
-          Authorization: `Token ${userStore.token}`,
-        }
-      }
-    )
-    newComment.value = ''
-    await fetchComments()
-  } catch (err) {
-    console.error('댓글 작성 실패:', err)
-  }
-}
 
 // bookId를 기반으로 책 정보 찾기
 onMounted(async () => {
@@ -133,7 +79,6 @@ onMounted(async () => {
     })
   }
 
-  await fetchComments()  
 })
 
 // 수정 페이지 이동 이벤트 
