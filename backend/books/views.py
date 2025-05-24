@@ -28,7 +28,7 @@ from .serializers import BookSerializer, CategorySerializer, PostDetailSerialize
 @api_view(['GET'])
 def book_list(request):
     paginator = PageNumberPagination()
-    paginator.page_size = 12
+    paginator.page_size = 10
 
     books = Book.objects.all()
     result_page = paginator.paginate_queryset(books, request)
@@ -104,7 +104,7 @@ def book_search(request):
 
 # 포스트 생성
 @api_view(['POST'])
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def post_create(request, book_pk):
     try:
         book = Book.objects.get(pk=book_pk)
@@ -146,7 +146,7 @@ def post_list(request):
     return Response(serializer.data)
 
 # 포스트 수정
-@api_view(['PUT'])
+@api_view(['PATCH'])
 # @permission_classes([IsAuthenticated])
 def post_update(request, book_pk, post_pk):
     try:

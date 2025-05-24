@@ -17,6 +17,12 @@
       <input v-model="datetime" type="datetime-local" class="form-control" />
     </div>
 
+    <img v-if="previewUrl" :src="previewUrl" alt="미리보기" class="img-thumbnail mb-2" style="max-height: 200px;" />
+    <div class="mb-3">
+      <label class="form-label">이미지 수정</label>
+      <input type="file" class="form-control" @change="handleImageUpload" />
+    </div>
+
     <div class="d-flex justify-content-center gap-3 mt-4">
       <button class="btn btn-secondary" @click="handleCancel">취소</button>
       <button class="btn btn-primary" @click="handleSubmit">작성</button>
@@ -28,17 +34,28 @@
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { usePostStore } from '@/stores/post'
+import { useUserStore } from '@/stores/users'
 import axios from 'axios'
 
 const router = useRouter()
 const route = useRoute()
+const userStore = useUserStore()
 
 const title = ref('')
 const content = ref('')
 const datetime = ref('')
+const imageFile = ref(null)
 
 const bookId = Number(route.params.bookId)
 const postId = Number(route.params.postId)
+const previewUrl = ref(null)
+
+const handleImageUpload = (e) => {
+  imageFile.value = e.target.files[0]
+  if (imageFile.value) {
+    previewUrl.value = URL.createObjectURL(imageFile.value)
+  }
+}
 
 // 제출 버튼 클릭 시
 const handleSubmit = () => {
@@ -47,13 +64,24 @@ const handleSubmit = () => {
     return
   }
 
-  const payload = {
-    title: title.value,
-    content: content.value,
-    created_at: datetime.value,
+  const formData = new FormData()
+  formData.append('title', title.value)
+  formData.append('content', content.value)
+  formData.append('created_at', datetime.value)
+  if (imageFile.value) {
+    formData.append('cover_img', imageFile.value)
   }
 
-   axios.put(`http://localhost:8000/api/v1/books/${bookId}/posts/${postId}/update/`, payload)
+  axios.patch(
+    `http://localhost:8000/api/v1/books/${bookId}/posts/${postId}/update/`,
+    formData,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        Authorization: `Token ${userStore.token}`,
+      },
+    }
+  )
     .then(() => {
       alert('수정 완료되었습니다.')
       router.push({ name: 'posts-detail', params: { postId } })

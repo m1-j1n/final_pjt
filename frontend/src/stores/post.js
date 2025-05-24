@@ -1,6 +1,7 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import axios from 'axios'
+import { useUserStore } from '@/stores/users'
 
 export const usePostStore = defineStore('post', () => {
   const BASE_API_URL = 'http://localhost:8000/api/v1'
@@ -42,16 +43,23 @@ export const usePostStore = defineStore('post', () => {
 
   // 📌 포스트 생성
   const createPost = (bookId, payload) => {
+    const userStore = useUserStore()
+    console.log(userStore.token);
+
+
     return axios.post(
       `${BASE_API_URL}/books/${bookId}/posts/create/`,
       payload,
       {
         headers: {
           'Content-Type': 'multipart/form-data',
+          Authorization: `Token ${userStore.token}`,
         },
       }
     ).catch((err) => {
       console.error('📛 포스트 생성 실패:', err)
+      console.log(userStore.token);
+      
     })
   }
 
