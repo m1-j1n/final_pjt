@@ -37,7 +37,7 @@
       </div>
 
       <!-- 도서 카드 리스트 하단 -->
-      <nav class="mt-4 d-flex justify-content-center">
+      <nav v-if="!searched" class="mt-4 d-flex justify-content-center">
         <ul class="pagination">
 
           <!-- 이전 그룹 버튼 -->
