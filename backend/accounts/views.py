@@ -1,26 +1,68 @@
 # accounts/views.py
 
 from dj_rest_auth.registration.views import RegisterView
-from .serializers import CustomRegisterSerializer
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from .serializers import CustomUserDetailSerializer
+from rest_framework import status
 
+from .serializers import (
+    CustomRegisterSerializer,
+    CustomUserDetailSerializer,
+    UserPreferenceSerializer,
+)
+from .models import UserPreference
+from accounts.models import LifestyleKeyword, ReadingStyle
+from accounts.serializers import LifestyleKeywordSerializer, ReadingStyleSerializer
+
+# ✅ 회원가입 View (커스텀 serializer 사용)
 class CustomRegisterView(RegisterView):
     serializer_class = CustomRegisterSerializer
 
-    def get_serializer_class(self):
-        # print("💥 실제 사용되는 serializer:", self.serializer_class)
-        return self.serializer_class
 
+# ✅ 마이페이지 View
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def user_profile(request):
+def MyPageView(request):
     user = request.user
     serializer = CustomUserDetailSerializer(user)
     return Response(serializer.data)
 
+
+# 설문 응답 View (조회 & 저장)
+@api_view(['GET', 'PUT'])
+@permission_classes([IsAuthenticated])
+def UserPreferenceView(request):
+    user = request.user
+
+    # 유저에 대한 preference가 없으면 생성
+    preference, created = UserPreference.objects.get_or_create(user=user)
+
+    if request.method == 'GET':
+        serializer = UserPreferenceSerializer(preference)
+        return Response(serializer.data)
+
+    elif request.method == 'PUT':
+        serializer = UserPreferenceSerializer(preference, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            # 설문 완료 여부 표시
+            user.is_signup_complete = True
+            user.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+def lifestyle_list(request):
+    lifestyles = LifestyleKeyword.objects.all()
+    serializer = LifestyleKeywordSerializer(lifestyles, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def readingstyle_list(request):
+    reading_styles = ReadingStyle.objects.all()
+    serializer = ReadingStyleSerializer(reading_styles, many=True)
+    return Response(serializer.data)
 
 # from django.http.response import JsonResponse
 # from django.shortcuts import render, get_object_or_404

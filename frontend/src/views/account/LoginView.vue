@@ -12,6 +12,9 @@
         <input type="password" id="password" v-model="password" placeholder="비밀번호를 입력하세요" />
       </div>
 
+      <!--로그인 실패 메시지-->
+      <p v-if="errorMessages" class="error-messages">{{ errorMessages }}</p>
+
       <button type="submit" class="login-btn">로그인</button>
     </form>
   </div>
@@ -22,24 +25,29 @@ import { ref } from 'vue'
 import { useUserStore } from '@/stores/users.js'
 import { useRouter } from 'vue-router'
 
+
 const userStore = useUserStore()
 const router = useRouter()
 
 const username = ref('')
 const password = ref('')
+const errorMessages = ref('')
 
 const onLogIn = function () {
   const userInfo = {
     username: username.value,
     password: password.value
   }
+
+  errorMessages.value = ''
+
   userStore.logIn(userInfo)
     .then(() => {
       alert('로그인 성공!')
       router.push({ name: 'landing' })
     })
     .catch(() => {
-      alert('❌ 로그인에 실패했습니다. 아이디 또는 비밀번호를 확인해주세요.')
+      errorMessages.value = '❌ 아이디 또는 비밀번호를 확인해주세요.'
     })
 }
 </script>
