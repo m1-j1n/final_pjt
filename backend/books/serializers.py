@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Book, Post, Comment, BookLike
+from .models import Book, Post, Comment, BookLike, ReadingStatus
 from accounts.models import Category
 from django.contrib.auth import get_user_model
 
@@ -54,6 +54,19 @@ class BookSimpleSerializer(serializers.ModelSerializer):
             return obj.book_likes.filter(user=user).exists()
         return False
 
+# 🔹 ReadingStatusSerializer : 책 상태 데이터 처리를 위해서
+class ReadingStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ReadingStatus
+        fields = [
+            'status',
+            'start_date',
+            'end_date',
+            'comment',
+            'progress',
+            'stop_reason',
+        ]
+
 # 🔹 PostCreateSerializer : 포스트 생성 시리얼라이저
 class PostCreateSerializer(serializers.ModelSerializer):
     class Meta:
@@ -65,14 +78,17 @@ class PostCreateSerializer(serializers.ModelSerializer):
 class PostDetailSerializer(serializers.ModelSerializer):
     user = serializers.CharField(source='user.username', read_only=True)
     book_id = serializers.IntegerField(source='book.id', read_only=True)
+    comment_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
         fields = [
             'id', 'title', 'content', 'created_at', 'cover_img',
-            'user', 'book_id' 
+            'user', 'book_id', 'comment_count'
         ]
-        read_only_fields = ['id', 'cover_img', 'user', 'book_id']
+
+    def get_comment_count(self, obj):
+        return obj.comments.count()
 
 # 🔹 PostListSerializer : 포스트 상세 조회 시리얼라이저
 class PostListSerializer(serializers.ModelSerializer):

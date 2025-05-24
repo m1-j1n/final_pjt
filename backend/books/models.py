@@ -38,6 +38,37 @@ class BookLike(models.Model):
     class Meta:
         unique_together = ('user', 'book') 
 
+class ReadingStatus(models.Model):
+    STATUS_CHOICES = [
+        ('done', '완독'),
+        ('reading', '읽는 중'),
+        ('stop', '중단'),
+    ]
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES)
+    
+    # 공통
+    start_date = models.DateField(null=True, blank=True)
+
+    # 완독일 때
+    end_date = models.DateField(null=True, blank=True)
+    comment = models.TextField(blank=True)
+
+    # 읽는 중일 때 - 0~100%
+    progress = models.PositiveIntegerField(null=True, blank=True)  
+
+    # 중단일 때
+    stop_reason = models.TextField(blank=True)
+    
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ('user', 'book')
+
+    def __str__(self):
+        return f"{self.user.username} - {self.book.title} ({self.status})"
 
 # 포스트 테이블
 class Post(models.Model):

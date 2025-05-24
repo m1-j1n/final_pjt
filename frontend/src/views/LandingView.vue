@@ -15,12 +15,13 @@
             </div>
           </div>
         </div>
+        <!-- 읽은 책 기반 추천 리스트 -->
         <div class="col-md-4">
-          <div class="card recommendation-card medium-card text-white position-relative overflow-hidden" @click="goToSurvey">
+          <div class="card recommendation-card medium-card text-white position-relative overflow-hidden" @click="goToReadingRecommend">
             <img src="@/assets/img/book-cover/b.jpg" class="card-img object-fit-cover" alt="추천 콘텐츠">
             <div class="card-img-overlay d-flex flex-column justify-content-end bg-dark bg-opacity-50 p-3">
               <small>Apr. 14th, 2025 • Security</small>
-              <h5 class="fw-bold">Sed do eiusmod tempor incididunt ut labore</h5>
+              <h5 class="fw-bold">당신이 읽고 있는 책과 유사한 리스트</h5>
             </div>
           </div>
         </div>
@@ -98,8 +99,14 @@ import 'swiper/css/autoplay'
 
 const router = useRouter()
 
+// 설문 이동
 const goToSurvey = () => {
   router.push('/survey')
+}
+
+// 독서 상태 기반 추천 이동
+const goToReadingRecommend = () => {
+  router.push({ name: 'recommend-reading' })
 }
 
 const topBooks = ref([])
