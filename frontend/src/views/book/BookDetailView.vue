@@ -3,15 +3,20 @@
     <!--  도서 상세 정보 -->
     <BookDetail :book="book" />
 
-    <!-- 쓰레드 작성 버튼 -->
-    <div class="mt-4 text-end">
+    <!-- 포스트 작성 버튼 -->
+    <!-- <div class="mt-4 text-end">
       <router-link
         :to="{ name: 'posts-write', params: { bookId: book.id } }"
         class="btn btn-success"
       >
-      + thread 
+      +   
       </router-link>
       
+    </div> -->
+    <div class="mt-4 text-end">
+      <button class="btn btn-outline-dark" @click="handleClick">
+        포스트 작성
+      </button>
     </div>
   </div>
 
@@ -25,10 +30,14 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useBookStore } from '@/stores/books.js'
 import BookDetail from '@/components/books/BookDetail.vue'
+import { useUserStore } from '@/stores/users'
+import { useRouter } from 'vue-router'
 
 const route = useRoute()
 const bookStore = useBookStore()
 const bookId = parseInt(route.params.bookId)
+const userStore = useUserStore()
+const router = useRouter()
 
 // 도서 정보 가져오기
 onMounted(async () => {
@@ -41,6 +50,15 @@ onMounted(async () => {
 const book = computed(() => {
   return (bookStore.books.results || []).find(b => b.id === bookId)
 })
+
+const handleClick = () => {
+  if (!userStore.isLogin) {
+    alert('회원만 가능합니다.')
+    router.push({ name: 'login' })
+  } else {
+    router.push({ name: 'posts-write' })
+  }
+}
 </script>
 
 <style scoped></style>

@@ -1,6 +1,7 @@
 <template>
   <div class="container py-5">
 
+
     <!-- 추천 콘텐츠 (비회원용) -->
     <section class="mb-5">
       <h3 class="mb-4 fw-bold">📚 당신을 위한 추천 콘텐츠</h3>
@@ -67,13 +68,16 @@
         :autoplay="{ delay: 3000, disableOnInteraction: false }"
       >
         <SwiperSlide v-for="book in topBooks" :key="book.id">
-          <div class="card h-100">
+          <RouterLink :to="{name: 'books-detail', params: {bookId: book.id}}">
+            <div class="card h-100">
             <img :src="book.cover" class="card-img-top" :alt="book.title">
             <div class="card-body">
               <h5 class="card-title">{{ book.title }}</h5>
               <p class="card-text text-muted">{{ book.author }}</p>
             </div>
           </div>
+          </RouterLink>
+         
         </SwiperSlide>
       </Swiper>
     </section>
@@ -85,6 +89,7 @@
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
+import { RouterLink } from "vue-router";
 
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import { Autoplay } from 'swiper/modules'
