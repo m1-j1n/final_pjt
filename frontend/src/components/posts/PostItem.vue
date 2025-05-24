@@ -17,7 +17,7 @@
         <RouterLink :to="{ name: 'posts-detail', params: { postId: post.id } }"
           class="text-decoration-none text-dark">
           <div class="card h-100" style="cursor: pointer;">
-            <img :src="post.book_cover" class="card-img-top post-image" :alt="post.title" />
+            <img :src="getImageUrl(post.cover_img)" class="card-img-top post-image" :alt="post.title" />
             <div class="card-body">
               <h5 class="card-title">{{ post.title }}</h5>
               <p class="card-text">{{ post.content }}</p>
@@ -59,6 +59,12 @@ const fetchPostsByCategory = async (categoryId) => {
   } catch (err) {
     console.error('카테고리 필터링 실패:', err)
   }
+}
+
+// 포스트 이미지 불러오기
+const getImageUrl = (path) => {
+  if (!path) return '/default-image.jpg' // 이미지 없을 때 기본 이미지
+  return `http://localhost:8000${path}`  
 }
 
 onMounted(async () => {

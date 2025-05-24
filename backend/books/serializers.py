@@ -42,7 +42,8 @@ class BookSimpleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Book
-        fields = ['id', 'title', 'description', 'cover', 'author', 'like_count', 'liked']
+        fields = ['id', 'title', 'description', 'cover', 'author', 'like_count', 'liked', 'category',
+            'publisher', 'pub_date',]
 
     def get_like_count(self, obj):
         return obj.book_likes.count()
@@ -58,7 +59,7 @@ class PostCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = ['id', 'title', 'content', 'created_at', 'cover_img']
-        read_only_fields = ['id', 'cover_img']
+        read_only_fields = ['id']
 
 # 🔹 PostDetailSerializer : 포스트 상세 조회 시리얼라이저
 class PostDetailSerializer(serializers.ModelSerializer):

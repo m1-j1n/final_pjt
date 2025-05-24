@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views.decorators.http import (
@@ -71,6 +72,35 @@ def detail(request, book_pk):
     
     serializer = BookSerializer(book, context={'request': request})
     return Response(serializer.data)
+
+# 도서 검색
+@api_view(['GET'])
+def book_search(request):
+    query = request.query_params.get('query', '').strip()
+
+    if not query:
+        return Response({'message': '검색어를 입력해 주세요'}, status=status.HTTP_400_BAD_REQUEST)
+
+    # 공백 기준으로 단어 분리
+    keywords = query.split()
+
+    # Q 객체 조합: 각 단어가 title, author, publisher 중 하나에라도 포함되도록 함
+    q = Q()
+    for word in keywords:
+        q &= (
+            Q(title__icontains=word) |
+            Q(author__icontains=word) |
+            Q(publisher__icontains=word)
+        )
+
+    books = Book.objects.filter(q)
+
+    if not books.exists():
+        return Response({'message': '검색 결과가 없습니다'}, status=status.HTTP_200_OK)
+
+    serializer = BookSerializer(books, many=True, context={'request': request})
+    return Response(serializer.data)
+
 
 # 포스트 생성
 @api_view(['POST'])
@@ -239,3 +269,4 @@ def delete_comment(request, comment_pk):
 
     comment.delete()
     return Response({'message': '댓글이 삭제되었습니다.'}, status=status.HTTP_204_NO_CONTENT)
+

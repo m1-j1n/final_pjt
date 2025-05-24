@@ -42,10 +42,17 @@ export const usePostStore = defineStore('post', () => {
 
   // 📌 포스트 생성
   const createPost = (bookId, payload) => {
-    return axios.post(`${BASE_API_URL}/books/${bookId}/posts/create/`, payload)
-      .catch((err) => {
-        console.error('📛 포스트 생성 실패:', err)
-      })
+    return axios.post(
+      `${BASE_API_URL}/books/${bookId}/posts/create/`,
+      payload,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    ).catch((err) => {
+      console.error('📛 포스트 생성 실패:', err)
+    })
   }
 
   // 📌 포스트 수정

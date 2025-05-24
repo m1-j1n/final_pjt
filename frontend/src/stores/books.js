@@ -9,7 +9,7 @@ export const useBookStore = defineStore('book', () => {
   const selectedCategory = ref(0)
   const BASE_API_URL = 'http://localhost:8000'
 
-  // 🔹 도서 API 요청 (.then().catch() 방식)
+  // 🔹 도서 API 요청 
   const fetchBooks = () => {
     axios.get(`${BASE_API_URL}/api/v1/books/`)
       .then(res => {
@@ -20,7 +20,7 @@ export const useBookStore = defineStore('book', () => {
       })
   }
 
-  // 🔹 카테고리 API 요청 (.then().catch() 방식)
+  // 🔹 카테고리 API 요청 
   const fetchCategories = () => {
     axios.get(`${BASE_API_URL}/api/v1/categories/`)
       .then(res => {

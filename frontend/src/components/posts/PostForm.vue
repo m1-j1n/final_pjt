@@ -9,12 +9,17 @@
 
     <div class="mb-3">
       <label class="form-label">내용</label>
-      <textarea v-model="content" class="form-control" rows="5" />
+      <textarea v-model="content" class="form-control" rows="5"></textarea>
     </div>
 
     <div class="mb-3">
       <label class="form-label">읽은 날짜</label>
       <input v-model="datetime" type="datetime-local" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">이미지 업로드</label>
+      <input type="file" class="form-control" @change="handleImageUpload" />
     </div>
 
     <div class="d-flex justify-content-center gap-3 mt-4">
@@ -32,6 +37,7 @@ import { usePostStore } from '@/stores/post'
 const title = ref('')
 const content = ref('')
 const datetime = ref('')
+const imageFile = ref(null)
 
 const store = usePostStore()
 const router = useRouter()
@@ -39,21 +45,28 @@ const route = useRoute()
 
 const bookId = Number(route.params.bookId)
 
+const handleImageUpload = (e) => {
+  imageFile.value = e.target.files[0]
+}
+
 const handleSubmit = () => {
   if (!title.value || !content.value) {
     alert('제목과 내용을 모두 입력하세요.')
     return
   }
 
-  const payload = {
-    title: title.value,
-    content: content.value,
-    created_at: datetime.value,
+  const formData = new FormData()
+  formData.append('title', title.value)
+  formData.append('content', content.value)
+  formData.append('created_at', datetime.value)
+
+  if (imageFile.value) {
+    formData.append('cover_img', imageFile.value)
   }
 
-  store.createPost(bookId, payload)
+  store.createPost(bookId, formData)
     .then(() => {
-      router.push({ name: 'posts'})
+      router.push({ name: 'posts' })
     })
     .catch(() => {
       alert('작성에 실패했습니다.')
