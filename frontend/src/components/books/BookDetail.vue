@@ -1,39 +1,40 @@
 <template>
-  <div v-if="book">
-    <div class="row">
-      <div class="col-md-4">
-        <img :src="book.cover" class="img-fluid" alt="도서 표지" />
+  <div v-if="book" class="container py-4">
+
+    <!-- 책 정보 섹션 -->
+    <h5 class="fw-bold mb-3">📘 책 정보</h5>
+    <div class="row g-4 align-items-start">
+      <!-- 책 표지 -->
+      <div class="col-md-3 text-center">
+        <img :src="book.cover" class="img-fluid rounded shadow-sm book-cover" alt="도서 표지" />
       </div>
-      <div class="col-md-8">
-        <div class="row">
-          <h2>{{ book.title }}</h2>
-          <p><strong>저자:</strong> {{ book.author }}</p>
-          <p><strong>출판사:</strong> {{ book.publisher }}</p>
-          <p><strong>출판일:</strong> {{ book.pub_date }}</p>
-          <p><strong>ISBN:</strong> {{ book.isbn }}</p>
-          <p><strong>고객 리뷰 평점:</strong> {{ book.customer_review_rank }}</p>
-          <p class="mt-3">{{ book.description }}</p>
+
+      <!-- 책 텍스트 정보 -->
+      <div class="col-md-9">
+        <h4 class="fw-semibold mb-2">{{ book.title }}</h4>
+        <p class="mb-1 text-muted">{{ book.author }} 지음</p>
+        <p class="mb-1"><strong>출판사:</strong> {{ book.publisher }}</p>
+        <p class="mb-1"><strong>출판일:</strong> {{ book.pub_date }}</p>
+        <p class="mb-1"><strong>ISBN:</strong> {{ book.isbn }}</p>
+        <p class="mb-1"><strong>평점:</strong> ⭐ {{ book.customer_review_rank }}</p>
+        <p class="mt-3 text-muted" style="line-height: 1.7;">{{ book.description }}</p>
+      </div>
+    </div>
+
+    <!-- 작가 정보 섹션 -->
+    <div class="mt-5">
+      <h5 class="fw-bold mb-3">👤 작가 정보</h5>
+      <div class="row g-3 align-items-center">
+        <div class="col-3 text-center">
+          <img :src="book.author_photo" class="author-photo shadow-sm" alt="작가 사진" />
+        </div>
+        <div class="col-9">
+          <h6 class="fw-semibold mb-2">{{ book.author }}</h6>
+          <p class="text-muted" style="line-height: 1.7;">{{ book.author_info }}</p>
         </div>
       </div>
     </div>
 
-    <div class="row mt-3">
-      <h5><strong>작가정보</strong></h5>
-    </div>
-
-    <div class="row">
-      <div class="col-3">
-        <img :src="book.author_photo" class="rounded-circle" alt="">
-      </div>
-      <div class="col-9">
-        <div class="row fw-bold fs-4">
-          {{ book.author }} 
-        </div>
-        <div class="row mt-2">
-          {{ book.author_info }}
-        </div>
-      </div>
-    </div>
   </div>
 
   <div v-else class="text-center mt-5">
@@ -62,4 +63,17 @@ onMounted(async () => {
 })
 </script>
 
-<style scoped></style>
+<style scoped>
+.book-cover {
+  max-height: 300px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.author-photo {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+</style>

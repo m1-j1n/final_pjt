@@ -2,7 +2,6 @@ from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views.decorators.http import (
-    require_http_methods,
     require_safe,
     require_POST,
 )
@@ -10,19 +9,17 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, parser_classes
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import permission_classes
 from rest_framework import status
+from rest_framework.parsers import MultiPartParser
+
 
 from accounts.models import Category
 from .models import Book, Post, Comment, BookLike, Book, ReadingStatus
-from .forms import CommentForm
-from .utils import (
-    generate_image_with_openai,
-)
-
+from .utils import get_random_image_file, generate_recommendation_summary
 from django.http import JsonResponse
 from django.core.exceptions import PermissionDenied
 from .serializers import BookSerializer, CategorySerializer, PostDetailSerializer, PostCreateSerializer, PostListSerializer, BookSimpleSerializer, CommentSerializer, ReadingStatusSerializer
@@ -127,25 +124,28 @@ def reading_status_create_or_update(request, book_id):
 # 포스트 생성
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
+@parser_classes([MultiPartParser])
 def post_create(request, book_pk):
     try:
         book = Book.objects.get(pk=book_pk)
     except Book.DoesNotExist:
         return Response({'error': '책을 찾을 수 없습니다.'}, status=status.HTTP_404_NOT_FOUND)
 
-    serializer = PostCreateSerializer(data=request.data)
+    data = request.data.copy()
+    files = request.FILES.copy()
+
+    # 커버 이미지가 없는 경우 랜덤 이미지 할당
+    if 'cover_img' not in files:
+        random_image = get_random_image_file()
+        if random_image:
+            files['cover_img'] = random_image
+
+    serializer = PostCreateSerializer(data=data)
     if serializer.is_valid():
-        user = request.user if request.user.is_authenticated else None
-        post = serializer.save(book=book, user=user)
-
-        # # OpenAI 이미지 생성
-        # generated_image_path = generate_image_with_openai(post.title, post.content, book.title, book.author)
-        # if generated_image_path:
-        #     post.cover_img = generated_image_path
-        #     post.save()
-
+        post = serializer.save(book=book, user=request.user)
         return Response(PostCreateSerializer(post).data, status=status.HTTP_201_CREATED)
-
+    
+    print(serializer.errors)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # 포스트 상세
@@ -229,25 +229,28 @@ def book_like_toggle(request, book_pk):
 def recommend_similar_books(request):
     user = request.user
 
-    # 현재 읽고 있는 책 상태 조회
     reading_books = ReadingStatus.objects.filter(user=user, status='reading').select_related('book')
-
-    # 읽는 책이 없다면 완독한 책 기반 추천 시도
     if not reading_books.exists():
         reading_books = ReadingStatus.objects.filter(user=user, status='done').select_related('book')
-
     if not reading_books.exists():
-        return Response([], status=200)
+        return Response({'books': [], 'summary': ''}, status=200)
 
-    # 읽고 있는 (또는 완독한) 책들의 카테고리, id 추출
+    user_books = [rs.book.title for rs in reading_books]
     categories = [rs.book.category for rs in reading_books]
-    book_ids = [rs.book.id for rs in reading_books]
+    read_ids = [rs.book.id for rs in reading_books]
 
-    # 동일한 카테고리의 다른 책 중 추천 (내가 이미 읽은 책은 제외)
-    similar_books = Book.objects.filter(category__in=categories).exclude(id__in=book_ids).distinct()[:10]
+    recommended_books = Book.objects.filter(category__in=categories).exclude(id__in=read_ids).distinct()[:10]
 
-    serializer = BookSimpleSerializer(similar_books, many=True, context={'request': request})
-    return Response(serializer.data)
+    # GPT 추천 요약 생성
+    summary = generate_recommendation_summary(user_books, recommended_books)
+
+    from .serializers import BookSimpleSerializer
+    serialized_books = BookSimpleSerializer(recommended_books, many=True, context={'request': request})
+
+    return Response({
+        'summary': summary,
+        'books': serialized_books.data,
+    })
 
 
 # 쓰레드 좋아요 처리

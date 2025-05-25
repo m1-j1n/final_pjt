@@ -1,8 +1,51 @@
+import os
 import requests
 import openai
 from pathlib import Path
 from django.conf import settings
 import uuid
+import random
+from django.core.files.base import ContentFile
+
+# get_random_image_file : 포스트 생성 시 디폴트 이미지 저장
+PICSUM_SEEDS = list(range(100, 200))
+
+def get_random_image_file():
+    seed = random.choice(range(100, 200))  # 고정된 seed 사용
+    url = f"https://picsum.photos/seed/{seed}/400/300"
+    response = requests.get(url)
+    
+    if response.status_code == 200:
+        file_name = f"random_{seed}.jpg"
+        return ContentFile(response.content, name=file_name)
+    return None
+
+# generate_reason : 추천 이유를 생성해주는 함수
+from openai import OpenAI
+client = OpenAI(api_key=settings.OPENAI_API_KEY)
+def generate_recommendation_summary(user_books, recommended_books):
+    """
+    user_books: 사용자가 읽은 책 제목 리스트
+    recommended_books: 추천된 책들의 제목 리스트
+    """
+    user_list = ", ".join(user_books)
+    rec_list = ", ".join([book.title for book in recommended_books])
+
+    prompt = (
+    f"{user_list}를 읽은 독자에게 잘 어울리는 책들입니다: {rec_list}.\n"
+    f"이 추천 리스트의 공통된 매력이나 연결점을 2문장 이내로 설명해주세요. 너무 과장되거나 뻔한 표현은 피하고, 자연스럽게 독서 큐레이터처럼 안내해주세요."
+)
+
+    response = client.chat.completions.create(
+        model="gpt-4o",
+        messages=[
+            {"role": "system", "content": "당신은 책 추천 전문가입니다."},
+            {"role": "user", "content": prompt}
+        ]
+    )
+
+    return response.choices[0].message.content.strip()
+
 
 def generate_image_with_openai(thread_title, thread_content, book_title, book_author):
 

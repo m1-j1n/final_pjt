@@ -1,49 +1,84 @@
 <template>
-    <div class="container mt-5">
-      <h2 class="mb-4 fw-bold">📚 현재 읽고 있는 책과 유사한 추천 도서</h2>
-  
-      <div v-if="recommendedBooks.length">
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-          <div class="col" v-for="book in recommendedBooks" :key="book.id">
-            <RouterLink :to="{ name: 'books-detail', params: { bookId: book.id } }" class="text-decoration-none">
-              <div class="card h-100">
-                <img :src="book.cover" class="card-img-top" :alt="book.title" />
-                <div class="card-body">
-                  <h5 class="card-title">{{ book.title }}</h5>
-                  <p class="card-text text-muted">{{ book.author }}</p>
+  <div class="container mt-5">
+    <h2 class="mb-4 fw-bold">📚 현재 읽고 있는 책과 유사한 추천 도서</h2>
+
+     <!-- GPT 추천 멘트 -->
+     <p v-if="recommendSummary" class="text-muted fst-italic mb-4 px-2">
+      📌 {{ recommendSummary }}
+    </p>
+
+    <div v-if="recommendedBooks.length">
+      <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-3">
+        <div class="col" v-for="book in recommendedBooks" :key="book.id">
+          <RouterLink
+            :to="{ name: 'books-detail', params: { bookId: book.id } }"
+            class="text-decoration-none"
+          >
+            <div class="card h-100 shadow-sm">
+              <img
+                :src="book.cover"
+                class="card-img-top book-cover"
+                :alt="book.title"
+              />
+              <div class="card-body px-2 py-2 d-flex flex-column justify-content-between">
+                <div>
+                  <h6 class="card-title text-truncate mb-1">{{ book.title }}</h6>
+                  <p class="card-text text-muted small mb-1">{{ book.author }}</p>
                 </div>
               </div>
-            </RouterLink>
-          </div>
+            </div>
+          </RouterLink>
         </div>
       </div>
-  
-      <div v-else>
-        <p>추천 도서를 불러오는 중이거나 없습니다.</p>
-      </div>
     </div>
-  </template>
+
+    <div v-else class="text-center mt-4 text-muted">
+      <p>추천 도서를 불러오는 중입니다.</p>
+    </div>
+  </div>
+</template>
   
   <script setup>
   import { ref, onMounted } from 'vue'
   import { useUserStore } from '@/stores/users.js'
+  import { useRouter } from 'vue-router'
   import axios from 'axios'
+  import Swal from 'sweetalert2'
   
   const recommendedBooks = ref([])
+  const recommendSummary = ref('')
   const userStore = useUserStore()
+  const router = useRouter()
   
   onMounted(() => {
-  axios.get('http://localhost:8000/api/v1/recommend/content-based/', {
-        headers: {
+    axios.get('http://localhost:8000/api/v1/recommend/content-based/', {
+      headers: {
         Authorization: `Token ${userStore.token}`
-        }
+      }
     })
     .then(res => {
-        console.log('✅ 추천 도서 응답:', res.data)
-        recommendedBooks.value = res.data
+      console.log('✅ 추천 도서 응답:', res.data)
+      recommendedBooks.value = res.data.books
+      recommendSummary.value = res.data.summary
+  
+      // 📌 추천 결과가 비었을 경우
+      if (res.data.books.length === 0) {
+        Swal.fire({
+          icon: 'info',
+          title: '추천 도서가 없습니다 🧐',
+          text: '먼저 책을 읽고 독서 상태를 기록해보세요!',
+          confirmButtonText: '기록하러 가기',
+          showCancelButton: true,
+          cancelButtonText: '나중에 할게요',
+        }).then(result => {
+          if (result.isConfirmed) {
+            router.push({ name: 'books' })  // 원하는 이동 위치 (예: 마이페이지)
+          }
+        })
+      }
     })
     .catch(err => {
-        console.error('❗ 추천 실패:', err)
+      console.error('❗ 추천 실패:', err)
     })
-    })
+  })
   </script>

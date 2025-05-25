@@ -12,13 +12,19 @@
       <textarea v-model="content" class="form-control" rows="5" />
     </div>
 
-    <div class="mb-3">
+    <!-- <div class="mb-3">
       <label class="form-label">읽은 날짜</label>
       <input v-model="datetime" type="datetime-local" class="form-control" />
-    </div>
+    </div> -->
 
-    <img v-if="previewUrl" :src="previewUrl" alt="미리보기" class="img-thumbnail mb-2" style="max-height: 200px;" />
-    <div class="mb-3">
+      <!-- 기존 이미지 미리보기 (서버에서 불러온) -->
+      <img v-if="existingImageUrl && !previewUrl" :src="existingImageUrl" alt="기존 이미지"
+        class="img-thumbnail mb-2 preview-img" />
+
+      <!-- 새로 업로드한 이미지 미리보기 -->
+      <img v-if="previewUrl" :src="previewUrl" alt="미리보기"
+        class="img-thumbnail mb-2 preview-img" />
+      <div class="mb-3">
       <label class="form-label">이미지 수정</label>
       <input type="file" class="form-control" @change="handleImageUpload" />
     </div>
@@ -97,23 +103,39 @@ const handleCancel = () => {
   router.back()
 }
 
-// 마운트 시
+const existingImageUrl = ref(null) // 기존 이미지 URL
+
 onMounted(() => {
-  axios.get(axios.get(`http://localhost:8000/api/v1/books/${bookId}/posts/${postId}/`)
-  .then((res) => {
-    const post = res.data
-    title.value = post.title
-    content.value = post.content
-    datetime.value = post.created_at
-  })
-  .catch((err) => {
-    console.error('❌ 포스트 정보 불러오기 실패:', err)
-    alert('포스트 정보를 불러오지 못했습니다.')
-    router.back()
-  }))
+  axios.get(`http://localhost:8000/api/v1/books/${bookId}/posts/${postId}/`)
+    .then((res) => {
+      const post = res.data
+      title.value = post.title
+      content.value = post.content
+      datetime.value = post.created_at
+      if (post.cover_img) {
+        existingImageUrl.value = `http://localhost:8000${post.cover_img}`
+      }
+    })
+    .catch((err) => {
+      console.error('❌ 포스트 정보 불러오기 실패:', err)
+      alert('포스트 정보를 불러오지 못했습니다.')
+      router.back()
+    })
 })
 </script>
 
 <style scoped>
+.preview-img {
+  max-height: 300px;
+  width: auto;
+  display: block;
+  margin: 0 auto;
+  object-fit: contain;
+}
 
+/* 내용 textarea 높이 확장 */
+textarea.form-control {
+  min-height: 200px;
+  resize: vertical;
+}
 </style>

@@ -2,9 +2,21 @@
     <div>
       <h5>💬 댓글</h5>
   
-      <form @submit.prevent="submitComment" class="mb-3">
-        <textarea v-model="newComment" class="form-control mb-2" rows="2" placeholder="댓글을 입력하세요" />
-        <button class="btn btn-sm btn-primary" :disabled="!newComment.trim()">작성</button>
+      <form @submit.prevent="submitComment" class="mb-3 d-flex align-items-start gap-2">
+        <textarea
+          v-model="newComment"
+          class="form-control"
+          rows="2"
+          placeholder="댓글을 입력하세요"
+          style="resize: none;"
+        />
+        <button
+          class="btn btn-primary"
+          :disabled="!newComment.trim()"
+          style="white-space: nowrap;"
+        >
+          작성
+        </button>
       </form>
   
       <ul class="list-group">
