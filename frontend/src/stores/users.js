@@ -9,6 +9,7 @@ export const useUserStore = defineStore('user', () => {
   const AUTH_API_URL = 'http://127.0.0.1:8000/api/v1/auth'
 
   const token = ref(localStorage.getItem('token') || '')
+  const username = ref(localStorage.getItem('username') || '')
 
   // 앱 시작 시 토큰 있으면 axios 헤더 세팅
   if (token.value) {
@@ -20,6 +21,22 @@ export const useUserStore = defineStore('user', () => {
     const res = await axios.post(`${ACCOUNT_API_URL}/signup/`, userInfo)
     return res
   }
+  
+    // username 따로 저장
+    // 로그인 이후 사용자 정보 가져오기
+    const fetchUserProfile = async () => {
+      try {
+        const res = await axios.get(`${ACCOUNT_API_URL}/profile/`, {
+          headers: {
+            Authorization: `Token ${token.value}`,
+          }
+        })
+        username.value = res.data.username
+        localStorage.setItem('username', res.data.username)
+      } catch (err) {
+        console.error('❌ 사용자 정보 불러오기 실패:', err)
+      }
+    }
 
   // ✅ 로그인
   const logIn = async ({ username, password }) => {
@@ -28,6 +45,7 @@ export const useUserStore = defineStore('user', () => {
     token.value = key
     localStorage.setItem('token', key)
     axios.defaults.headers.common.Authorization = `Token ${key}`
+    await fetchUserProfile()
     console.log('로그인 성공')
     return res
   }
@@ -43,7 +61,7 @@ export const useUserStore = defineStore('user', () => {
   // 로그인 여부
   const isLogin = computed(() => !!token.value)
 
-  return { signUp, logIn, logOut, isLogin, token }
+  return { signUp, logIn, logOut, isLogin, token, username }
 }, {
   persist: true
 })

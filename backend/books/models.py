@@ -69,6 +69,13 @@ class ReadingStatus(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.book.title} ({self.status})"
+    
+# 키워드 테이블
+class Keyword(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+
+    def __str__(self):
+        return self.name
 
 # 포스트 테이블
 class Post(models.Model):
@@ -83,9 +90,11 @@ class Post(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True
     )
+    keywords = models.ManyToManyField(Keyword, related_name='posts', blank=True)
 
     def __str__(self):
         return self.title
+
 
 # 댓글 테이블
 class Comment(models.Model):

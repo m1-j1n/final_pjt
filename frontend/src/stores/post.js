@@ -52,7 +52,6 @@ export const usePostStore = defineStore('post', () => {
       payload,
       {
         headers: {
-          'Content-Type': 'multipart/form-data',
           Authorization: `Token ${userStore.token}`,
         },
       }

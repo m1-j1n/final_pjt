@@ -20,7 +20,7 @@
           <div class="card recommendation-card medium-card text-white position-relative overflow-hidden" @click="goToReadingRecommend">
             <img src="@/assets/img/book-cover/b.jpg" class="card-img object-fit-cover" alt="추천 콘텐츠">
             <div class="card-img-overlay d-flex flex-column justify-content-end bg-dark bg-opacity-50 p-3">
-              <small>Apr. 14th, 2025 • Security</small>
+              <small>Curated for your taste</small>
               <h5 class="fw-bold">당신이 읽고 있는 책과 유사한 리스트</h5>
             </div>
           </div>
@@ -91,12 +91,14 @@ import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
 import { RouterLink } from "vue-router";
-
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import { Autoplay } from 'swiper/modules'
+import { useUserStore } from '@/stores/users.js' 
 import 'swiper/css'
 import 'swiper/css/autoplay'
+import Swal from 'sweetalert2'
 
+const userStore = useUserStore()
 const router = useRouter()
 
 // 설문 이동
@@ -106,13 +108,31 @@ const goToSurvey = () => {
 
 // 독서 상태 기반 추천 이동
 const goToReadingRecommend = () => {
+  if (!userStore.token) {
+    Swal.fire({
+      icon: 'info',
+      title: '🔒 로그인 필요',
+      text: '추천 시스템을 이용하려면 먼저 로그인해주세요 😊',
+      confirmButtonText: '로그인하러 가기',
+      showCancelButton: true,
+      cancelButtonText: '나중에 할게요',
+    }).then(result => {
+      if (result.isConfirmed) {
+        router.push({ name: 'login' })
+      }
+    })
+    return
+  }
+
   router.push({ name: 'recommend-reading' })
 }
 
 const topBooks = ref([])
 
 onMounted(() => {
-  axios.get('http://127.0.0.1:8000/api/v1/books/')
+  axios.get('http://127.0.0.1:8000/api/v1/books/', {
+  headers: { Authorization: undefined }
+  })
     .then(res => {
       const books = res.data.results
       topBooks.value = books

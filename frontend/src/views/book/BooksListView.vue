@@ -76,6 +76,7 @@ import axios from 'axios'
 import { useBookStore } from '@/stores/books.js'
 import { searchBooks } from '@/stores/search.js'
 import BookCard from '@/components/books/BookCard.vue'
+import Swal from 'sweetalert2'
 
 const BASE_API_URL = 'http://localhost:8000'
 const bookStore = useBookStore()
@@ -89,13 +90,19 @@ const searched = ref(false)
 const doSearch = async () => {
   if (!searchQuery.value.trim()) return
 
-  // 검색 결과 요청
-  results.value = await searchBooks(searchQuery.value)
+  const data = await searchBooks(searchQuery.value)
+  if (!data.length) {
+    Swal.fire({
+      icon: 'info',
+      title: '검색 결과 없음',
+      text: '해당 키워드에 대한 도서를 찾을 수 없어요 😢',
+      confirmButtonText: '확인',
+    })
+    return
+  }
 
-  // 검색 모드로 전환
+  results.value = data
   searched.value = true
-
-  // 선택된 카테고리 초기화
   bookStore.selectedCategory = 0
 }
 

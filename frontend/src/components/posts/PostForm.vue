@@ -12,10 +12,10 @@
       <textarea v-model="content" class="form-control" rows="5"></textarea>
     </div>
 
-    <div class="mb-3">
+    <!-- <div class="mb-3">
       <label class="form-label">읽은 날짜</label>
       <input v-model="datetime" type="datetime-local" class="form-control" />
-    </div>
+    </div> -->
 
     <div class="mb-3">
       <label class="form-label">이미지 업로드</label>
@@ -58,7 +58,7 @@ const handleSubmit = () => {
   const formData = new FormData()
   formData.append('title', title.value)
   formData.append('content', content.value)
-  formData.append('created_at', datetime.value)
+  // formData.append('created_at', datetime.value)
 
   if (imageFile.value) {
     formData.append('cover_img', imageFile.value)
@@ -70,6 +70,7 @@ const handleSubmit = () => {
     })
     .catch(() => {
       alert('작성에 실패했습니다.')
+      
     })
 }
 
@@ -77,3 +78,10 @@ const handleCancel = () => {
   router.back()
 }
 </script>
+
+<style scoped>
+textarea.form-control {
+  min-height: 200px;
+  resize: vertical;
+}
+</style>

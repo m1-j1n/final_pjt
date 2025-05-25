@@ -16,6 +16,20 @@ import PublicProfileView from '@/views/account/PublicProfileView.vue'  // ✅ �
 import OnboardingSurveyView from '@/views/account/OnboardingSurveyView.vue'
 import ReadingStateView from '@/views/recommend/ReadingStateView.vue'
 
+// 인증이 필요한 라우트용 가드
+const requireAuth = async (to, from, next) => {
+  try {
+    const res = await axios.get('/accounts/profile/', { withCredentials: true })
+    if (res.status === 200) {
+      next()
+    } else {
+      next({ name: 'landing' })
+    }
+  } catch (err) {
+    next({ name: 'landing' })
+  }
+}
+
 const routes = [
   {
     path: '/',
@@ -117,6 +131,17 @@ router.beforeEach(async (to, from, next) => {
     }
   } else {
     next()
+=======
+  routes: routes, // 👈 명시적으로 유지
+})
+
+// 전역 가드: meta.requiresAuth 사용 시 처리
+router.beforeEach((to, from, next) => {
+  const requiresAuth = to.meta.requiresAuth === true
+  const isAuth = !!axios.defaults.headers.common.Authorization
+
+  if (requiresAuth && !isAuth) {
+    return next({ name: 'login' })
   }
 })
 

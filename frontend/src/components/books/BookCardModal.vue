@@ -2,18 +2,23 @@
   <!-- 모달 코드를 넣어요 -->
   <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
       <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
+        <div class="modal-content fixed-modal">
           <div class="modal-header">
             <h5 class="modal-title">📘 독서 상태 기록</h5>
             <button type="button" class="btn-close" @click="closeModal"></button>
           </div>
           <div class="modal-body">
           <p class="mb-2 small text-muted">독서 상태를 선택해주세요</p>
-          <select v-model="status" class="form-select mb-3" id="select-state">
-            <option value="done">완독</option>
-            <option value="reading">읽는 중</option>
-            <option value="stop">중단</option>
-          </select>
+          <div class="btn-group w-100 mb-3" role="group">
+            <input type="radio" class="btn-check" id="btn-done" value="done" v-model="status" autocomplete="off" />
+            <label class="btn btn-outline-primary" for="btn-done">✅ 완독</label>
+
+            <input type="radio" class="btn-check" id="btn-reading" value="reading" v-model="status" autocomplete="off" />
+            <label class="btn btn-outline-success" for="btn-reading">📖 읽는 중</label>
+
+            <input type="radio" class="btn-check" id="btn-stop" value="stop" v-model="status" autocomplete="off" />
+            <label class="btn btn-outline-danger" for="btn-stop">⛔ 중단</label>
+          </div>
 
           <!-- 완독 -->
           <div v-if="status === 'done'">
@@ -32,9 +37,19 @@
             <p class="mb-2 small text-muted">책을 읽기 시작한 날짜를 입력하세요</p>
             <input type="date" v-model="startDate" class="form-control mb-2" />
 
-            <p class="mb-2 small text-muted">현재까지 읽은 비율을 입력하세요</p>
-            <input type="range" class="form-range mb-1" v-model="progress" min="0" max="100" />
-            <div class="text-end mb-2">{{ progress }}%</div>
+            <div class="reading-progress mb-3">
+              <label class="form-label d-flex justify-content-between align-items-center mb-1">
+                <span class="text-muted">📈 현재까지 읽은 비율</span>
+                <span class="badge bg-success">{{ progress }}%</span>
+              </label>
+              <input
+                type="range"
+                class="form-range custom-range"
+                v-model="progress"
+                min="0"
+                max="100"
+              />
+            </div>
           </div>
 
           <!-- 중단 -->
@@ -112,5 +127,37 @@ const closeModal = () => {
 </script>
 
 <style scoped>
+.fixed-modal {
+  min-height: 480px; 
+  display: flex;
+  flex-direction: column;
+}
 
+.modal-body {
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* 선택 UI를 자연스럽게 보이도록 */
+.state-button-group {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  gap: 0.5rem;
+}
+
+.state-button-group button {
+  flex: 1;
+}
+
+.reading-progress {
+  padding: 0.5rem 0;
+}
+
+.custom-range {
+  accent-color: #198754; /* Bootstrap success 색상 */
+  height: 6px;
+  border-radius: 3px;
+  background-color: #e9ecef;
+}
 </style>

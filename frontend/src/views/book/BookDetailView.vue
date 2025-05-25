@@ -1,23 +1,12 @@
 <template>
   <div class="container mt-4" v-if="book">
-    <!--  도서 상세 정보 -->
-    <BookDetail :book="book" />
-
-    <!-- 포스트 작성 버튼 -->
-    <!-- <div class="mt-4 text-end">
-      <router-link
-        :to="{ name: 'posts-write', params: { bookId: book.id } }"
-        class="btn btn-success"
-      >
-      + thread 
-      </router-link>
-      
-    </div> -->
+    <!-- 도서 상세 정보 -->
     <div class="mt-4 text-end">
       <button class="btn btn-outline-dark" @click="handleClick">
         포스트 작성
       </button>
     </div>
+    <BookDetail :book="book" />
   </div>
 
   <div v-else class="container mt-4">
@@ -26,29 +15,26 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
-import { useBookStore } from '@/stores/books.js'
+import { ref, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import BookDetail from '@/components/books/BookDetail.vue'
 import { useUserStore } from '@/stores/users'
-import { useRouter } from 'vue-router'
+import axios from 'axios'
 
 const route = useRoute()
-const bookStore = useBookStore()
-const bookId = parseInt(route.params.bookId)
-const userStore = useUserStore()
 const router = useRouter()
+const userStore = useUserStore()
 
-// 도서 정보 가져오기
+const book = ref(null)
+const bookId = route.params.bookId
+
 onMounted(async () => {
-  if (!bookStore.books.results || bookStore.books.results.length === 0) {
-    await bookStore.fetchBooks()
+  try {
+    const res = await axios.get(`http://localhost:8000/api/v1/books/${bookId}/`)
+    book.value = res.data
+  } catch (err) {
+    console.error('도서 정보 불러오기 실패:', err)
   }
-})
-
-// 해당 bookId의 도서 찾기
-const book = computed(() => {
-  return (bookStore.books.results || []).find(b => b.id === bookId)
 })
 
 const handleClick = () => {
@@ -56,7 +42,7 @@ const handleClick = () => {
     alert('회원만 가능합니다.')
     router.push({ name: 'login' })
   } else {
-    router.push({ name: 'posts-write' })
+    router.push({ name: 'posts-write', params: { bookId } })
   }
 }
 </script>

@@ -2,18 +2,39 @@
     <div>
       <h5>💬 댓글</h5>
   
-      <form @submit.prevent="submitComment" class="mb-3">
-        <textarea v-model="newComment" class="form-control mb-2" rows="2" placeholder="댓글을 입력하세요" />
-        <button class="btn btn-sm btn-primary" :disabled="!newComment.trim()">작성</button>
+      <form @submit.prevent="submitComment" class="mb-3 d-flex align-items-start gap-2">
+        <textarea
+          v-model="newComment"
+          class="form-control"
+          rows="2"
+          placeholder="댓글을 입력하세요"
+          style="resize: none;"
+        />
+        <button
+          class="btn btn-primary"
+          :disabled="!newComment.trim()"
+          style="white-space: nowrap;"
+        >
+          작성
+        </button>
       </form>
   
       <ul class="list-group">
         <li v-for="comment in comments" :key="comment.id" class="list-group-item d-flex justify-content-between align-items-start">
-          <div>
-            <strong>{{ comment.user }}</strong><br />
-            {{ comment.content }}
-          </div>
-          <small class="text-muted">{{ formatDate(comment.created_at) }}</small>
+          <div class="flex-grow-1">
+              <strong>{{ comment.user }}</strong><br />
+              {{ comment.content }}
+            </div>
+            <div class="text-end d-flex flex-column align-items-end">
+              <small class="text-muted mb-1">{{ formatDate(comment.created_at) }}</small>
+              <button
+                v-if="comment.user === userStore.username"
+                class="btn btn-sm btn-outline-danger btn-delete"
+                @click="deleteComment(comment.id)"
+              >
+                삭제
+              </button>
+            </div>
         </li>
       </ul>
     </div>
@@ -50,6 +71,21 @@
     await fetchComments()
   }
   
+  // 댓글 삭제하기
+  const deleteComment = async (commentId) => {
+  try {
+    await axios.delete(`http://localhost:8000/api/v1/comments/${commentId}/delete/`, {
+      headers: {
+        Authorization: `Token ${userStore.token}`,
+      },
+    })
+    await fetchComments()
+  } catch (err) {
+    alert('댓글 삭제에 실패했습니다.')
+    console.error(err)
+  }
+}
+
   const formatDate = (iso) => new Date(iso).toLocaleString()
   
   onMounted(fetchComments)
