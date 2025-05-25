@@ -15,6 +15,19 @@ import MyPageView from '@/views/account/MyPageView.vue'
 import OnboardingSurveyView from '@/views/account/OnboardingSurveyView.vue'
 import ReadingStateView from '@/views/recommend/ReadingStateView.vue'
 
+const requireAuth = async (to, from, next) => {
+  try {
+    const res = await axios.get('/accounts/profile/', { withCredentials: true })
+    if (res.status === 200) {
+      next()
+    } else {
+      next({ name: 'landing' })
+    }
+  } catch (err) {
+    next({ name: 'landing' })
+  }
+}
+
 const routes = [
   {
     path: '/',

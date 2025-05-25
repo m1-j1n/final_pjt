@@ -12,6 +12,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
+from rest_framework.decorators import permission_classes
 from rest_framework import status
 
 from accounts.models import Category
@@ -20,6 +22,7 @@ from .forms import CommentForm
 from .utils import (
     generate_image_with_openai,
 )
+
 from django.http import JsonResponse
 from django.core.exceptions import PermissionDenied
 from .serializers import BookSerializer, CategorySerializer, PostDetailSerializer, PostCreateSerializer, PostListSerializer, BookSimpleSerializer, CommentSerializer, ReadingStatusSerializer
@@ -27,6 +30,7 @@ from .serializers import BookSerializer, CategorySerializer, PostDetailSerialize
 ### 도서 ###
 # 책 전체 조회
 @api_view(['GET'])
+@permission_classes([AllowAny])
 def book_list(request):
     paginator = PageNumberPagination()
     paginator.page_size = 10

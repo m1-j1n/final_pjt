@@ -112,7 +112,9 @@ const goToReadingRecommend = () => {
 const topBooks = ref([])
 
 onMounted(() => {
-  axios.get('http://127.0.0.1:8000/api/v1/books/')
+  axios.get('http://127.0.0.1:8000/api/v1/books/', {
+  headers: { Authorization: undefined }
+  })
     .then(res => {
       const books = res.data.results
       topBooks.value = books
