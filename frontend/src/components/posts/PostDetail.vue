@@ -35,8 +35,19 @@
         </div>
       </div>
 
-        <!-- 수정/삭제 -->
-        <div class="d-flex justify-content-end mt-4">
+        <!-- 키워드 해시태그 -->
+        <div v-if="post.keywords && post.keywords.length" class="mt-3 d-flex flex-wrap gap-2 justify-content-end">
+          <span
+            v-for="(kw, i) in post.keywords"
+            :key="i"
+            class="badge rounded-pill bg-light text-dark border"
+          >
+            #{{ kw.name }}
+          </span>
+        </div>
+
+        <!-- 수정/삭제 (작성자만 가능) -->
+        <div class="d-flex justify-content-end mt-4" v-if="isOwner">
           <button class="btn btn-outline-primary me-2" @click="goToEdit(book.id, post.id)">수정</button>
           <button class="btn btn-outline-danger" @click="deleteThread(book.id, post.id)">삭제</button>
         </div>
@@ -93,7 +104,7 @@ onMounted(async () => {
 
 // 작성자 여부 확인
 const isOwner = computed(() => {
-  return post.value?.user === userStore.user?.username
+  return post.value?.user === userStore.username
 })
 
 // 수정 버튼

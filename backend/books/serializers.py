@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Book, Post, Comment, BookLike, ReadingStatus
+from .models import Book, Post, Comment, BookLike, ReadingStatus, Keyword
 from accounts.models import Category
 from django.contrib.auth import get_user_model
 
@@ -67,6 +67,14 @@ class ReadingStatusSerializer(serializers.ModelSerializer):
             'stop_reason',
         ]
 
+# 🔹 KeywordSerializer : 키워드 시리얼라이저
+
+class KeywordSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Keyword
+        fields = ['name']
+
+
 # 🔹 PostCreateSerializer : 포스트 생성 시리얼라이저
 class PostCreateSerializer(serializers.ModelSerializer):
     class Meta:
@@ -79,12 +87,13 @@ class PostDetailSerializer(serializers.ModelSerializer):
     user = serializers.CharField(source='user.username', read_only=True)
     book_id = serializers.IntegerField(source='book.id', read_only=True)
     comment_count = serializers.SerializerMethodField()
+    keywords = KeywordSerializer(many=True, read_only=True)
 
     class Meta:
         model = Post
         fields = [
             'id', 'title', 'content', 'created_at', 'cover_img',
-            'user', 'book_id', 'comment_count'
+            'user', 'book_id', 'comment_count', 'keywords'
         ]
 
     def get_comment_count(self, obj):

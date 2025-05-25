@@ -15,10 +15,10 @@ urlpatterns = [
     path('books/<int:book_id>/reading-status/', views.reading_status_create_or_update, name='reading_status_create_or_update'),
     # 독서 상태 기반 추천
     path('recommend/content-based/', views.recommend_similar_books, name='recommend_similar_books'),
-
     # 검색
     path('books/search/', views.book_search, name='book_search'),
-
+    path('books/<int:book_pk>/posts/list/', views.book_related_posts, name='book_related_posts'),
+    
 
     ### 포스트 ###
     path('posts/', views.post_list, name='post_list'),
@@ -28,12 +28,12 @@ urlpatterns = [
     path('books/<int:book_pk>/posts/<int:post_pk>/delete/', views.post_delete, name='post_delete'),
     path('posts/category/<int:category_id>/', views.filter_posts_by_category, name='filter_posts_by_category'),
 
-    # 좋아요
-    path('books/<int:book_pk>/threads/<int:thread_pk>/likes/', views.likes, name='likes'),
 
     # 댓글
     path('posts/<int:post_pk>/comments/', views.comments_list, name='comments_list'),
     path('posts/<int:post_pk>/comments/create/', views.create_comment, name='create_comment'),
     path('comments/<int:comment_pk>/delete/', views.delete_comment, name='delete_comment'),
 
+    # # 좋아요
+    # path('books/<int:book_pk>/threads/<int:thread_pk>/likes/', views.likes, name='likes'),
 ]

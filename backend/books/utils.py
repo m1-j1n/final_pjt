@@ -46,6 +46,24 @@ def generate_recommendation_summary(user_books, recommended_books):
 
     return response.choices[0].message.content.strip()
 
+# extract_keywords_from_content : 키워드 추출 함수
+def extract_keywords_from_content(content):
+    prompt = (
+        f"다음 글에서 핵심 키워드 3개를 뽑아주세요. 각 키워드는 1~2단어로 짧고 명확하게.\n\n"
+        f"글:\n{content}\n\n"
+        f"출력 형식: 키워드1, 키워드2, 키워드3"
+    )
+
+    response = client.chat.completions.create(
+        model="gpt-4o",
+        messages=[
+            {"role": "system", "content": "당신은 글을 요약하고 핵심 키워드를 잘 뽑는 도우미입니다."},
+            {"role": "user", "content": prompt}
+        ]
+    )
+
+    result = response.choices[0].message.content.strip()
+    return [kw.strip() for kw in result.split(",")]
 
 def generate_image_with_openai(thread_title, thread_content, book_title, book_author):
 
