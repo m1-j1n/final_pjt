@@ -1,29 +1,19 @@
 from django.db.models import Q
-from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views.decorators.http import (
-    require_http_methods,
     require_safe,
-    require_POST,
 )
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import get_user_model
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, parser_classes
+from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
-from rest_framework.decorators import permission_classes
 from rest_framework import status
 
-from accounts.models import Category
-from .models import Book, Post, Comment, BookLike, Book, ReadingStatus
-from .forms import CommentForm
-from .utils import (
-    generate_image_with_openai,
-)
 
-from django.http import JsonResponse
+from accounts.models import Category
+from .models import Book, Post, Comment, BookLike, Book, ReadingStatus, Keyword
+from .utils import get_random_image_file, generate_recommendation_summary, extract_keywords_from_content
 from django.core.exceptions import PermissionDenied
 from .serializers import BookSerializer, CategorySerializer, PostDetailSerializer, PostCreateSerializer, PostListSerializer, BookSimpleSerializer, CommentSerializer, ReadingStatusSerializer
 
@@ -66,6 +56,13 @@ def filter_posts_by_category(request, category_id):
     posts = Post.objects.filter(book__category__id=category_id)
     serializer = PostListSerializer(posts, many=True)
     return Response({'posts': serializer.data})
+
+# 도서에 해당하는 포스트 뽑기
+@api_view(['GET'])
+def book_related_posts(request, book_pk):
+    posts = Post.objects.filter(book_id=book_pk).select_related('user').order_by('-created_at')
+    serializer = PostListSerializer(posts, many=True)
+    return Response(serializer.data)
 
 # 도서 상세 정보
 @require_safe
@@ -113,10 +110,6 @@ def reading_status_create_or_update(request, book_id):
     instance, created = ReadingStatus.objects.get_or_create(user=request.user, book=book)
 
     serializer = ReadingStatusSerializer(instance, data=request.data, partial=True)
-    # if serializer.is_valid():
-    #     serializer.save()
-    #     return Response(serializer.data, status=status.HTTP_200_OK if not created else status.HTTP_201_CREATED)
-    # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK if not created else status.HTTP_201_CREATED)
@@ -127,30 +120,42 @@ def reading_status_create_or_update(request, book_id):
 # 포스트 생성
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
+@parser_classes([MultiPartParser])
 def post_create(request, book_pk):
     try:
         book = Book.objects.get(pk=book_pk)
     except Book.DoesNotExist:
         return Response({'error': '책을 찾을 수 없습니다.'}, status=status.HTTP_404_NOT_FOUND)
 
-    serializer = PostCreateSerializer(data=request.data)
-    if serializer.is_valid():
-        user = request.user if request.user.is_authenticated else None
-        post = serializer.save(book=book, user=user)
+    data = request.data.copy()
+    files = request.FILES.copy()
 
-        # # OpenAI 이미지 생성
-        # generated_image_path = generate_image_with_openai(post.title, post.content, book.title, book.author)
-        # if generated_image_path:
-        #     post.cover_img = generated_image_path
-        #     post.save()
+    # 랜덤 이미지 처리
+    if 'cover_img' not in files:
+        random_image = get_random_image_file()
+        if random_image:
+            files['cover_img'] = random_image
+
+    serializer = PostCreateSerializer(data=data)
+    if serializer.is_valid():
+        post = serializer.save(book=book, user=request.user)
+
+        # ✅ GPT 키워드 추출
+        content = serializer.validated_data.get('content', '')
+        keywords = extract_keywords_from_content(content)
+
+        for kw in keywords:
+            keyword_obj, _ = Keyword.objects.get_or_create(name=kw)
+            post.keywords.add(keyword_obj)
 
         return Response(PostCreateSerializer(post).data, status=status.HTTP_201_CREATED)
-
+    
+    print(serializer.errors)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # 포스트 상세
 @api_view(['GET'])
-# @permission_classes([IsAuthenticated])  ← 로그인 제한이 필요하면 유지
+# @permission_classes([IsAuthenticated])  
 def post_detail(request, book_pk, post_pk):
     try:
         post = Post.objects.get(pk=post_pk, book_id=book_pk)
@@ -169,25 +174,38 @@ def post_list(request):
 
 # 포스트 수정
 @api_view(['PATCH'])
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
+@parser_classes([MultiPartParser])
 def post_update(request, book_pk, post_pk):
     try:
         post = Post.objects.get(pk=post_pk, book_id=book_pk)
     except Post.DoesNotExist:
         return Response({'error': '게시글을 찾을 수 없습니다.'}, status=status.HTTP_404_NOT_FOUND)
 
-    # if post.user != request.user:
-    #     raise PermissionDenied('수정 권한이 없습니다.')
+    if post.user != request.user:
+        raise PermissionDenied('수정 권한이 없습니다.')
 
-    serializer = PostCreateSerializer(post, data=request.data)
+    # 키워드 따로 처리
+    keyword_names = request.data.getlist('keywords')  # 여러 개일 경우 리스트로 받기
+    keywords = []
+    if keyword_names:
+        from books.models import Keyword  # 경로에 따라 조정
+        for name in keyword_names:
+            keyword, _ = Keyword.objects.get_or_create(name=name.strip())
+            keywords.append(keyword)
+
+    serializer = PostCreateSerializer(post, data=request.data, partial=True)
     if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        updated_post = serializer.save()
+        if keywords:
+            updated_post.keywords.set(keywords)
+        return Response(PostDetailSerializer(updated_post).data, status=status.HTTP_200_OK)
+
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # 포스트 삭제
 @api_view(['DELETE'])
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def post_delete(request, book_pk, post_pk):
     try:
         post = Post.objects.get(pk=post_pk, book_id=book_pk)
@@ -195,8 +213,8 @@ def post_delete(request, book_pk, post_pk):
         return Response({'error': '존재하지 않는 게시글입니다.'}, status=status.HTTP_404_NOT_FOUND)
 
     # 글을 작성한 사용자만 삭제 가능
-    # if post.user != request.user:
-    #     return Response({'error': '삭제 권한이 없습니다.'}, status=status.HTTP_403_FORBIDDEN)
+    if post.user != request.user:
+        return Response({'error': '삭제 권한이 없습니다.'}, status=status.HTTP_403_FORBIDDEN)
 
     post.delete()
     return Response({'success': True}, status=status.HTTP_204_NO_CONTENT)
@@ -229,45 +247,48 @@ def book_like_toggle(request, book_pk):
 def recommend_similar_books(request):
     user = request.user
 
-    # 현재 읽고 있는 책 상태 조회
     reading_books = ReadingStatus.objects.filter(user=user, status='reading').select_related('book')
-
-    # 읽는 책이 없다면 완독한 책 기반 추천 시도
     if not reading_books.exists():
         reading_books = ReadingStatus.objects.filter(user=user, status='done').select_related('book')
-
     if not reading_books.exists():
-        return Response([], status=200)
+        return Response({'books': [], 'summary': ''}, status=200)
 
-    # 읽고 있는 (또는 완독한) 책들의 카테고리, id 추출
+    user_books = [rs.book.title for rs in reading_books]
     categories = [rs.book.category for rs in reading_books]
-    book_ids = [rs.book.id for rs in reading_books]
+    read_ids = [rs.book.id for rs in reading_books]
 
-    # 동일한 카테고리의 다른 책 중 추천 (내가 이미 읽은 책은 제외)
-    similar_books = Book.objects.filter(category__in=categories).exclude(id__in=book_ids).distinct()[:10]
+    recommended_books = Book.objects.filter(category__in=categories).exclude(id__in=read_ids).distinct()[:10]
 
-    serializer = BookSimpleSerializer(similar_books, many=True, context={'request': request})
-    return Response(serializer.data)
+    # GPT 추천 요약 생성
+    summary = generate_recommendation_summary(user_books, recommended_books)
 
+    from .serializers import BookSimpleSerializer
+    serialized_books = BookSimpleSerializer(recommended_books, many=True, context={'request': request})
 
-# 쓰레드 좋아요 처리
-@login_required
-@require_POST
-def likes(request, book_pk, thread_pk):
-    thread = Thread.objects.get(pk=thread_pk)
-    user = request.user
-
-    if thread.likes.filter(pk=user.pk).exists():
-        thread.likes.remove(user)
-        liked = False
-    else:
-        thread.likes.add(user)
-        liked = True
-
-    return JsonResponse({
-        'liked': liked,
-        'like_count': thread.likes.count(),
+    return Response({
+        'summary': summary,
+        'books': serialized_books.data,
     })
+
+
+# # 쓰레드 좋아요 처리
+# @login_required
+# @require_POST
+# def likes(request, book_pk, thread_pk):
+#     thread = Thread.objects.get(pk=thread_pk)
+#     user = request.user
+
+#     if thread.likes.filter(pk=user.pk).exists():
+#         thread.likes.remove(user)
+#         liked = False
+#     else:
+#         thread.likes.add(user)
+#         liked = True
+
+#     return JsonResponse({
+#         'liked': liked,
+#         'like_count': thread.likes.count(),
+#     })
 
 
 # 포스트 댓글 생성

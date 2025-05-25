@@ -8,32 +8,37 @@
       <img :src="book.cover" class="book-cover" alt="도서 표지" />
     </router-link>
 
-    <!-- 도서 정보 -->
-    <div class="flex-grow-1 h-100 d-flex flex-column justify-content-between">
-      <div class="info-wrapper me-3">
-        <router-link
-          :to="{ name: 'books-detail', params: { bookId: book.id } }"
-          class="text-dark text-decoration-none"
-        >
+  <!-- 도서 정보 -->
+  <div class="flex-grow-1 h-100 d-flex flex-column justify-content-start align-self-start">
+    <div class="info-wrapper me-3">
+      <router-link
+        :to="{ name: 'books-detail', params: { bookId: book.id } }"
+        class="text-dark text-decoration-none"
+      >
         <h5 class="card-title text-truncate-2">
-            {{ book.title }}
-          </h5>
-          <p class="card-text mb-1">{{ book.author }} | {{ book.pub_date }} | {{ book.publisher }} </p>
-          <p class="card-text mb-1">{{ book.description.slice(0, 50) }}{{ book.description.length > 50 ? '...' : '' }}</p>
-        </router-link>
-      </div>
+          {{ book.title }}
+        </h5>
+        <p class="card-text mb-1">{{ book.author }} | {{ book.pub_date }} | {{ book.publisher }}</p>
+        <p class="card-text mb-1">{{ book.description.slice(0, 50) }}{{ book.description.length > 50 ? '...' : '' }}</p>
+      </router-link>
     </div>
+  </div>
+  
     <!-- 버튼 영역 -->
-    <div class="button-column ms-2">
-      <button class="btn btn-outline-danger mb-1" @click.stop.prevent="toggleLike">
-        <span class="fs-6">
-          ❤️ 읽고싶어요 {{ likeCount }}
-        </span>
+    <div class="button-column ms-2 d-flex flex-column justify-content-center gap-2">
+      <button
+        class="btn btn-like d-flex align-items-center justify-content-center gap-1"
+        :class="liked ? 'liked' : 'not-liked'"
+        @click.stop.prevent="toggleLike"
+      >
+        <i class="bi bi-heart-fill" v-if="liked"></i>
+        <i class="bi bi-heart" v-else></i>
+        <span>❤️ 읽고싶어요 {{ likeCount }}</span>
       </button>
-      <button class="btn btn-outline-success" @click.prevent="openModal">
-        <span class="fs-6">
-          ✏️ 독서 기록하기
-        </span>
+
+      <button class="btn btn-record d-flex align-items-center justify-content-center gap-1" @click.prevent="openModal">
+        <i class="bi bi-journal-text"></i>
+        <span>✏️ 독서 기록하기</span>
       </button>
     </div>
   </div>
@@ -48,15 +53,18 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/users.js'
 import BookCardModal from '@/components/books/BookCardModal.vue'
 import axios from 'axios'
+import Swal from 'sweetalert2'
 
 const props = defineProps({
   book: Object
 })
 const book = props.book
+const router = useRouter()
 
 // 좋아요 처리 
 const liked = ref(false)
@@ -82,7 +90,22 @@ const toggleLike = async () => {
     Object.assign(book, updatedBook)
 
   } catch (err) {
-    console.error('좋아요 실패:', err)
+    if (err.response?.status === 401) {
+      Swal.fire({
+        icon: 'info',
+        title: '🛑 로그인 먼저 🛑',
+        text: '이 책이 맘에 들었다면, 로그인하고 찜해보세요 ✨',
+        confirmButtonText: '로그인하러 가기',
+        showCancelButton: true,
+        cancelButtonText: '나중에 할게요',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          router.push({ name: 'login' })
+        }
+      })
+    } else {
+      console.error('좋아요 실패:', err)
+    }
   }
 }
 
@@ -91,7 +114,22 @@ const showModal = ref(false)
 const selectedBookId = ref(null)
 
 const openModal = () => {
-  console.log('모달 열기')
+  if (!userStore.token) {
+    Swal.fire({
+      icon: 'info',
+      title: '📝 독서 기록은 로그인 후에 📝',
+      text: '로그인하면 독서 기록을 남길 수 있어요 ✨',
+      confirmButtonText: '지금 로그인하기',
+      showCancelButton: true,
+      cancelButtonText: '나중에 할게요',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        router.push({ name: 'login' })
+      }
+    })
+    return
+  }
+
   selectedBookId.value = book.id
   showModal.value = true
 }
@@ -160,12 +198,49 @@ onMounted(() => {
   white-space: normal;
 }
 
-.button-column {
-  width: 120px; /* 너비 고정 */
-  height: 160px; /* 이미지 높이 등과 맞춤 */
-  display: flex;
-  flex-direction: column;
+.button-column .btn {
+  white-space: nowrap;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem; /* 기존보다 약간 작은 크기 */
+  min-width: 130px;
+  display: inline-flex;
+  align-items: center;
   justify-content: center;
-  flex-shrink: 0; /* 줄어들지 않게 */
+}
+
+.like-btn,
+.record-btn {
+  white-space: nowrap;         /* 줄바꿈 금지 */
+  overflow: hidden;            /* 넘치는 텍스트 숨기기 */
+  text-overflow: ellipsis;     /* 넘치면 ... 표시 */
+  font-size: 0.9rem;
+  padding: 0.4rem 0.4rem;
+  max-width: 100%;             /* 필요 시 지정 가능 */
+}
+
+.liked {
+  background-color: #dc3545;
+  color: #fff;
+  border: none;
+}
+
+.not-liked {
+  background-color: #fff;
+  color: #dc3545;
+  border: 1px solid #dc3545;
+}
+
+.not-liked:hover {
+  background-color: #ffe5e9;
+}
+
+.btn-record {
+  background-color: #f8f9fa;
+  border: 1px solid #198754;
+  color: #198754;
+}
+
+.btn-record:hover {
+  background-color: #e6f4ea;
 }
 </style>
