@@ -25,7 +25,11 @@
     </div>
     <!-- 버튼 영역 -->
     <div class="button-column ms-2">
-      <button class="btn btn-outline-danger mb-1" @click.stop.prevent="toggleLike">
+      <button
+        class="mb-1 btn"
+        :class="liked ? 'btn-danger' : 'btn-outline-danger'"
+        @click.stop.prevent="toggleLike"
+      >
         <span class="fs-6">
           ❤️ 읽고싶어요 {{ likeCount }}
         </span>
@@ -49,14 +53,17 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/users.js'
 import BookCardModal from '@/components/books/BookCardModal.vue'
 import axios from 'axios'
+import Swal from 'sweetalert2'
 
 const props = defineProps({
   book: Object
 })
 const book = props.book
+const router = useRouter()
 
 // 좋아요 처리 
 const liked = ref(false)
@@ -82,7 +89,22 @@ const toggleLike = async () => {
     Object.assign(book, updatedBook)
 
   } catch (err) {
-    console.error('좋아요 실패:', err)
+    if (err.response?.status === 401) {
+      Swal.fire({
+        icon: 'info',
+        title: '🛑 로그인 먼저 🛑',
+        text: '이 책이 맘에 들었다면, 로그인하고 찜해보세요 ✨',
+        confirmButtonText: '로그인하러 가기',
+        showCancelButton: true,
+        cancelButtonText: '나중에 할게요',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          router.push({ name: 'login' })
+        }
+      })
+    } else {
+      console.error('좋아요 실패:', err)
+    }
   }
 }
 
@@ -91,6 +113,23 @@ const showModal = ref(false)
 const selectedBookId = ref(null)
 
 const openModal = () => {
+  if (!userStore.token) {
+    Swal.fire({
+      icon: 'info',
+      title: '📝 독서 기록은 로그인 후에 📝',
+      text: '로그인하면 독서 기록을 남길 수 있어요 ✨',
+      confirmButtonText: '지금 로그인하기',
+      showCancelButton: true,
+      cancelButtonText: '나중에 할게요',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        router.push({ name: 'login' })
+      }
+    })
+    return
+  }
+
+  // 로그인 되어 있다면 모달 열기
   console.log('모달 열기')
   selectedBookId.value = book.id
   showModal.value = true
