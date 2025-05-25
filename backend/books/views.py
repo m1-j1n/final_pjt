@@ -131,8 +131,9 @@ def post_create(request, book_pk):
 
     serializer = PostCreateSerializer(data=request.data)
     if serializer.is_valid():
-        user = request.user if request.user.is_authenticated else None
-        post = serializer.save(book=book, user=user)
+        post = serializer.save(book=book, user=request.user)
+        # user = request.user if request.user.is_authenticated else None
+        # post = serializer.save(book=book, user=user)
 
         # # OpenAI 이미지 생성
         # generated_image_path = generate_image_with_openai(post.title, post.content, book.title, book.author)
@@ -297,3 +298,15 @@ def delete_comment(request, comment_pk):
     comment.delete()
     return Response({'message': '댓글이 삭제되었습니다.'}, status=status.HTTP_204_NO_CONTENT)
 
+
+# 내가 작성한 포스트 조회
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def my_posts(request):
+    user = request.user
+    # 뷰 코드에 추가해봐
+    print(f"[DEBUG] 로그인 유저 ID: {request.user.id}")
+    print(f"[DEBUG] 마이포스트 개수: {Post.objects.filter(user=request.user).count()}")
+    posts = Post.objects.filter(user=user)
+    serializer = PostListSerializer(posts, many=True)
+    return Response(serializer.data)

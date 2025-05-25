@@ -110,11 +110,13 @@ const onSignUp = async () => {
   }
 
   try {
+  
+    const ACCOUNT_API_URL = 'http://127.0.0.1:8000/api/v1/accounts'
     // 회원가입 요청
-    await axios.post('http://127.0.0.1:8000/accounts/signup/', userInfo)
+    await axios.post( `${ACCOUNT_API_URL}/signup/`, userInfo)
 
     // 회원가입 성공 후 로그인 시도
-    const loginRes = await axios.post('http://127.0.0.1:8000/accounts/login/', {
+    const loginRes = await axios.post('http://127.0.0.1:8000/api/v1/auth/login/', {
       username: userInfo.username,
       password: userInfo.password1,
     })
@@ -128,7 +130,7 @@ const onSignUp = async () => {
 
   } catch (err) {
     console.error('❌ 에러 응답:', err.response?.data || err)
-    errorMessage.value = Object.values(err.response?.data || { error: '오류 발생' }).flat().join(', ')
+    // errorMessage.value = Object.values(err.response?.data || { error: '오류 발생' }).flat().join(', ')
   }
 }
 </script>

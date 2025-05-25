@@ -1,42 +1,22 @@
-"""
-URL configuration for the_greatest_book_pjt project.
+# the_greatest_book_pjt/urls.py
 
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/4.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
 from django.urls import path, include
-from accounts.views import (
-    CustomRegisterView, 
-    MyPageView, 
-    UserPreferenceView,
-     lifestyle_list,           # 
-    readingstyle_list 
-    )
-from django.conf.urls.static import static
 from django.conf import settings
-
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/v1/', include('books.urls')),
-    path('accounts/', include('dj_rest_auth.urls')),
-    path('api/v1/accounts/', include('accounts.urls')),  # ✅ 이 줄 추가!
-    path('api/v1/auth/', include('dj_rest_auth.urls')),
-    # path('accounts/signup/', CustomRegisterView.as_view(), name='custom_signup'),
-    # path('accounts/profile/', MyPageView, name='mypage'),
-    # path('accounts/preference/', UserPreferenceView, name='user_preference'),
-    #  path('accounts/lifestyles/', lifestyle_list, name='lifestyle_list'),
-    # path('accounts/readingstyles/', readingstyle_list, name='readingstyle_list'),
 
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    # 도서 관련 API
+    path('api/v1/', include('books.urls')),
+
+    # 회원 커스텀 기능 (회원가입, 마이페이지 등)
+    path('api/v1/accounts/', include('accounts.urls')),
+
+    # 인증 (로그인, 로그아웃, 비밀번호 변경 등)
+    path('api/v1/auth/', include('dj_rest_auth.urls')),
+]
+
+# 미디어 파일 처리
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

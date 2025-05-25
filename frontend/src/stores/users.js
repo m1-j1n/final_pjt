@@ -4,29 +4,26 @@ import { defineStore } from 'pinia'
 import axios from 'axios'
 
 export const useUserStore = defineStore('user', () => {
-  const ACCOUNT_API_URL = 'http://127.0.0.1:8000/accounts'
-  // persisted 상태에서 불러오거나, 없으면 빈 문자열
+  // ✅ API 경로 분리
+  const ACCOUNT_API_URL = 'http://127.0.0.1:8000/api/v1/accounts'
+  const AUTH_API_URL = 'http://127.0.0.1:8000/api/v1/auth'
+
   const token = ref(localStorage.getItem('token') || '')
 
-  // 앱 시작 시 토큰이 있으면 axios 기본 헤더에 세팅
+  // 앱 시작 시 토큰 있으면 axios 헤더 세팅
   if (token.value) {
     axios.defaults.headers.common.Authorization = `Token ${token.value}`
   }
 
-  // 회원가입 (가입 후 자동 로그인)
+  // ✅ 회원가입 (가입만 하고 로그인은 별도 처리)
   const signUp = async (userInfo) => {
     const res = await axios.post(`${ACCOUNT_API_URL}/signup/`, userInfo)
-    const newKey = res.data.key
-    token.value = newKey
-    localStorage.setItem('token', newKey)
-    axios.defaults.headers.common.Authorization = `Token ${newKey}`
-    console.log('회원가입 및 자동 로그인 완료')
     return res
   }
 
-  // 로그인
+  // ✅ 로그인
   const logIn = async ({ username, password }) => {
-    const res = await axios.post(`${ACCOUNT_API_URL}/login/`, { username, password })
+    const res = await axios.post(`${AUTH_API_URL}/login/`, { username, password })
     const key = res.data.key
     token.value = key
     localStorage.setItem('token', key)

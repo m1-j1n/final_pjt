@@ -72,8 +72,8 @@ const readingStyles = ref([])
 onMounted(async () => {
   const [catRes, lifeRes, styleRes] = await Promise.all([
     axios.get('http://127.0.0.1:8000/api/v1/categories/'),
-    axios.get('http://127.0.0.1:8000/accounts/lifestyles/'),
-    axios.get('http://127.0.0.1:8000/accounts/readingstyles/'),
+    axios.get('http://127.0.0.1:8000/api/v1/accounts/lifestyles/'),
+    axios.get('http://127.0.0.1:8000/api/v1/accounts/readingstyles/'),
   ])
 
   categories.value = catRes.data
@@ -94,7 +94,8 @@ const submitSurvey = async () => {
   }
 
   try {
-    await axios.put('http://127.0.0.1:8000/accounts/preference/', payload, {
+    await axios.put('http://127.0.0.1:8000/api/v1/accounts/preference/', payload, {
+
       headers: {
         Authorization: `Token ${token}`
       }

@@ -107,3 +107,12 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = ['id', 'content', 'user', 'created_at', 'updated_at', 'post']
         read_only_fields = ['user', 'created_at', 'updated_at', 'post']
+
+
+# Book + 상태를 같이 보내기 위한 Serializer (마이페이지 용)
+class BookWithStatusSerializer(serializers.ModelSerializer):
+    book = BookSimpleSerializer(read_only=True)
+
+    class Meta:
+        model = ReadingStatus
+        fields = ['book', 'status']
