@@ -31,10 +31,12 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/', include('books.urls')),
     path('accounts/', include('dj_rest_auth.urls')),
-    path('accounts/signup/', CustomRegisterView.as_view(), name='custom_signup'),
-    path('accounts/profile/', MyPageView, name='mypage'),
-    path('accounts/preference/', UserPreferenceView, name='user_preference'),
-     path('accounts/lifestyles/', lifestyle_list, name='lifestyle_list'),
-    path('accounts/readingstyles/', readingstyle_list, name='readingstyle_list'),
+    path('api/v1/accounts/', include('accounts.urls')),  # ✅ 이 줄 추가!
+    path('api/v1/auth/', include('dj_rest_auth.urls')),
+    # path('accounts/signup/', CustomRegisterView.as_view(), name='custom_signup'),
+    # path('accounts/profile/', MyPageView, name='mypage'),
+    # path('accounts/preference/', UserPreferenceView, name='user_preference'),
+    #  path('accounts/lifestyles/', lifestyle_list, name='lifestyle_list'),
+    # path('accounts/readingstyles/', readingstyle_list, name='readingstyle_list'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

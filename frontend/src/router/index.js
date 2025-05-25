@@ -11,6 +11,8 @@ import BookDetailView from '@/views/book/BookDetailView.vue'
 import SignUpView from '@/views/account/SignUpView.vue'
 import LoginView from '@/views/account/LoginView.vue'
 import MyPageView from '@/views/account/MyPageView.vue'
+import MyPageEditView from '@/views/account/MyPageEditView.vue'
+import PublicProfileView from '@/views/account/PublicProfileView.vue'  // ✅ 추가
 import OnboardingSurveyView from '@/views/account/OnboardingSurveyView.vue'
 import ReadingStateView from '@/views/recommend/ReadingStateView.vue'
 
@@ -69,6 +71,17 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
+    path: '/mypage/edit',
+    name: 'mypage-edit',
+    component: MyPageEditView,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/accounts/:userId/profile',
+    name: 'public-profile',
+    component: PublicProfileView,
+  },
+  {
     path: '/onboarding',
     name: 'onboarding-survey',
     component: OnboardingSurveyView,
@@ -85,11 +98,15 @@ const router = createRouter({
   routes,
 })
 
-// 전역 가드로 인증 체크
+// ✅ 인증이 필요한 페이지 접근 시 토큰 유효성 확인
 router.beforeEach(async (to, from, next) => {
   if (to.meta.requiresAuth) {
     try {
-      const res = await axios.get('/accounts/profile/', { withCredentials: true })
+      const res = await axios.get('/accounts/mypage/', {
+        headers: {
+          Authorization: `Token ${localStorage.getItem('access_token')}`
+        }
+      })
       if (res.status === 200) {
         next()
       } else {

@@ -5,9 +5,9 @@
       <div class="col-lg-4 mb-4 mb-lg-0">
         <div class="card shadow-sm text-center p-4">
           <img :src="profileImg" alt="Author" class="rounded-circle mb-3" width="120" height="120">
+
           <h4>{{ user.name }}</h4>
           <p class="text-muted">독서 회원</p>
-
           <p class="mb-3 small text-muted">{{ user.bio }}</p>
 
           <div class="d-flex justify-content-between my-4">
@@ -31,6 +31,11 @@
             <i class="bi bi-instagram"></i>
             <i class="bi bi-linkedin"></i>
           </div>
+
+          <!-- 내 정보 수정 페이지로 이동 -->
+          <RouterLink :to="{ name: 'mypage-edit' }" class="btn btn-outline-primary mt-3">
+            ✏ 내 정보 수정
+          </RouterLink>
         </div>
       </div>
 
@@ -40,7 +45,7 @@
           <h4>About Me</h4>
           <p>{{ user.about }}</p>
 
-          <h5 class="mt-4">설문 기반 태그</h5>
+          <h5 class="mt-4">설문 기본 태그</h5>
           <div class="mb-3">
             <span
               v-for="tag in user.tags"
@@ -81,8 +86,10 @@ import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import defaultImg from '@/assets/img/default-profile.png'
 
-const profileImg = ref(defaultImg)
+// ✅ API base 주소 상수화
+const API_ACCOUNT_URL = 'http://127.0.0.1:8000/api/v1/accounts'
 
+const profileImg = ref(defaultImg)
 const user = ref({
   name: '',
   bio: '',
@@ -110,9 +117,9 @@ const user = ref({
 })
 
 onMounted(() => {
-  axios.get('http://127.0.0.1:8000/accounts/profile/', {
+  axios.get(`${API_ACCOUNT_URL}/mypage/`, {
     headers: {
-      Authorization: `Token ${localStorage.getItem('token')}`
+      Authorization: `Token ${localStorage.getItem('access_token')}`
     }
   }).then(res => {
     const data = res.data
@@ -120,42 +127,37 @@ onMounted(() => {
     user.value.bio = `${data.gender === 'M' ? '남성' : '여성'}, ${data.age}세`
 
     const tags = []
-
     if (data.preference) {
       user.value.about = `주 ${data.preference.weekly_avg_reading_time}시간 독서, 연간 ${data.preference.annual_reading_amount}권 읽음`
 
-      // 관심 장르
       if (data.preference.interested_genres) {
         tags.push(...data.preference.interested_genres.map(g => g.name))
       }
-
-      // 라이프스타일
       if (data.preference.lifestyle?.name) {
         tags.push(`라이프스타일: ${data.preference.lifestyle.name}`)
       }
-
-      // 선호 독서 스타일
       if (data.preference.preferred_reading_style?.name) {
         tags.push(`독서 스타일: ${data.preference.preferred_reading_style.name}`)
       }
-
-      // 기피 키워드
       if (data.preference.avoided_keywords) {
         tags.push(`기피: ${data.preference.avoided_keywords}`)
       }
-
     } else {
       user.value.about = '설문 미완료'
     }
-
     user.value.tags = tags
 
-    // 프로필 이미지
     if (data.profile_img) {
       profileImg.value = data.profile_img.startsWith('http')
         ? data.profile_img
         : `http://127.0.0.1:8000${data.profile_img}`
     }
+
+    // 🔄 추후 실제 값으로 대체 가능
+    user.value.articles = data.articles_count || 0
+    user.value.awards = data.awards_count || 0
+    user.value.followers = data.followers_count || 0
+
   }).catch(err => {
     console.error('사용자 정보 불러오기 실패:', err)
   })
