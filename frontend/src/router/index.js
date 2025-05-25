@@ -1,4 +1,3 @@
-// src/router/index.js
 import { createRouter, createWebHistory } from 'vue-router'
 import axios from 'axios'
 
@@ -19,135 +18,89 @@ const routes = [
   {
     path: '/',
     name: 'landing',
-    component: LandingView
+    component: LandingView,
   },
   {
     path: '/posts',
     name: 'posts',
-    component: PostsListView
+    component: PostsListView,
   },
   {
     path: '/posts/:postId',
     name: 'posts-detail',
-    component: PostsDetailView
+    component: PostsDetailView,
   },
   {
     path: '/posts/:bookId/write',
     name: 'posts-write',
     component: PostsWriteView,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true },
   },
   {
     path: '/books/:bookId/posts/:postId/update',
     name: 'post-update',
     component: PostUpdateView,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true },
   },
   {
     path: '/books',
     name: 'books',
-    component: BooksListView
+    component: BooksListView,
   },
   {
     path: '/books/:bookId',
     name: 'books-detail',
-    component: BookDetailView
+    component: BookDetailView,
   },
   {
     path: '/signup',
     name: 'signup',
-    component: SignUpView
+    component: SignUpView,
   },
   {
     path: '/login',
     name: 'login',
-    component: LoginView
+    component: LoginView,
   },
   {
     path: '/mypage',
     name: 'mypage',
     component: MyPageView,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true },
   },
   {
     path: '/onboarding',
     name: 'onboarding-survey',
-    component: OnboardingSurveyView
-  }
+    component: OnboardingSurveyView,
+  },
+  {
+    path: '/recommend/reading',
+    name: 'recommend-reading',
+    component: ReadingStateView,
+  },
 ]
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
-    {
-      path: '/',
-      name: 'landing',
-      component: LandingView,
-    },
-    {
-      path: '/posts',
-      name: 'posts',
-      component: PostsListView,
-    },
-    {
-      path: '/posts/:postId',
-      name: 'posts-detail',
-      component: PostsDetailView,
-    },
-    {
-      path: '/posts/:bookId/write',
-      name: 'posts-write',
-      component: PostsWriteView,
-      beforeEnter: requireAuth,
-    },
-    {
-      path: '/books/:bookId/posts/:postId/update',
-      name: 'post-update',
-      component: PostUpdateView,
-    },
-    {
-      path: '/books',
-      name: 'books',
-      component: BooksListView,
-    },
-    {
-      path: '/books/:bookId',
-      name: 'books-detail',
-      component: BookDetailView,
-    },
-    {
-      path: '/signup',
-      name: 'signup',
-      component: SignUpView,
-    },
-    {
-      path: '/login',
-      name: 'login',
-      component: LoginView,
-    },
-    {
-      path: '/mypage',
-      name: 'mypage',
-      component: MyPageView,
-      beforeEnter: requireAuth,
-    },
-    {
-      path: '/recommend/reading',
-      name: 'recommend-reading',
-      component: ReadingStateView,
-    },
-  ],
+  routes,
 })
 
-// 전역 가드: meta.requiresAuth 체크
-router.beforeEach((to, from, next) => {
-  const requiresAuth = to.meta.requiresAuth === true
-  const isAuth = !!axios.defaults.headers.common.Authorization
-
-  if (requiresAuth && !isAuth) {
-    return next({ name: 'login' })
+// 전역 가드로 인증 체크
+router.beforeEach(async (to, from, next) => {
+  if (to.meta.requiresAuth) {
+    try {
+      const res = await axios.get('/accounts/profile/', { withCredentials: true })
+      if (res.status === 200) {
+        next()
+      } else {
+        next({ name: 'login' })
+      }
+    } catch (err) {
+      next({ name: 'login' })
+    }
+  } else {
+    next()
   }
-  next()
 })
 
 export default router

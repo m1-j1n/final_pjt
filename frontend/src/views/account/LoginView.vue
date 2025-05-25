@@ -17,6 +17,14 @@
 
       <button type="submit" class="login-btn">로그인</button>
     </form>
+
+    <!-- ✅ 회원가입 링크 추가 -->
+    <div class="signup-link mt-2">
+      아직 회원이 아니신가요?
+      <RouterLink :to="{ name: 'signup' }">회원가입</RouterLink>
+    </div>
+
+
   </div>
 </template>
 

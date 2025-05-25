@@ -40,14 +40,22 @@
           <h4>About Me</h4>
           <p>{{ user.about }}</p>
 
-          <h5 class="mt-4">관심 장르</h5>
+          <h5 class="mt-4">설문 기반 태그</h5>
           <div class="mb-3">
-            <span v-for="tag in user.tags" :key="tag" class="badge bg-light text-dark border me-2">{{ tag }}</span>
+            <span
+              v-for="tag in user.tags"
+              :key="tag"
+              class="badge bg-light text-dark border me-2"
+            >{{ tag }}</span>
           </div>
 
           <h5 class="mt-4">Featured Articles</h5>
           <div class="row">
-            <div class="col-md-6" v-for="article in user.articlesFeatured" :key="article.title">
+            <div
+              class="col-md-6"
+              v-for="article in user.articlesFeatured"
+              :key="article.title"
+            >
               <div class="card">
                 <img :src="article.image" class="card-img-top" alt="Article">
                 <div class="card-body">
@@ -110,10 +118,43 @@ onMounted(() => {
     const data = res.data
     user.value.name = data.name
     user.value.bio = `${data.gender === 'M' ? '남성' : '여성'}, ${data.age}세`
-    user.value.about = `주 ${data.weekly_avg_reading_time}시간 독서, 연간 ${data.annual_reading_amount}권 읽음`
-    user.value.tags = data.interested_genres.map(g => g.name)
+
+    const tags = []
+
+    if (data.preference) {
+      user.value.about = `주 ${data.preference.weekly_avg_reading_time}시간 독서, 연간 ${data.preference.annual_reading_amount}권 읽음`
+
+      // 관심 장르
+      if (data.preference.interested_genres) {
+        tags.push(...data.preference.interested_genres.map(g => g.name))
+      }
+
+      // 라이프스타일
+      if (data.preference.lifestyle?.name) {
+        tags.push(`라이프스타일: ${data.preference.lifestyle.name}`)
+      }
+
+      // 선호 독서 스타일
+      if (data.preference.preferred_reading_style?.name) {
+        tags.push(`독서 스타일: ${data.preference.preferred_reading_style.name}`)
+      }
+
+      // 기피 키워드
+      if (data.preference.avoided_keywords) {
+        tags.push(`기피: ${data.preference.avoided_keywords}`)
+      }
+
+    } else {
+      user.value.about = '설문 미완료'
+    }
+
+    user.value.tags = tags
+
+    // 프로필 이미지
     if (data.profile_img) {
-      profileImg.value = data.profile_img.startsWith('http') ? data.profile_img : `http://127.0.0.1:8000${data.profile_img}`
+      profileImg.value = data.profile_img.startsWith('http')
+        ? data.profile_img
+        : `http://127.0.0.1:8000${data.profile_img}`
     }
   }).catch(err => {
     console.error('사용자 정보 불러오기 실패:', err)
