@@ -99,3 +99,14 @@ def verify_password(request):
         return Response({'detail': '비밀번호가 일치하지 않습니다.'}, status=status.HTTP_400_BAD_REQUEST)
 
     return Response({'detail': '비밀번호 인증 성공'}, status=status.HTTP_200_OK)
+
+
+# 현재 로그인 사용자 정보 저장
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_user_profile(request):
+    user = request.user
+    return Response({
+        "username": user.username,
+        "email": user.email,
+    })

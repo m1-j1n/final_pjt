@@ -15,7 +15,10 @@ from accounts.models import Category
 from .models import Book, Post, Comment, BookLike, Book, ReadingStatus, Keyword
 from .utils import get_random_image_file, generate_recommendation_summary, extract_keywords_from_content
 from django.core.exceptions import PermissionDenied
-from .serializers import BookSerializer, CategorySerializer, PostDetailSerializer, PostCreateSerializer, PostListSerializer, BookSimpleSerializer, CommentSerializer, ReadingStatusSerializer
+from .serializers import  ( BookSerializer, CategorySerializer, PostDetailSerializer, PostCreateSerializer, 
+                           PostListSerializer, BookSimpleSerializer, CommentSerializer, ReadingStatusSerializer,
+                            StoppedBookSerializer,
+)
 
 ### 도서 ###
 # 책 전체 조회
@@ -269,6 +272,13 @@ def recommend_similar_books(request):
         'books': serialized_books.data,
     })
 
+# 중단한 책 리스트
+@api_view(['GET'])
+def dropped_books_summary(request):
+    # stop 상태인 독서 기록 중 최신 3개 (여러 유저 데이터 기준)
+    dropped = ReadingStatus.objects.filter(status='stop').order_by('-updated_at')[:3]
+    serializer = StoppedBookSerializer(dropped, many=True)
+    return Response(serializer.data)
 
 # # 쓰레드 좋아요 처리
 # @login_required

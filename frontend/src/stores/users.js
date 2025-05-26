@@ -21,22 +21,22 @@ export const useUserStore = defineStore('user', () => {
     const res = await axios.post(`${ACCOUNT_API_URL}/signup/`, userInfo)
     return res
   }
-  
-    // username 따로 저장
-    // 로그인 이후 사용자 정보 가져오기
-    const fetchUserProfile = async () => {
-      try {
-        const res = await axios.get(`${ACCOUNT_API_URL}/profile/`, {
-          headers: {
-            Authorization: `Token ${token.value}`,
-          }
-        })
-        username.value = res.data.username
-        localStorage.setItem('username', res.data.username)
-      } catch (err) {
-        console.error('❌ 사용자 정보 불러오기 실패:', err)
-      }
+
+  // username 따로 저장
+  // 로그인 이후 사용자 정보 가져오기
+  const fetchUserProfile = async () => {
+    try {
+      const res = await axios.get(`${ACCOUNT_API_URL}/profile/`, {
+        headers: {
+          Authorization: `Token ${token.value}`,
+        }
+      })
+      username.value = res.data.username
+      localStorage.setItem('username', res.data.username)
+    } catch (err) {
+      console.error('❌ 사용자 정보 불러오기 실패:', err)
     }
+  }
 
   // ✅ 로그인
   const logIn = async ({ username, password }) => {

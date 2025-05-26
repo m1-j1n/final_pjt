@@ -60,6 +60,7 @@ class ReadingStatus(models.Model):
     progress = models.PositiveIntegerField(null=True, blank=True)  
 
     # 중단일 때
+    stop_date = models.DateField(null=True, blank=True)
     stop_reason = models.TextField(blank=True)
     
     updated_at = models.DateTimeField(auto_now=True)

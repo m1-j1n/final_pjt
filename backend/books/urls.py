@@ -13,8 +13,10 @@ urlpatterns = [
     path('books/<int:book_pk>/like/', views.book_like_toggle, name='book_like_toggle'),
     # 독서 상태 기록
     path('books/<int:book_id>/reading-status/', views.reading_status_create_or_update, name='reading_status_create_or_update'),
-    # 독서 상태 기반 추천
+    # 추천
     path('recommend/content-based/', views.recommend_similar_books, name='recommend_similar_books'),
+    path('recommend/dropped-books/', views.dropped_books_summary, name='dropped-books-summary'),
+
     # 검색
     path('books/search/', views.book_search, name='book_search'),
     path('books/<int:book_pk>/posts/list/', views.book_related_posts, name='book_related_posts'),

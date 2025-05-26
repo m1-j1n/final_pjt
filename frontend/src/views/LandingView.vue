@@ -47,11 +47,11 @@
           </div>
         </div>
         <div class="col-md-4">
-          <div class="card recommendation-card small-card text-white position-relative overflow-hidden" @click="goToSurvey">
+          <div class="card recommendation-card small-card text-white position-relative overflow-hidden" @click="gotoStopBookList">
             <img src="@/assets/img/book-cover/b.jpg" class="card-img object-fit-cover" alt="추천 콘텐츠">
             <div class="card-img-overlay d-flex flex-column justify-content-end bg-dark bg-opacity-50 p-3">
               <small>Apr. 14th, 2025 • Programming</small>
-              <h6 class="fw-bold">Excepteur sint occaecat cupidatat non proident</h6>
+              <h6 class="fw-bold">사람들이 많인 중단한 책.. 그 이유는 ?</h6>
             </div>
           </div>
         </div>
@@ -125,6 +125,11 @@ const goToReadingRecommend = () => {
   }
 
   router.push({ name: 'recommend-reading' })
+}
+
+// 사람들이 읽다 중단한 책으로 이동
+const gotoStopBookList = () => {
+  router.push('/recommend/stop')
 }
 
 const topBooks = ref([])

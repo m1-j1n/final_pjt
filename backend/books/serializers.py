@@ -65,10 +65,20 @@ class ReadingStatusSerializer(serializers.ModelSerializer):
             'comment',
             'progress',
             'stop_reason',
+            'stop_reason',
         ]
 
-# 🔹 KeywordSerializer : 키워드 시리얼라이저
+# 🔹 StoppedBookSerializer : 키워드 시리얼라이저
+class StoppedBookSerializer(serializers.ModelSerializer):
+    book_title = serializers.CharField(source='book.title', read_only=True)
+    book_cover = serializers.URLField(source='book.cover', read_only=True) 
+    stop_reason = serializers.CharField()
 
+    class Meta:
+        model = ReadingStatus
+        fields = ['book_title', 'book_cover', 'stop_reason']
+
+# 🔹 KeywordSerializer : 키워드 시리얼라이저
 class KeywordSerializer(serializers.ModelSerializer):
     class Meta:
         model = Keyword

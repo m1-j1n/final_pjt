@@ -6,7 +6,8 @@ from .views import (
     lifestyle_list,
     readingstyle_list,
     verify_password,
-    public_user_profile,  
+    public_user_profile,
+    get_user_profile
 )
 
 urlpatterns = [
@@ -17,4 +18,5 @@ urlpatterns = [
     path('lifestyles/', lifestyle_list, name='lifestyle_list'),
     path('readingstyles/', readingstyle_list, name='readingstyle_list'),
     path('<int:user_id>/profile/', public_user_profile, name='user-profile'),  # 다른 유저의 프로필 조회
+    path('profile/', get_user_profile, name='my-profile'),
 ]

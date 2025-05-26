@@ -12,9 +12,10 @@ import SignUpView from '@/views/account/SignUpView.vue'
 import LoginView from '@/views/account/LoginView.vue'
 import MyPageView from '@/views/account/MyPageView.vue'
 import MyPageEditView from '@/views/account/MyPageEditView.vue'
-import PublicProfileView from '@/views/account/PublicProfileView.vue'  // ✅ 추가
+import PublicProfileView from '@/views/account/PublicProfileView.vue'
 import OnboardingSurveyView from '@/views/account/OnboardingSurveyView.vue'
 import ReadingStateView from '@/views/recommend/ReadingStateView.vue'
+import StopRedingView from '@/views/recommend/StopRedingView.vue'
 
 // 인증이 필요한 라우트용 가드
 const requireAuth = async (to, from, next) => {
@@ -105,14 +106,19 @@ const routes = [
     name: 'recommend-reading',
     component: ReadingStateView,
   },
+  {
+    path: '/recommend/stop',
+    name: 'recommend-stop',
+    component: StopRedingView,
+  },
 ]
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
 })
 
-// ✅ 인증이 필요한 페이지 접근 시 토큰 유효성 확인
 router.beforeEach(async (to, from, next) => {
   if (to.meta.requiresAuth) {
     try {
@@ -131,17 +137,6 @@ router.beforeEach(async (to, from, next) => {
     }
   } else {
     next()
-=======
-  routes: routes, // 👈 명시적으로 유지
-})
-
-// 전역 가드: meta.requiresAuth 사용 시 처리
-router.beforeEach((to, from, next) => {
-  const requiresAuth = to.meta.requiresAuth === true
-  const isAuth = !!axios.defaults.headers.common.Authorization
-
-  if (requiresAuth && !isAuth) {
-    return next({ name: 'login' })
   }
 })
 

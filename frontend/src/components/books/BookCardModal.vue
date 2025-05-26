@@ -58,7 +58,7 @@
             <input type="date" v-model="startDate" class="form-control mb-2" />
 
             <p class="mb-2 small text-muted">책을 중단한 날짜를 입력하세요</p>
-            <input type="date" v-model="endDate" class="form-control mb-2" />
+            <input type="date" v-model="stopDate" class="form-control mb-2" />
 
             <p class="mb-2 small text-muted">중단한 이유를 입력해주세요</p>
             <textarea v-model="stopReason" class="form-control" placeholder="중단한 이유를 적어주세요" />
@@ -85,6 +85,7 @@ const emit = defineEmits(['close', 'saved'])
 const status = ref('done')
 const startDate = ref('')
 const endDate = ref('')
+const stopDate = ref('')
 const comment = ref('')
 const progress = ref(0)
 const stopReason = ref('')
@@ -104,6 +105,7 @@ const submitStatus = () => {
     status: status.value,
     start_date: formatDate(startDate.value),
     end_date: formatDate(endDate.value),
+    stop_date: formatDate(stopDate.value),
     comment: comment.value,
     progress: progress.value,
     stop_reason: stopReason.value,
@@ -115,6 +117,7 @@ const submitStatus = () => {
   status.value = 'done'
   startDate.value = ''
   endDate.value = ''
+  stopDate.value = ''
   comment.value = ''
   progress.value = null
   stopReason.value = ''

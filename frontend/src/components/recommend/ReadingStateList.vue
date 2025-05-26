@@ -72,7 +72,7 @@
           cancelButtonText: '나중에 할게요',
         }).then(result => {
           if (result.isConfirmed) {
-            router.push({ name: 'books' })  // 원하는 이동 위치 (예: 마이페이지)
+            router.push({ name: 'books' })
           }
         })
       }
