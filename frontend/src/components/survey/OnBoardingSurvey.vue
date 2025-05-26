@@ -72,8 +72,8 @@ const readingStyles = ref([])
 onMounted(async () => {
   const [catRes, lifeRes, styleRes] = await Promise.all([
     axios.get('http://127.0.0.1:8000/api/v1/categories/'),
-    axios.get('http://127.0.0.1:8000/accounts/lifestyles/'),
-    axios.get('http://127.0.0.1:8000/accounts/readingstyles/'),
+    axios.get('http://127.0.0.1:8000/api/v1/accounts/lifestyles/'),
+    axios.get('http://127.0.0.1:8000/api/v1/accounts/readingstyles/'),
   ])
 
   categories.value = catRes.data
@@ -94,14 +94,15 @@ const submitSurvey = async () => {
   }
 
   try {
-    await axios.put('http://127.0.0.1:8000/accounts/preference/', payload, {
+    await axios.put('http://127.0.0.1:8000/api/v1/accounts/preference/', payload, {
+
       headers: {
         Authorization: `Token ${token}`
       }
     })
 
     alert('🎉 설문이 완료되었습니다! 메인 페이지로 이동합니다.')
-    router.push({ name: 'landing' })
+    router.push({ name: 'login' })
   } catch (err) {
     console.error('❌ 오류 응답 내용:', err.response?.data)
     alert('❌ 제출에 실패했습니다. 입력값을 다시 확인해주세요.')

@@ -3,26 +3,33 @@
     <div class="card">
       <h2 class="title">회원가입</h2>
       <form @submit.prevent="onSignUp">
+        <!-- 아이디 (이메일) -->
         <div class="form-group">
-          <label for="username">아이디</label>
+          <label for="username">이메일</label>
           <input id="username" type="text" v-model="username" required />
+          <span v-if="username && !isEmailValid" class="error-message">❌ 유효한 이메일 형식이 아닙니다.</span>
         </div>
 
+        <!-- 이름 -->
         <div class="form-group">
           <label for="name">이름</label>
           <input id="name" type="text" v-model="name" required />
         </div>
 
+        <!-- 비밀번호 -->
         <div class="form-group">
           <label for="password1">비밀번호</label>
           <input id="password1" type="password" v-model="password1" required />
         </div>
 
+        <!-- 비밀번호 확인 -->
         <div class="form-group">
           <label for="password2">비밀번호 확인</label>
           <input id="password2" type="password" v-model="password2" required />
+          <span v-if="passwordMismatch" class="error-message">❌ 비밀번호가 일치하지 않습니다.</span>
         </div>
 
+        <!-- 성별 -->
         <div class="form-group">
           <label for="gender">성별</label>
           <select id="gender" v-model="gender" required>
@@ -32,12 +39,14 @@
           </select>
         </div>
 
+        <!-- 나이 -->
         <div class="form-group">
           <label for="age">나이</label>
           <input id="age" type="number" v-model.number="age" min="1" required />
         </div>
 
-        <!-- <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p> -->
+        <!-- 서버 응답 에러 메시지 -->
+        <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
 
         <div class="submit-group">
           <input type="submit" value="회원가입" />
@@ -48,7 +57,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 
@@ -62,10 +71,26 @@ const gender = ref('')
 const age = ref(0)
 const errorMessage = ref('')
 
+// 이메일 유효성 검사
+const isEmailValid = computed(() => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return emailRegex.test(username.value)
+})
+
+// 비밀번호 불일치 검사
+const passwordMismatch = computed(() => {
+  return password1.value !== password2.value && password2.value !== ''
+})
+
 const onSignUp = async () => {
   errorMessage.value = ''
 
-  if (password1.value !== password2.value) {
+  if (!isEmailValid.value) {
+    errorMessage.value = '❌ 이메일 형식이 올바르지 않습니다.'
+    return
+  }
+
+  if (passwordMismatch.value) {
     errorMessage.value = '❌ 비밀번호가 일치하지 않습니다.'
     return
   }
@@ -85,24 +110,27 @@ const onSignUp = async () => {
   }
 
   try {
-    // 1. 회원가입
-    await axios.post('http://127.0.0.1:8000/accounts/signup/', userInfo)
+  
+    const ACCOUNT_API_URL = 'http://127.0.0.1:8000/api/v1/accounts'
+    // 회원가입 요청
+    await axios.post( `${ACCOUNT_API_URL}/signup/`, userInfo)
 
-    // 2. 회원가입 성공 → 로그인
-    const loginRes = await axios.post('http://127.0.0.1:8000/accounts/login/', {
+    // 회원가입 성공 후 로그인 시도
+    const loginRes = await axios.post('http://127.0.0.1:8000/api/v1/auth/login/', {
       username: userInfo.username,
       password: userInfo.password1,
     })
 
-    // 3. 토큰 저장
+    // 토큰 저장
     const token = loginRes.data.key
     localStorage.setItem('access_token', token)
 
-    // 4. 설문 페이지로 이동
+    // 설문 페이지로 이동
     router.push({ name: 'onboarding-survey' })
+
   } catch (err) {
     console.error('❌ 에러 응답:', err.response?.data || err)
-    errorMessage.value = Object.values(err.response?.data || { error: '오류 발생' }).flat().join(', ')
+    // errorMessage.value = Object.values(err.response?.data || { error: '오류 발생' }).flat().join(', ')
   }
 }
 </script>
@@ -147,8 +175,8 @@ select {
 }
 .error-message {
   color: red;
-  text-align: center;
-  margin-top: 1rem;
+  font-size: 0.9rem;
+  margin-top: 0.3rem;
 }
 .submit-group {
   margin-top: 1.5rem;

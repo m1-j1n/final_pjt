@@ -139,7 +139,6 @@ def post_create(request, book_pk):
     serializer = PostCreateSerializer(data=data)
     if serializer.is_valid():
         post = serializer.save(book=book, user=request.user)
-
         # ✅ GPT 키워드 추출
         content = serializer.validated_data.get('content', '')
         keywords = extract_keywords_from_content(content)
@@ -322,3 +321,15 @@ def delete_comment(request, comment_pk):
     comment.delete()
     return Response({'message': '댓글이 삭제되었습니다.'}, status=status.HTTP_204_NO_CONTENT)
 
+
+# 내가 작성한 포스트 조회
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def my_posts(request):
+    user = request.user
+    # 뷰 코드에 추가해봐
+    print(f"[DEBUG] 로그인 유저 ID: {request.user.id}")
+    print(f"[DEBUG] 마이포스트 개수: {Post.objects.filter(user=request.user).count()}")
+    posts = Post.objects.filter(user=user)
+    serializer = PostListSerializer(posts, many=True)
+    return Response(serializer.data)

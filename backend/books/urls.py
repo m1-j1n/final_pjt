@@ -27,6 +27,8 @@ urlpatterns = [
     path('books/<int:book_pk>/posts/<int:post_pk>/update/', views.post_update, name='post_update'),
     path('books/<int:book_pk>/posts/<int:post_pk>/delete/', views.post_delete, name='post_delete'),
     path('posts/category/<int:category_id>/', views.filter_posts_by_category, name='filter_posts_by_category'),
+    path('posts/mine/', views.my_posts, name='my_posts'), # 마이페이지에 가져올 포스트들
+
 
 
     # 댓글
