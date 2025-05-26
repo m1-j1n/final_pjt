@@ -120,6 +120,8 @@ class UserPreferenceDetailSerializer(serializers.ModelSerializer):
 
 class CustomUserDetailSerializer(serializers.ModelSerializer):
     preference = UserPreferenceDetailSerializer(read_only=True)
+    followers_count = serializers.SerializerMethodField()
+    followings_count = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -131,4 +133,12 @@ class CustomUserDetailSerializer(serializers.ModelSerializer):
             'profile_img',
             'preference',
             'is_signup_complete',
+            'followers_count', 
+            'followings_count',
         ]
+
+    def get_followers_count(self, obj):
+        return obj.followers.count()
+
+    def get_followings_count(self, obj):
+        return obj.followings.count()

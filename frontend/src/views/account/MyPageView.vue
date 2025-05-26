@@ -20,8 +20,12 @@
               <small class="text-muted">Posts</small>
             </div>
             <div>
-              <h5>{{ user.followers }}</h5>
+              <h5>{{ user.followers_count  }}</h5>
               <small class="text-muted">Followers</small>
+            </div>
+            <div>
+              <h5>{{ user.followings_count   }}</h5>
+              <small class="text-muted">Following</small>
             </div>
           </div>
 
@@ -92,9 +96,9 @@
 
         <!-- Book Tab Content -->
         <div v-if="activeTab === 'books'" class="book-grid">
-          <div v-for="book in books" :key="book.id" class="book-card" @click="goToBookDetail(book.id)">
+          <div v-for="book in books" :key="book.id" class="book-card">
             <div class="book-img-wrapper position-relative">
-              <img :src="book.cover" class="book-img" />
+              <img :src="book.cover" class="book-img"  @click="goToBookDetail(book.id)"/>
 
               <!-- ✅ 상태 뱃지: 왼쪽 상단 -->
               <span
@@ -163,7 +167,8 @@ const user = ref({
   tags: [],
   articles: 0,
   awards: 0,
-  followers: 0
+  followers_count: 0,
+  followings_count: 0,
 })
 
 const likedBooks = ref([])
@@ -193,7 +198,7 @@ function mergeBooks() {
 
   const merged = Array.from(bookMap.values())
   books.value = merged
-  bookCount.value = merged.length   // 👈 여기서 개수 저장
+  bookCount.value = merged.length  
 }
 
 
@@ -220,9 +225,8 @@ onMounted(() => {
       profileImg.value = data.profile_img.startsWith('http') ? data.profile_img : `http://127.0.0.1:8000${data.profile_img}`
     }
 
-    user.value.articles = data.articles_count || 0
-    user.value.awards = data.awards_count || 0
-    user.value.followers = data.followers_count || 0
+    user.value.followers_count = data.followers_count || 0
+    user.value.followings_count = data.followings_count || 0 
   }).catch(err => {
     console.error('사용자 정보 불러오기 실패:', err)
   })

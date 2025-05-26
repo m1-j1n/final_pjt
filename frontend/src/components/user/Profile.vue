@@ -19,8 +19,12 @@
               <small class="text-muted">Posts</small>
             </div>
             <div>
-              <h5>{{ user.followers }}</h5>
+              <h5>{{ user.followers_count  }}</h5>
               <small class="text-muted">Followers</small>
+            </div>
+            <div>
+              <h5>{{ user.followings_count   }}</h5>
+              <small class="text-muted">Following</small>
             </div>
           </div>
 
@@ -151,27 +155,38 @@ const toggleFollow = async () => {
 }
 
 onMounted(async () => {
-  const headers = { Authorization: `Token ${localStorage.getItem('access_token')}` }
-
-  try {
-    const res = await axios.get(`http://localhost:8000/api/v1/accounts/${userId}/profile/`, { headers })
-    user.value = res.data
-    profileImg.value = getImageUrl(res.data.profile_img)
-    posts.value = res.data.posts || []
-    books.value = res.data.books || []
-    postCount.value = posts.value.length
-    bookCount.value = books.value.length
-  } catch (err) {
-    console.error('프로필 데이터 로딩 실패:', err)
+  const headers = {
+    Authorization: `Token ${localStorage.getItem('access_token')}`
   }
 
-  try {
-    const followRes = await axios.get(`http://localhost:8000/api/v1/accounts/${userId}/follow-status/`, { headers })
-    isFollowing.value = followRes.data.is_following
-  } catch (err) {
-    console.error('팔로우 상태 확인 실패:', err)
+  // 1. 프로필 정보 불러오기
+  const fetchUserProfile = async () => {
+    try {
+      const { data } = await axios.get(`http://localhost:8000/api/v1/accounts/${userId}/profile/`, { headers })
+      user.value = data
+      profileImg.value = getImageUrl(data.profile_img)
+      posts.value = data.posts || []
+      books.value = data.books || []
+      postCount.value = posts.value.length
+      bookCount.value = books.value.length
+    } catch (err) {
+      console.error('❌ 프로필 데이터 로딩 실패:', err)
+    }
   }
+
+  // 2. 팔로우 상태 확인
+  const fetchFollowStatus = async () => {
+    try {
+      const { data } = await axios.get(`http://localhost:8000/api/v1/accounts/${userId}/follow-status/`, { headers })
+      isFollowing.value = data.is_following
+    } catch (err) {
+      console.error('❌ 팔로우 상태 확인 실패:', err)
+    }
+  }
+
+  await Promise.all([fetchUserProfile(), fetchFollowStatus()])
 })
+
 </script>
 
 <style scoped>
