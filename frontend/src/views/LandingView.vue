@@ -35,7 +35,7 @@
             @click="goToPost">
             <img src="@/assets/img/book-cover/d.jpg" class="card-img object-fit-cover" alt="추천 콘텐츠">
             <div class="card-img-overlay d-flex flex-column justify-content-end bg-dark bg-opacity-50 p-3">
-              <small>Apr. 14th, 2025 • Career</small>
+              <small>:-)</small>
               <h6 class="fw-bold">다른 사람의 인생 책이 궁금하신가요?</h6>
             </div>
           </div>
@@ -45,7 +45,7 @@
             @click="gotoStyleRecommned">
             <img src="@/assets/img/book-cover/a.jpg" class="card-img object-fit-cover" alt="추천 콘텐츠">
             <div class="card-img-overlay d-flex flex-column justify-content-end bg-dark bg-opacity-50 p-3">
-              <small>Apr. 14th, 2025 • Cloud</small>
+              <small>책을 고르기 망설여질 때,</small>
               <h6 class="fw-bold">당신이 선호하는 스타일의 책은 ?</h6>
             </div>
           </div>
@@ -55,7 +55,7 @@
             @click="gotoStopBookList">
             <img src="@/assets/img/book-cover/b.jpg" class="card-img object-fit-cover" alt="추천 콘텐츠">
             <div class="card-img-overlay d-flex flex-column justify-content-end bg-dark bg-opacity-50 p-3">
-              <small>Apr. 14th, 2025 • Programming</small>
+              <small>책을 덮은 사람들이 궁금할 때,</small>
               <h6 class="fw-bold">사람들이 많이 중단한 책.. 그 이유는 ?</h6>
             </div>
           </div>

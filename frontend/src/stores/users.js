@@ -10,6 +10,7 @@ export const useUserStore = defineStore('user', () => {
 
   const token = ref(localStorage.getItem('token') || '')
   const username = ref(localStorage.getItem('username') || '')
+  const currName = ref(localStorage.getItem('name') ||'')
 
   // 앱 시작 시 토큰 있으면 axios 헤더 세팅
   if (token.value) {
@@ -32,6 +33,7 @@ export const useUserStore = defineStore('user', () => {
         }
       })
       username.value = res.data.username
+      currName.value = res.data.name
       localStorage.setItem('username', res.data.username)
     } catch (err) {
       console.error('❌ 사용자 정보 불러오기 실패:', err)
@@ -61,7 +63,7 @@ export const useUserStore = defineStore('user', () => {
   // 로그인 여부
   const isLogin = computed(() => !!token.value)
 
-  return { signUp, logIn, logOut, isLogin, token, username }
+  return { signUp, logIn, logOut, isLogin, token, username, currName }
 }, {
   persist: true
 })

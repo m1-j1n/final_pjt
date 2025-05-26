@@ -1,30 +1,46 @@
 <template>
-  <div class="container">
-    <h3 class="mb-3">📚 카테고리별 도서 보기</h3>
+  <div class="container blogy-theme">
+    <h3 class="mb-3 text-heading">카테고리별 도서 보기</h3>
     <div class="row">
+      <!-- ─── 좌측 사이드바 ─── -->
       <div class="col-3">
         <!-- 검색바 -->
-        <div class="input-group mb-3">
-          <input v-model="searchQuery" @keyup.enter="doSearch" class="form-control" placeholder="검색어를 입력하세요" />
-          <button class="btn btn-outline-secondary" @click="doSearch">검색</button>
+        <div class="card mb-4 blogy-card blogy-search">
+          <div class="card-body">
+            <h5 class="blogy-title">Search</h5>
+            <div class="input-group">
+              <input
+                v-model="searchQuery"
+                @keyup.enter="doSearch"
+                type="text"
+                class="form-control"
+                placeholder="검색어를 입력하세요"
+              />
+              <button class="btn blogy-btn" @click="doSearch">검색</button>
+            </div>
+          </div>
         </div>
 
         <!-- 카테고리 사이드바 -->
-        <h5>카테고리</h5>
-        <ul class="list-group">
-          <li
-            v-for="cat in bookStore.categories"
-            :key="cat.id"
-            class="list-group-item"
-            :class="{ active: bookStore.selectedCategory === cat.id }"
-            @click="fetchBooksByCategory(cat.id)"
-          >
-            {{ cat.name }}
-          </li>
-        </ul>
+        <div class="card blogy-card blogy-categories">
+          <div class="card-body">
+            <h5 class="blogy-title">Categories</h5>
+            <ul class="list-unstyled mb-0">
+              <li
+                v-for="cat in bookStore.categories"
+                :key="cat.id"
+                class="category-item mb-1"
+                :class="{ active: bookStore.selectedCategory === cat.id }"
+                @click="fetchBooksByCategory(cat.id)"
+              >
+                {{ cat.name }}
+              </li>
+            </ul>
+          </div>
+        </div>
       </div>
 
-      <!-- 도서 카드 리스트 -->
+      <!-- ─── 메인 콘텐츠: 도서 카드 리스트 ─── -->
       <div class="col-9">
         <div class="d-flex flex-column gap-3">
           <div
@@ -35,37 +51,34 @@
           </div>
         </div>
       </div>
-
-      <!-- 도서 카드 리스트 하단 -->
-      <nav v-if="!searched" class="mt-4 d-flex justify-content-center">
-        <ul class="pagination">
-
-          <!-- 이전 그룹 버튼 -->
-          <li class="page-item" :class="{ disabled: pageGroupStart === 1 }">
-            <button class="page-link" @click="goToPrevGroup">이전</button>
-          </li>
-
-          <!-- 현재 그룹의 페이지 번호 -->
-          <li
-            class="page-item"
-            v-for="n in pageGroupEnd - pageGroupStart + 1"
-            :key="n"
-            :class="{ active: currentPage === pageGroupStart + n - 1 }"
-          >
-            <button
-              class="page-link"
-              @click="fetchBooksByCategory(bookStore.selectedCategory, pageGroupStart + n - 1)"
+       <!-- ─── 페이지네이션 (전체 폭) ─── -->
+    <div class="row">
+      <div class="col-12 d-flex justify-content-center">
+        <nav v-if="!searched">
+          <ul class="pagination pagination-sm justify-content-center">
+            <li class="page-item" :class="{ disabled: pageGroupStart === 1 }">
+              <button class="page-link" @click="goToPrevGroup">이전</button>
+            </li>
+            <li
+              v-for="n in pageGroupEnd - pageGroupStart + 1"
+              :key="n"
+              class="page-item"
+              :class="{ active: currentPage === pageGroupStart + n - 1 }"
             >
-              {{ pageGroupStart + n - 1 }}
-            </button>
-          </li>
-
-          <!-- 다음 그룹 버튼 -->
-          <li class="page-item" :class="{ disabled: pageGroupEnd === totalPages }">
-            <button class="page-link" @click="goToNextGroup">다음</button>
-          </li>
-        </ul>
-      </nav>
+              <button
+                class="page-link"
+                @click="fetchBooksByCategory(bookStore.selectedCategory, pageGroupStart + n - 1)"
+              >
+                {{ pageGroupStart + n - 1 }}
+              </button>
+            </li>
+            <li class="page-item" :class="{ disabled: pageGroupEnd === totalPages }">
+              <button class="page-link" @click="goToNextGroup">다음</button>
+            </li>
+          </ul>
+        </nav>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -168,3 +181,61 @@ const fetchBooksByCategory = async (categoryId, page = 1) => {
   }
 }
 </script>
+
+<style scoped>
+.blogy-card {
+  border: 1px solid #e6e6e6;
+  border-radius: 12px;
+  background-color: #fafafa;
+  padding: 1rem;
+}
+
+.blogy-title {
+  position: relative;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2c3e50;
+  padding-left: 1rem;
+  margin-bottom: 1rem;
+}
+
+.blogy-title::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.1rem;
+  width: 4px;
+  height: 100%;
+  background-color: #f7a76c; /* 부드러운 주황색 */
+  border-radius: 2px;
+}
+
+.blogy-search .input-group {
+  border: 1px solid #ddd;
+  border-radius: 50px;
+  overflow: hidden;
+  background-color: white;
+}
+
+.blogy-search input {
+  border: none;
+  outline: none;
+  border-radius: 50px 0 0 50px;
+  padding-left: 1rem;
+}
+
+.blogy-search button {
+  border: none;
+  background: none;
+  color: #555;
+  padding: 0 1rem;
+  border-left: 1px solid #ddd;
+  border-radius: 0 50px 50px 0;
+}
+
+.blogy-search input:focus {
+  box-shadow: none;
+}
+
+
+</style>

@@ -1,6 +1,6 @@
 <template>
-  <div class="container mt-4">
-    <h3 class="mb-4 fw-bold">📝 요즘 유저들이 남긴 포스트</h3>
+  <div class="container">
+    <h3 class="mb-3 text-heading">요즘 유저들이 남긴 포스트</h3>
 
     <!-- 포스트 카드 (2열 고정) -->
     <div class="row row-cols-1 row-cols-md-2 g-4">
@@ -8,31 +8,26 @@
         <RouterLink :to="{ name: 'posts-detail', params: { postId: post.id } }" class="text-decoration-none text-dark">
           <div class="card h-100 shadow-sm" style="cursor: pointer;">
             <img :src="getImageUrl(post.cover_img)" class="card-img-top post-image" :alt="post.title" />
-            <div class="card-body d-flex flex-column justify-content-between">
-              <div>
-                <p class="text-muted mb-1">
-                  <strong>{{ post.user }}</strong> · 
-                  {{ formatTimeAgo(post.created_at) }}
-                </p>
-                <h5 class="card-title">{{ post.title }}</h5>
-                <p class="card-text">
-                  {{ post.content.length > 100 ? post.content.slice(0, 100) + '...' : post.content }}
-                </p>
-              </div>
-
-              <!-- 하단 고정: 댓글 수 + 키워드 -->
-              <div class="d-flex justify-content-between align-items-center mt-3">
-                <p class="text-muted small mb-0">💬 댓글 {{ post.comment_count || 0 }}개</p>
-                <div class="d-flex flex-wrap gap-1 justify-content-end">
-                  <span
-                    v-for="(kw, i) in post.keywords.slice(0, 3)"
-                    :key="i"
-                    class="badge rounded-pill bg-light text-dark border"
-                  >
-                    #{{ kw.name }}
-                  </span>
-                </div>
-              </div>
+            <div class="card-body d-flex flex-column">
+              <p class="text-muted mb-1">
+                <strong>{{ post.user }}</strong> · 
+                {{ formatTimeAgo(post.created_at) }}
+              </p>
+              <h5 class="card-title">{{ post.title }}</h5>
+              <p class="card-text">
+                {{ post.content.length > 100 ? post.content.slice(0, 100) + '...' : post.content }}
+              </p>
+              <p class="text-muted mt-auto small">💬 댓글 {{ post.comment_count || 0 }}개</p>
+              <!-- 키워드 해시태그 -->
+              <p class="small mt-1">
+                <span
+                  v-for="(kw, i) in post.keywords.slice(0, 3)"
+                  :key="i"
+                  class="me-1 text-primary"
+                >
+                  #{{ kw.name }}
+                </span>
+              </p>
             </div>
           </div>
         </RouterLink>

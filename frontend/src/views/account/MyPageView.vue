@@ -4,7 +4,7 @@
       <!-- Left: Profile Card + About Me -->
       <div class="col-lg-4 mb-4 mb-lg-0">
         <div class="card shadow-sm text-center p-4 mb-4">
-          <img :src="profileImg" alt="Author" class="rounded-circle mb-3" width="120" height="120">
+          <img :src="profileImg" alt="Author" class="rounded-circle mb-3 d-block mx-auto" width="120" height="120">
 
           <h4>{{ user.name }}</h4>
           <p class="text-muted">독서 회원</p>
@@ -12,7 +12,7 @@
 
           <div class="d-flex justify-content-between my-4">
             <div>
-              <h5>{{ bookCount   }}</h5>
+              <h5>{{ bookCount }}</h5>
               <small class="text-muted">Books</small>
             </div>
             <div>
@@ -291,10 +291,9 @@ const getImageUrl = (src) => {
   gap: 20px;
 }
 
-
 .book-card {
   position: relative;
-  cursor: pointer;
+  width: 200px; 
   aspect-ratio: 2 / 3;
   overflow: hidden;
   border-radius: 12px;
@@ -302,15 +301,20 @@ const getImageUrl = (src) => {
 }
 
 .book-img {
-  width: 200px;
-  height: 300px;
+  width: 100%;         
+  height: 100%;
   object-fit: cover;
   transition: transform 0.2s ease;
   border-radius: 12px;
 }
 
+.book-img-wrapper {
+  position: relative;
+  overflow: hidden;
+}
+
 .book-img:hover {
-  transform: scale(1.03); /* 🖱️ hover 시 약간 확대 효과 */
+  transform: scale(1.03);
 }
 
 .status-badge {
@@ -325,10 +329,12 @@ const getImageUrl = (src) => {
 }
 
 .status-left {
+  top: 10px;
   left: 10px;
 }
 
 .status-right {
+  top: 10px;
   right: 10px;
 }
 

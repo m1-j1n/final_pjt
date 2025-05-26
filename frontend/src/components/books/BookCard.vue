@@ -357,4 +357,16 @@ onMounted(async () => {
 .btn-record:hover {
   background-color: #e6f4ea;
 }
+
+.card {
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* 부드러운 그림자 */
+  border: 1px solid #eee;
+  transition: box-shadow 0.2s ease-in-out;
+  background-color: #fff;
+}
+
+.card:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); /* 호버 시 살짝 강조 */
+}
 </style>

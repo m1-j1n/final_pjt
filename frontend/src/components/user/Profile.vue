@@ -4,7 +4,7 @@
       <!-- Left: 유저 카드 -->
       <div class="col-lg-4 mb-4 mb-lg-0">
         <div class="card shadow-sm text-center p-4 mb-4">
-          <img :src="profileImg" alt="Author" class="rounded-circle mb-3" width="120" height="120" />
+          <img :src="profileImg" alt="Author" class="rounded-circle mb-3 d-block mx-auto" width="120" height="120" />
           <h4>{{ user.name }}</h4>
           <p class="text-muted">독서 회원</p>
           <p class="mb-3 small text-muted">{{ user.bio }}</p>
@@ -28,7 +28,11 @@
             </div>
           </div>
 
-          <button @click="toggleFollow" class="btn btn-outline-primary mt-2">
+          <button
+            @click="toggleFollow"
+            class="btn mt-2"
+            :class="isFollowing ? 'btn-outline-secondary' : 'btn-outline-primary'"
+          >
             {{ isFollowing ? '언팔로우' : '팔로우' }}
           </button>
         </div>
@@ -149,6 +153,14 @@ const toggleFollow = async () => {
       headers: { Authorization: `Token ${localStorage.getItem('access_token')}` }
     })
     isFollowing.value = !isFollowing.value
+
+    // 팔로워 수 변경
+    if (isFollowing.value) {
+      user.value.followers_count += 1
+    } else {
+      user.value.followers_count -= 1
+    }
+
   } catch (err) {
     console.error('팔로우 요청 실패:', err)
   }

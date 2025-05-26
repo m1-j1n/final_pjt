@@ -1,13 +1,12 @@
 <template>
-  <header>
-    <nav>
-    
-    </nav>
-  </header>
-
-  <!--NavBar-->
-  <NavBar />
-  <RouterView />
+  <div class="app-wrapper">
+    <header>
+      <NavBar />
+    </header>
+    <main class="pt-5">
+      <RouterView />
+    </main>
+  </div>
 </template>
 
 <script setup>
@@ -17,4 +16,8 @@ import { RouterLink, RouterView } from 'vue-router'
 
 </script>
 
-<style scoped></style>
+<style scoped>
+.app-wrapper {
+  padding-top: 72px;
+}
+</style>

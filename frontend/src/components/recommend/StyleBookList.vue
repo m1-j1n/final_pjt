@@ -1,8 +1,15 @@
 <template>
   <div class="container mt-5">
-    <h2 class="mb-4 fw-bold">📚 회원님의 스타일과 어울리는 도서 리스트</h2>
+    <h2 class="mb-4 fw-bold">이런 책들이 회원님의 스타일과 잘 어울려요</h2>
 
-    <div v-if="recommendedBooks.length" class="row row-cols-1 row-cols-md-3 g-4">
+    <div v-if="recommendationSummary" class="alert alert-light">
+      <p class="mb-0">
+        {{ name }}님은 <strong>{{ genres }}</strong> 장르를 선호하고,
+        <strong>{{ styles }}</strong>
+      </p>
+    </div>
+
+    <div v-if="recommendedBooks.length" class="row row-cols-1 row-cols-md-3 g-4 mt-3">
       <div v-for="book in recommendedBooks" :key="book.id" class="col">
         <RouterLink
           :to="{ name: 'books-detail', params: { bookId: book.id } }"
@@ -25,15 +32,31 @@
       </div>
     </div>
 
-    <p v-else class="text-muted">아직 추천 도서가 없습니다.</p>
+    <p v-else class="text-muted mt-3">아직 추천 도서가 없습니다.</p>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import axios from 'axios'
+import { useUserStore } from '@/stores/users.js'
 
+const userStore = useUserStore()
 const recommendedBooks = ref([])
+const recommendationSummary = ref(null)
+const name = userStore.username
+
+const genres = computed(() =>
+  recommendationSummary.value?.preferred_genres?.join(', ') || '관심 장르 정보 없음'
+)
+
+const styles = computed(() =>
+  recommendationSummary.value?.preferred_reading_styles?.join(', ') || '선호 스타일 없음'
+)
+
+const avoids = computed(() =>
+  recommendationSummary.value?.avoided_keywords?.join(', ') || '기피 키워드 없음'
+)
 
 onMounted(async () => {
   try {
@@ -42,7 +65,8 @@ onMounted(async () => {
         Authorization: `Token ${localStorage.getItem('access_token')}`,
       },
     })
-    recommendedBooks.value = res.data
+    recommendedBooks.value = res.data.books
+    recommendationSummary.value = res.data.recommendation_summary
   } catch (err) {
     console.error('추천 도서 불러오기 실패:', err)
   }

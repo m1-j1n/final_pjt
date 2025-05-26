@@ -1,13 +1,15 @@
 from dj_rest_auth.registration.views import RegisterView
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+
 from rest_framework.response import Response
 from rest_framework import status
 
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
+from .serializers import UserProfileSerializer
 
-
+from books.models import Post, Book, ReadingStatus
 from .models import UserPreference, LifestyleKeyword, ReadingStyle, AvoidedKeyword, User
 from .serializers import (
     CustomRegisterSerializer,
@@ -145,3 +147,23 @@ def follow_status(request, user_id):
     you = get_object_or_404(User, id=user_id)
     is_following = you in me.followings.all()
     return Response({"is_following": is_following})
+
+# 상대방 프로필 조회
+@api_view(['GET'])
+def public_user_profile(request, user_id):
+    try:
+        user = get_user_model().objects.get(pk=user_id)
+    except User.DoesNotExist:
+        return Response({'detail': '사용자를 찾을 수 없습니다.'}, status=404)
+
+    posts = Post.objects.filter(user=user)
+    liked_books = Book.objects.filter(book_likes__user=user)
+    reading_statuses = ReadingStatus.objects.filter(user=user)
+
+    serializer = UserProfileSerializer(user, context={
+        'request': request,
+        'posts': posts,
+        'liked_books': liked_books,
+        'reading_statuses': reading_statuses,
+    })
+    return Response(serializer.data)

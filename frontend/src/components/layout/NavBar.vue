@@ -1,51 +1,71 @@
 <template>
-  <nav class="navbar navbar-expand-lg bg-body-tertiary">
-    <div class="container-fluid">
-      <RouterLink class="navbar-brand" :to="{ name: 'landing' }">Main</RouterLink>
+  <nav class="navbar navbar-expand-lg bg-white shadow-sm fixed-top py-3">
+    <div class="container">
+      <!-- 로고 -->
+      <RouterLink class="navbar-brand fw-bold text-dark fs-4" :to="{ name: 'landing' }">
+        Booksy
+      </RouterLink>
 
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
+      <!-- 모바일 토글 버튼 -->
+      <button
+        class="navbar-toggler border-0"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarNav"
+      >
+        <i class="bi bi-list fs-2 text-dark"></i>
       </button>
 
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+      <!-- 네브바 메뉴 -->
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav align-items-center gap-3">
           <li class="nav-item">
-            <RouterLink class="nav-link active" :to="{ name: 'books' }">Book</RouterLink>
+            <RouterLink class="nav-link text-dark fw-semibold" :to="{ name: 'books' }">Books</RouterLink>
           </li>
           <li class="nav-item">
-            <RouterLink class="nav-link active" :to="{ name: 'posts' }">Post</RouterLink>
+            <RouterLink class="nav-link text-dark fw-semibold" :to="{ name: 'posts' }">Posts</RouterLink>
           </li>
-        </ul>
 
-        <!-- 🔒 로그인 상태에 따라 버튼 달라짐 -->
-        <div class="d-flex align-items-center gap-2">
           <template v-if="!userStore.isLogin">
-            <RouterLink class="btn btn-outline-primary" :to="{ name: 'signup' }">SignUp</RouterLink>
-            <RouterLink class="btn btn-outline-success" :to="{ name: 'login' }">Login</RouterLink>
+            <li class="nav-item">
+              <RouterLink class="btn btn-sm btn-outline-dark rounded-pill px-3" :to="{ name: 'signup' }">
+                Sign Up
+              </RouterLink>
+            </li>
+            <li class="nav-item">
+              <RouterLink class="btn btn-sm btn-dark rounded-pill px-3" :to="{ name: 'login' }">
+                Login
+              </RouterLink>
+            </li>
           </template>
-          <template v-else>
-            <RouterLink class="btn btn-outline-info" :to="{ name: 'mypage' }">My Page</RouterLink>
-            <button class="btn btn-outline-danger" @click="logOut">Logout</button>
-          </template>
-        </div>
 
+          <template v-else>
+            <li class="nav-item">
+              <RouterLink class="nav-link text-dark fw-semibold" :to="{ name: 'mypage' }">
+                My Page
+              </RouterLink>
+            </li>
+            <li class="nav-item">
+              <button class="btn btn-sm btn-outline-secondary rounded-pill px-3" @click="logOut">
+                Logout
+              </button>
+            </li>
+          </template>
+        </ul>
       </div>
     </div>
   </nav>
 </template>
 
 <script setup>
-import { RouterLink, useRouter } from 'vue-router'
+import { useRouter, RouterLink } from 'vue-router'
 import { useUserStore } from '@/stores/users'
 
 const userStore = useUserStore()
 const router = useRouter()
 
 const logOut = () => {
-  userStore.logOut() // 로그아웃 처리: 토큰 삭제 등
-  router.push({ name: 'landing' }) // 메인으로 이동
+  userStore.logOut()
+  router.push({ name: 'landing' })
 }
 </script>
-
-<style scoped></style>

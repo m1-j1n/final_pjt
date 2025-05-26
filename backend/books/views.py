@@ -468,18 +468,6 @@ def recommend_books(request):
     preferred_styles = preference.preferred_reading_styles.all()
     avoided_keywords = preference.avoided_keywords.all()
 
-    print("✅ 선호 독서 스타일:")
-    for style in preferred_styles:
-        print("-", style.name)
-
-    print("🚫 기피 키워드:")
-    for keyword in avoided_keywords:
-        print("-", keyword.name)
-
-    print("🎯 관심 장르:")
-    for genre in preferred_genres:
-        print("-", genre.name)
-
     # 관심 장르 도서를 먼저, 그 외는 나중에
     books = list(Book.objects.filter(category__in=preferred_genres))
     other_books = list(Book.objects.exclude(category__in=preferred_genres)[:20])
@@ -487,4 +475,11 @@ def recommend_books(request):
     sorted_books = books + other_books
 
     serializer = BookSimpleSerializer(sorted_books, many=True, context={'request': request})
-    return Response(serializer.data)
+    return Response({
+    'recommendation_summary': {
+        'preferred_genres': [g.name for g in preferred_genres],
+        'preferred_reading_styles': [s.name for s in preferred_styles],
+        'avoided_keywords': [k.name for k in avoided_keywords],
+    },
+    'books': BookSimpleSerializer(sorted_books, many=True, context={'request': request}).data
+})

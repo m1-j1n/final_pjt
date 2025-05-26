@@ -2,6 +2,8 @@ from dj_rest_auth.registration.serializers import RegisterSerializer
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from books.models import Category
+from books.serializers import PostListSerializer, BookSimpleSerializer, LikedOrReadBookSerializer
+from books.models import ReadingStatus
 from .models import (
     UserPreference,
     LifestyleKeyword,
@@ -136,6 +138,49 @@ class CustomUserDetailSerializer(serializers.ModelSerializer):
             'followers_count', 
             'followings_count',
         ]
+
+    def get_followers_count(self, obj):
+        return obj.followers.count()
+
+    def get_followings_count(self, obj):
+        return obj.followings.count()
+    
+
+User = get_user_model()
+class UserProfileSerializer(serializers.ModelSerializer):
+    posts = serializers.SerializerMethodField()
+    books = serializers.SerializerMethodField()
+    followers_count = serializers.SerializerMethodField()
+    followings_count = serializers.SerializerMethodField()
+    preference = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = [
+            'id', 'username', 'name', 'profile_img',
+            'gender', 'age',
+            'preference',
+            'posts', 'books',
+            'followers_count', 'followings_count',
+        ]
+
+    def get_preference(self, obj):
+        if hasattr(obj, 'preference') and obj.preference:
+            return UserPreferenceDetailSerializer(obj.preference).data
+        return None
+
+    def get_posts(self, obj):
+        posts = self.context.get('posts', [])
+        return PostListSerializer(posts, many=True, context=self.context).data
+
+    def get_books(self, obj):
+        liked_books = self.context.get('liked_books', [])
+        reading_statuses = self.context.get('reading_statuses', [])
+        status_dict = {rs.book.id: rs.status for rs in reading_statuses}
+        return LikedOrReadBookSerializer(
+            liked_books, many=True,
+            context={**self.context, 'status_dict': status_dict}
+        ).data
 
     def get_followers_count(self, obj):
         return obj.followers.count()
