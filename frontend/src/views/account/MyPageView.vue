@@ -1,9 +1,9 @@
 <template>
   <div class="container py-5">
     <div class="row">
-      <!-- Left: Profile Card -->
+      <!-- Left: Profile Card + About Me -->
       <div class="col-lg-4 mb-4 mb-lg-0">
-        <div class="card shadow-sm text-center p-4">
+        <div class="card shadow-sm text-center p-4 mb-4">
           <img :src="profileImg" alt="Author" class="rounded-circle mb-3" width="120" height="120">
 
           <h4>{{ user.name }}</h4>
@@ -36,28 +36,58 @@
             ✏ 내 정보 수정
           </RouterLink>
         </div>
-      </div>
 
-      <!-- Right: About + Tags + Books/Posts Tabs -->
-      <div class="col-lg-8">
-        <div class="card p-4 shadow-sm mb-4">
-          <h4>About Me</h4>
+        <!-- About Me + 설문 요약 -->
+        <div class="card p-4 shadow-sm">
+          <h4 class="mb-3">About Me</h4>
           <p>{{ user.about }}</p>
 
-          <h5 class="mt-4">설문 기본 태그</h5>
-          <div class="mb-3">
-            <span
-              v-for="tag in user.tags"
-              :key="tag"
-              class="badge bg-light text-dark border me-2"
-            >{{ tag }}</span>
+          <h6 class="mt-4">라이프스타일</h6>
+          <div class="mb-2">
+            <span v-for="item in user.preference?.lifestyles" :key="item.id"
+              class="badge bg-light text-dark border me-1">{{ item.name }}</span>
           </div>
-        </div>
 
+          <h6 class="mt-3">독서 스타일</h6>
+          <div class="mb-2">
+            <span v-for="item in user.preference?.preferred_reading_styles" :key="item.id"
+              class="badge bg-light text-dark border me-1">{{ item.name }}</span>
+          </div>
+
+          <h6 class="mt-3">관심 장르</h6>
+          <div class="mb-2">
+            <span v-for="item in user.preference?.interested_genres" :key="item.id"
+              class="badge bg-primary-subtle text-primary-emphasis border me-1">{{ item.name }}</span>
+          </div>
+
+          <h6 class="mt-3">비선호 장르</h6>
+          <div class="mb-2">
+            <span v-for="item in user.preference?.avoided_genres" :key="item.id"
+              class="badge bg-danger-subtle text-danger-emphasis border me-1">{{ item.name }}</span>
+          </div>
+
+          <h6 class="mt-3">기피 키워드</h6>
+          <div>
+            <span v-for="item in user.preference?.avoided_keywords" :key="item.id"
+              class="badge bg-warning-subtle text-dark border me-1">{{ item.name }}</span>
+          </div>
+
+          <RouterLink :to="{ name: 'mypage-preference-edit' }" class="btn btn-outline-primary mt-3">
+            ✏ 내 선호도 수정
+          </RouterLink>
+        </div>
+      </div>
+
+      <!-- Right: Books/Posts Tabs -->
+      <div class="col-lg-8">
         <!-- Tab Buttons -->
         <div class="d-flex mb-3">
-          <button class="btn me-2" :class="{ 'btn-primary': activeTab === 'books', 'btn-outline-primary': activeTab !== 'books' }" @click="activeTab = 'books'">📚 책</button>
-          <button class="btn" :class="{ 'btn-primary': activeTab === 'posts', 'btn-outline-primary': activeTab !== 'posts' }" @click="activeTab = 'posts'">📝 포스트</button>
+          <button class="btn me-2"
+            :class="{ 'btn-primary': activeTab === 'books', 'btn-outline-primary': activeTab !== 'books' }"
+            @click="activeTab = 'books'">📚 책</button>
+          <button class="btn"
+            :class="{ 'btn-primary': activeTab === 'posts', 'btn-outline-primary': activeTab !== 'posts' }"
+            @click="activeTab = 'posts'">📝 포스트</button>
         </div>
 
         <!-- Book Tab Content -->
@@ -70,19 +100,14 @@
 
         <!-- Post Tab Content -->
         <div v-if="activeTab === 'posts'" class="row">
-          <!-- ✅ 포스트가 아예 없는 경우 -->
           <p v-if="myPosts.length === 0" class="text-muted text-center">
             📝 포스트가 아직 작성되지 않았습니다.
           </p>
 
           <div class="col-md-6 mb-4" v-for="post in myPosts" :key="post.id">
             <div class="card h-100" @click="goToPostDetail(post.id)" style="cursor: pointer;">
-              <img
-                :src="post.cover_img || post.book_cover"
-                class="card-img-top"
-                alt="포스트 이미지"
-                style="height: 200px; object-fit: cover;"
-              />
+              <img :src="post.cover_img || post.book_cover" class="card-img-top" alt="포스트 이미지"
+                style="height: 200px; object-fit: cover;" />
               <div class="card-body">
                 <h6 class="card-title">{{ post.title }}</h6>
                 <p class="text-muted small">{{ post.content.slice(0, 50) }}...</p>
@@ -118,13 +143,7 @@ const user = ref({
   followers: 0
 })
 
-const books = ref([
-  { id: 1, title: '책1', cover: '/media/book1.jpg', status: '완독' },
-  { id: 2, title: '책2', cover: '/media/book2.jpg', status: '읽는 중' },
-  { id: 3, title: '책3', cover: '/media/book3.jpg', status: '읽고 싶은 책' },
-  { id: 4, title: '책4', cover: '/media/book4.jpg', status: '중단' },
-])
-
+const books = ref([])
 const myPosts = ref([])
 
 const goToBookDetail = (bookId) => {
@@ -136,7 +155,6 @@ const goToPostDetail = (postId) => {
 }
 
 onMounted(() => {
-  // ✅ 사용자 정보 요청
   axios.get(`${API_ACCOUNT_URL}/mypage/`, {
     headers: {
       Authorization: `Token ${localStorage.getItem('access_token')}`
@@ -145,32 +163,16 @@ onMounted(() => {
     const data = res.data
     user.value.name = data.name
     user.value.bio = `${data.gender === 'M' ? '남성' : '여성'}, ${data.age}세`
+    user.value.preference = data.preference || {}
 
-    const tags = []
     if (data.preference) {
       user.value.about = `주 ${data.preference.weekly_avg_reading_time}시간 독서, 연간 ${data.preference.annual_reading_amount}권 읽음`
-
-      if (data.preference.interested_genres) {
-        tags.push(...data.preference.interested_genres.map(g => g.name))
-      }
-      if (data.preference.lifestyle?.name) {
-        tags.push(`라이프스타일: ${data.preference.lifestyle.name}`)
-      }
-      if (data.preference.preferred_reading_style?.name) {
-        tags.push(`독서 스타일: ${data.preference.preferred_reading_style.name}`)
-      }
-      if (data.preference.avoided_keywords) {
-        tags.push(`기피: ${data.preference.avoided_keywords}`)
-      }
     } else {
       user.value.about = '설문 미완료'
     }
-    user.value.tags = tags
 
     if (data.profile_img) {
-      profileImg.value = data.profile_img.startsWith('http')
-        ? data.profile_img
-        : `http://127.0.0.1:8000${data.profile_img}`
+      profileImg.value = data.profile_img.startsWith('http') ? data.profile_img : `http://127.0.0.1:8000${data.profile_img}`
     }
 
     user.value.articles = data.articles_count || 0
@@ -180,7 +182,6 @@ onMounted(() => {
     console.error('사용자 정보 불러오기 실패:', err)
   })
 
-  // ✅ 내 포스트 목록 요청 (경로 수정!)
   axios.get('http://127.0.0.1:8000/api/v1/posts/mine/', {
     headers: {
       Authorization: `Token ${localStorage.getItem('access_token')}`
@@ -191,30 +192,33 @@ onMounted(() => {
     console.error('내 포스트 불러오기 실패:', err)
   })
 })
-
 </script>
 
 <style scoped>
 .card {
   border-radius: 16px;
 }
+
 .badge {
   font-size: 0.75rem;
   padding: 0.3em 0.6em;
   border-radius: 8px;
 }
+
 .book-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 20px;
 }
+
 .book-card {
   position: relative;
   cursor: pointer;
 }
+
 .book-img {
   width: 100%;
   border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 </style>

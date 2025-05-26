@@ -4,27 +4,31 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 
-from django.contrib.auth import get_user_model  # ✅ 다른 사람 프로필 조회용
+from django.contrib.auth import get_user_model
+
+from .models import UserPreference, LifestyleKeyword, ReadingStyle, AvoidedKeyword
 from .serializers import (
     CustomRegisterSerializer,
     CustomUserDetailSerializer,
     UserPreferenceSerializer,
+    LifestyleKeywordSerializer,
+    ReadingStyleSerializer,
+    AvoidedKeywordSerializer,
 )
-from .models import UserPreference
-from accounts.models import LifestyleKeyword, ReadingStyle
-from accounts.serializers import LifestyleKeywordSerializer, ReadingStyleSerializer
 
-
-# ✅ 회원가입 View (커스텀 serializer 사용)
+# ✅ 커스텀 회원가입 뷰 (추가 정보 포함)
 class CustomRegisterView(RegisterView):
     serializer_class = CustomRegisterSerializer
 
-
-# ✅ 내 마이페이지 View (GET, PATCH)
+# ✅ 내 마이페이지 (GET: 조회 / PATCH: 수정)
 @api_view(['GET', 'PATCH'])
 @permission_classes([IsAuthenticated])
-def MyPageView(request):
+def my_page_view(request):
     user = request.user
+
+    # 💡 preference가 없으면 자동 생성
+    if not hasattr(user, 'preference'):
+        UserPreference.objects.create(user=user)
 
     if request.method == 'GET':
         serializer = CustomUserDetailSerializer(user)
@@ -38,7 +42,7 @@ def MyPageView(request):
         return Response(serializer.errors, status=400)
 
 
-# ✅ 다른 사람 마이페이지 View (GET만)
+# ✅ 공개 프로필 조회 (유저 ID 기준)
 @api_view(['GET'])
 def public_user_profile(request, user_id):
     User = get_user_model()
@@ -51,12 +55,12 @@ def public_user_profile(request, user_id):
     return Response(serializer.data)
 
 
-# ✅ 설문 응답 View
+# ✅ 설문 응답 조회 & 저장 (PUT: 회원가입 마지막 단계)
 @api_view(['GET', 'PUT'])
 @permission_classes([IsAuthenticated])
-def UserPreferenceView(request):
+def user_preference_view(request):
     user = request.user
-    preference, created = UserPreference.objects.get_or_create(user=user)
+    preference, _ = UserPreference.objects.get_or_create(user=user)
 
     if request.method == 'GET':
         serializer = UserPreferenceSerializer(preference)
@@ -66,11 +70,10 @@ def UserPreferenceView(request):
         serializer = UserPreferenceSerializer(preference, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            user.is_signup_complete = True
+            user.is_signup_complete = True  # ✅ 회원가입 완료 처리
             user.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 # ✅ 라이프스타일 키워드 목록
 @api_view(['GET'])
@@ -88,6 +91,16 @@ def readingstyle_list(request):
     return Response(serializer.data)
 
 
+# ✅ 피하고 싶은 키워드 목록 (다중 선택용)
+@api_view(['GET'])
+def avoided_keyword_list(request):
+    keywords = AvoidedKeyword.objects.all()
+    serializer = AvoidedKeywordSerializer(keywords, many=True)
+    return Response(serializer.data)
+
+
+
+
 # ✅ 비밀번호 인증
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -99,6 +112,7 @@ def verify_password(request):
         return Response({'detail': '비밀번호가 일치하지 않습니다.'}, status=status.HTTP_400_BAD_REQUEST)
 
     return Response({'detail': '비밀번호 인증 성공'}, status=status.HTTP_200_OK)
+
 
 
 # 현재 로그인 사용자 정보 저장
