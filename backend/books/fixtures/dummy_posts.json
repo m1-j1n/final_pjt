@@ -1,0 +1,128 @@
+[
+  {
+    "model": "books.post",
+    "pk": 1,
+    "fields": {
+      "title": "Aut ut nobis fuga id.",
+      "content": "Optio accusamus nulla maxime nemo qui. At asperiores ipsa facere. In incidunt in consequatur. Numquam assumenda nobis. Velit dolor labore aspernatur odit.",
+      "reading_date": "2025-05-19",
+      "cover_img": "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f",
+      "book": 118,
+      "user": 16,
+      "created_at": "2025-05-25T12:00:00Z",
+      "updated_at": "2025-05-25T12:00:00Z"
+    }
+  },
+  {
+    "model": "books.post",
+    "pk": 2,
+    "fields": {
+      "title": "Delectus dolores iste.",
+      "content": "Quasi in blanditiis velit excepturi nisi. Sequi dolorum officiis tempore sapiente maiores. Laudantium sequi aperiam. Fugit id consectetur ex. Quis nobis quo neque.",
+      "reading_date": "2025-05-12",
+      "cover_img": "https://images.unsplash.com/photo-1512820790803-83ca734da794",
+      "book": 183,
+      "user": 19,
+      "created_at": "2025-05-25T12:00:00Z",
+      "updated_at": "2025-05-25T12:00:00Z"
+    }
+  },
+  {
+    "model": "books.post",
+    "pk": 3,
+    "fields": {
+      "title": "Molestiae et culpa.",
+      "content": "Eveniet illum consectetur repellat excepturi quibusdam voluptates. Voluptatum blanditiis iure non repellat ut. Quia debitis molestiae nostrum in accusamus corporis porro. Vero suscipit sit maiores. Aut saepe ducimus totam vero dicta.",
+      "reading_date": "2025-05-14",
+      "cover_img": "https://images.unsplash.com/photo-1495446815901-a7297e633e8d",
+      "book": 136,
+      "user": 25,
+      "created_at": "2025-05-25T12:00:00Z",
+      "updated_at": "2025-05-25T12:00:00Z"
+    }
+  },
+  {
+    "model": "books.post",
+    "pk": 4,
+    "fields": {
+      "title": "Perspiciatis nesciunt aliquid.",
+      "content": "Deleniti fuga explicabo cum delectus. Reprehenderit nihil atque distinctio. Neque dolore unde quis blanditiis veritatis sint aspernatur. Eos similique quas adipisci facilis. Aut necessitatibus earum sit ratione. Dignissimos tenetur ratione distinctio.",
+      "reading_date": "2025-05-18",
+      "cover_img": "https://images.unsplash.com/photo-1528207776546-365bb710ee93",
+      "book": 187,
+      "user": 7,
+      "created_at": "2025-05-25T12:00:00Z",
+      "updated_at": "2025-05-25T12:00:00Z"
+    }
+  },
+  {
+    "model": "books.post",
+    "pk": 5,
+    "fields": {
+      "title": "Quibusdam maiores repellat.",
+      "content": "Nemo odit et consequatur magni. Repudiandae tenetur dolore quibusdam illum similique. Impedit aliquam blanditiis ad dignissimos itaque quasi.",
+      "reading_date": "2025-05-11",
+      "cover_img": "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c",
+      "book": 190,
+      "user": 7,
+      "created_at": "2025-05-25T12:00:00Z",
+      "updated_at": "2025-05-25T12:00:00Z"
+    }
+  },
+  {
+    "model": "books.post",
+    "pk": 6,
+    "fields": {
+      "title": "Voluptatem quo maxime in possimus.",
+      "content": "Saepe quidem vero ea. Ut illo quae consequuntur. Laudantium veritatis sed corporis repellendus nemo.",
+      "reading_date": "2025-05-19",
+      "cover_img": "https://images.unsplash.com/photo-1529655683826-aba9b3e77383",
+      "book": 132,
+      "user": 29,
+      "created_at": "2025-05-25T12:00:00Z",
+      "updated_at": "2025-05-25T12:00:00Z"
+    }
+  },
+  {
+    "model": "books.post",
+    "pk": 7,
+    "fields": {
+      "title": "Provident ducimus excepturi impedit eos veniam.",
+      "content": "Corporis mollitia quia accusamus beatae magni. Perferendis quas maxime facilis amet error. Mollitia debitis at officia praesentium ullam. Fugit nobis eveniet aliquam libero fuga. At est porro facere blanditiis ut ut odit.",
+      "reading_date": "2025-05-20",
+      "cover_img": "https://images.unsplash.com/photo-1586483213133-985b58da94f3",
+      "book": 178,
+      "user": 3,
+      "created_at": "2025-05-25T12:00:00Z",
+      "updated_at": "2025-05-25T12:00:00Z"
+    }
+  },
+  {
+    "model": "books.post",
+    "pk": 8,
+    "fields": {
+      "title": "Id non ex dicta.",
+      "content": "Corporis perspiciatis vel nostrum. At vel dolorem harum. Minima culpa saepe numquam ab.",
+      "reading_date": "2025-05-17",
+      "cover_img": "https://images.unsplash.com/photo-1509021436665-8f07dbf5bf1d",
+      "book": 156,
+      "user": 18,
+      "created_at": "2025-05-25T12:00:00Z",
+      "updated_at": "2025-05-25T12:00:00Z"
+    }
+  },
+  {
+    "model": "books.post",
+    "pk": 9,
+    "fields": {
+      "title": "Dolore dolorum unde.",
+      "content": "Dolores ipsam doloribus maiores tenetur nesciunt. Eius voluptate provident deleniti ex pariatur cum deleniti. Minus quisquam nam atque fugit doloribus explicabo.",
+      "reading_date": "2025-05-07",
+      "cover_img": "https://images.unsplash.com/photo-1495446815901-a7297e633e8d",
+      "book": 179,
+      "user": 5,
+      "created_at": "2025-05-25T12:00:00Z",
+      "updated_at": "2025-05-25T12:00:00Z"
+    }
+  }
+]
