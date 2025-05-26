@@ -16,6 +16,9 @@ urlpatterns = [
     # 추천
     path('recommend/content-based/', views.recommend_similar_books, name='recommend_similar_books'),
     path('recommend/dropped-books/', views.dropped_books_summary, name='dropped-books-summary'),
+    path('recommend/basic/', views.recommend_books_basic, name='recommend_books_basic'),
+
+
 
     # 검색
     path('books/search/', views.book_search, name='book_search'),

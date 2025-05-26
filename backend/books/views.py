@@ -1,3 +1,5 @@
+import openai
+from random import sample
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.views.decorators.http import (
@@ -13,12 +15,22 @@ from rest_framework import status
 
 from accounts.models import Category
 from .models import Book, Post, Comment, BookLike, Book, ReadingStatus, Keyword
-from .utils import get_random_image_file, generate_recommendation_summary, extract_keywords_from_content
+from .utils import (
+    get_random_image_file, 
+    generate_recommendation_summary, 
+    extract_keywords_from_content,
+    build_prompt, 
+    parse_response,
+    get_gpt_recommendation,
+    
+    )
 from django.core.exceptions import PermissionDenied
 from .serializers import  ( BookSerializer, CategorySerializer, PostDetailSerializer, PostCreateSerializer, 
                            PostListSerializer, BookSimpleSerializer, CommentSerializer, ReadingStatusSerializer,
                             StoppedBookSerializer,
 )
+
+
 
 ### 도서 ###
 # 책 전체 조회
@@ -367,3 +379,25 @@ def my_posts(request):
     posts = Post.objects.filter(user=user)
     serializer = PostListSerializer(posts, many=True)
     return Response(serializer.data)
+
+
+@api_view(['POST'])
+def recommend_books_basic(request):
+    answers = request.data.get('answers')
+
+    if not answers:
+        return Response({'error': 'Invalid input'}, status=400)
+
+    # ✅ 모든 책 → 직렬화
+    books = BookSerializer(Book.objects.all(), many=True, context={'request': request}).data
+
+    # ✅ 랜덤으로 30권만 추출
+    books_sampled = sample(books, min(30, len(books)))
+
+    try:
+        # ✅ GPT 추천 함수에 보냄 (핵심)
+        recommended_books = get_gpt_recommendation(answers, books_sampled)
+        return Response({'recommended_books': recommended_books})
+    except Exception as e:
+        print("[ERROR] GPT 추천 오류:", str(e))
+        return Response({'error': str(e)}, status=500)

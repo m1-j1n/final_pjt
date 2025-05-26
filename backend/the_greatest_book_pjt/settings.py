@@ -179,3 +179,4 @@ REST_AUTH_REGISTER_SERIALIZERS = {
 
 # 이메일 인증 까지는 안받고 싶어요..
 ACCOUNT_EMAIL_VERIFICATION = 'none'
+

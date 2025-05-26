@@ -17,7 +17,9 @@ import PublicProfileView from '@/views/account/PublicProfileView.vue'
 import OnboardingSurveyView from '@/views/account/OnboardingSurveyView.vue'
 import ReadingStateView from '@/views/recommend/ReadingStateView.vue'
 import StopRedingView from '@/views/recommend/StopRedingView.vue'
-import MyPreferenceEditView from '@/views/account/MyPreferenceEditview.vue'
+import MyPreferenceEditView from '@/views/account/MyPreferenceEditView.vue'
+import SurveyView from '@/views/recommend/SurveyView.vue'
+import BasicRecommendView from '@/views/recommend/BasicRecommendView.vue'
 
 // 인증이 필요한 라우트용 가드
 const requireAuth = async (to, from, next) => {
@@ -53,6 +55,18 @@ const routes = [
     name: 'mypage-preference-edit',
     component: MyPreferenceEditView,
   },
+  {
+    path: '/survey',
+    name: 'survey',
+    component: SurveyView,
+  },
+  {
+    path: '/recommend/baisc',
+    name: 'basic-recommend',
+    component: BasicRecommendView
+  }
+
+
 ]
 
 
