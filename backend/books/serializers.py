@@ -70,13 +70,14 @@ class ReadingStatusSerializer(serializers.ModelSerializer):
 
 # 🔹 StoppedBookSerializer : 키워드 시리얼라이저
 class StoppedBookSerializer(serializers.ModelSerializer):
+    book_id = serializers.IntegerField(source='book.id', read_only=True)
     book_title = serializers.CharField(source='book.title', read_only=True)
     book_cover = serializers.URLField(source='book.cover', read_only=True) 
     stop_reason = serializers.CharField()
 
     class Meta:
         model = ReadingStatus
-        fields = ['book_title', 'book_cover', 'stop_reason']
+        fields = ['book_id', 'book_title', 'book_cover', 'stop_reason']
 
 # 🔹 KeywordSerializer : 키워드 시리얼라이저
 class KeywordSerializer(serializers.ModelSerializer):
@@ -95,6 +96,7 @@ class PostCreateSerializer(serializers.ModelSerializer):
 # 🔹 PostDetailSerializer : 포스트 상세 조회 시리얼라이저
 class PostDetailSerializer(serializers.ModelSerializer):
     user = serializers.CharField(source='user.username', read_only=True)
+    user_id = serializers.IntegerField(source='user.id', read_only=True)
     book_id = serializers.IntegerField(source='book.id', read_only=True)
     comment_count = serializers.SerializerMethodField()
     keywords = KeywordSerializer(many=True, read_only=True)
@@ -103,7 +105,7 @@ class PostDetailSerializer(serializers.ModelSerializer):
         model = Post
         fields = [
             'id', 'title', 'content', 'created_at', 'cover_img',
-            'user', 'book_id', 'comment_count', 'keywords'
+            'user', 'user_id', 'book_id', 'comment_count', 'keywords'
         ]
 
     def get_comment_count(self, obj):

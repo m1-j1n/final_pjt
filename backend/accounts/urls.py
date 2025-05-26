@@ -9,6 +9,8 @@ from .views import (
     public_user_profile,  
     avoided_keyword_list, 
     get_user_profile,
+    toggle_follow,
+    follow_status
 )
 
 urlpatterns = [
@@ -21,4 +23,7 @@ urlpatterns = [
      path('avoided-keywords/', avoided_keyword_list, name='avoided_keywords'),
     path('<int:user_id>/profile/', public_user_profile, name='user-profile'),  # 다른 유저의 프로필 조회
     path('profile/', get_user_profile, name='my-profile'),
+    # 팔로잉 팔로우
+    path('<int:user_id>/follow/', toggle_follow, name='toggle_follow'),
+    path('<int:user_id>/follow-status/', follow_status, name='follow_status'),
 ]

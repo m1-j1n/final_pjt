@@ -20,6 +20,8 @@ import StopRedingView from '@/views/recommend/StopRedingView.vue'
 import MyPreferenceEditView from '@/views/account/MyPreferenceEditView.vue'
 import SurveyView from '@/views/recommend/SurveyView.vue'
 import BasicRecommendView from '@/views/recommend/BasicRecommendView.vue'
+import UserProfileView from '@/views/account/UserProfileView.vue'
+import StyleRecommendView from '@/views/recommend/StyleRecommendView.vue'
 
 // 인증이 필요한 라우트용 가드
 const requireAuth = async (to, from, next) => {
@@ -65,9 +67,17 @@ const routes = [
     path: '/recommend/baisc',
     name: 'basic-recommend',
     component: BasicRecommendView
-  }
-
-
+  },
+  {
+    path: '/recommend/style',
+    name: 'style-recommend',
+    component: StyleRecommendView,
+  },
+  {
+    path: '/users/:userId/profile',
+    name: 'user-profile',
+    component: UserProfileView,
+  },
 ]
 
 

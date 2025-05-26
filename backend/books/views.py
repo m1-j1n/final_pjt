@@ -420,7 +420,7 @@ def my_posts(request):
         'posts': serializer.data            # 🔸 포스트 리스트
     })
 
-
+# 기본 설문 추천
 @api_view(['POST'])
 def recommend_books_basic(request):
     answers = request.data.get('answers')
@@ -441,3 +441,42 @@ def recommend_books_basic(request):
     except Exception as e:
         print("[ERROR] GPT 추천 오류:", str(e))
         return Response({'error': str(e)}, status=500)
+
+# 회원가입 키워드 기반 추천
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def recommend_books(request):
+    user = request.user
+    preference = getattr(user, 'preference', None)
+
+    if not preference:
+        return Response({'detail': '선호 정보를 먼저 등록해주세요.'}, status=400)
+
+    # 관심 장르
+    preferred_genres = preference.interested_genres.all()
+    preferred_genre_ids = [genre.id for genre in preferred_genres]
+
+    # 👇 선호/기피 키워드 프린트
+    preferred_styles = preference.preferred_reading_styles.all()
+    avoided_keywords = preference.avoided_keywords.all()
+
+    print("✅ 선호 독서 스타일:")
+    for style in preferred_styles:
+        print("-", style.name)
+
+    print("🚫 기피 키워드:")
+    for keyword in avoided_keywords:
+        print("-", keyword.name)
+
+    print("🎯 관심 장르:")
+    for genre in preferred_genres:
+        print("-", genre.name)
+
+    # 관심 장르 도서를 먼저, 그 외는 나중에
+    books = list(Book.objects.filter(category__in=preferred_genres))
+    other_books = list(Book.objects.exclude(category__in=preferred_genres)[:20])
+
+    sorted_books = books + other_books
+
+    serializer = BookSimpleSerializer(sorted_books, many=True, context={'request': request})
+    return Response(serializer.data)

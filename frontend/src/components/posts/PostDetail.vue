@@ -15,7 +15,14 @@
       <!-- 왼쪽: 본문 영역 -->
       <div class="col-lg-8 mb-4">
         <div class="mb-2 text-muted small">
-          ✍️ {{ post.user }} · 🕒 {{ formatDate(post.created_at) }}
+          ✍️
+          <RouterLink
+            :to="{ name: 'user-profile', params: { userId: post.user_id } }"
+            class="text-decoration-none text-dark fw-medium"
+          >
+            {{ post.user }}
+          </RouterLink>
+          · 🕒 {{ formatDate(post.created_at) }}
         </div>
         <h2 class="fw-bold mb-3">{{ post.title }}</h2>
         <p class="fs-5" style="line-height: 1.8;" v-html="formattedContent"></p>

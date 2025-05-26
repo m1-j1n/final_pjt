@@ -5,8 +5,10 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from django.contrib.auth import get_user_model
+from django.shortcuts import get_object_or_404
 
-from .models import UserPreference, LifestyleKeyword, ReadingStyle, AvoidedKeyword
+
+from .models import UserPreference, LifestyleKeyword, ReadingStyle, AvoidedKeyword, User
 from .serializers import (
     CustomRegisterSerializer,
     CustomUserDetailSerializer,
@@ -82,7 +84,6 @@ def lifestyle_list(request):
     serializer = LifestyleKeywordSerializer(lifestyles, many=True)
     return Response(serializer.data)
 
-
 # ✅ 독서 스타일 목록
 @api_view(['GET'])
 def readingstyle_list(request):
@@ -90,16 +91,12 @@ def readingstyle_list(request):
     serializer = ReadingStyleSerializer(reading_styles, many=True)
     return Response(serializer.data)
 
-
 # ✅ 피하고 싶은 키워드 목록 (다중 선택용)
 @api_view(['GET'])
 def avoided_keyword_list(request):
     keywords = AvoidedKeyword.objects.all()
     serializer = AvoidedKeywordSerializer(keywords, many=True)
     return Response(serializer.data)
-
-
-
 
 # ✅ 비밀번호 인증
 @api_view(['POST'])
@@ -113,9 +110,7 @@ def verify_password(request):
 
     return Response({'detail': '비밀번호 인증 성공'}, status=status.HTTP_200_OK)
 
-
-
-# 현재 로그인 사용자 정보 저장
+# ✅ 현재 로그인 사용자 정보 저장
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_user_profile(request):
@@ -124,3 +119,29 @@ def get_user_profile(request):
         "username": user.username,
         "email": user.email,
     })
+
+# ✅ 팔로우 하기
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def toggle_follow(request, user_id):
+    me = request.user
+    you = get_object_or_404(User, id=user_id)
+
+    if me == you:
+        return Response({"detail": "자기 자신은 팔로우할 수 없습니다."}, status=status.HTTP_400_BAD_REQUEST)
+
+    if you in me.followings.all():
+        me.followings.remove(you)
+        return Response({"followed": False})
+    else:
+        me.followings.add(you)
+        return Response({"followed": True})
+
+# ✅ 팔로우 여부 확인
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def follow_status(request, user_id):
+    me = request.user
+    you = get_object_or_404(User, id=user_id)
+    is_following = you in me.followings.all()
+    return Response({"is_following": is_following})
