@@ -101,24 +101,48 @@ def book_search(request):
     return Response(serializer.data)
 
 # 도서 상태 기록
-@api_view(['POST'])
+@api_view(['GET', 'POST', 'PATCH', 'DELETE'])
 @permission_classes([IsAuthenticated])
 def reading_status_create_or_update(request, book_id):
     try:
         book = Book.objects.get(pk=book_id)
     except Book.DoesNotExist:
-        return Response({'error': '책을 찾을 수 없습니다.'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'error': '책을 찾을 수 없습니다.'}, status=404)
 
-    # 기존 상태가 있다면 수정, 없으면 생성
-    instance, created = ReadingStatus.objects.get_or_create(user=request.user, book=book)
+    try:
+        instance = ReadingStatus.objects.get(user=request.user, book=book)
+    except ReadingStatus.DoesNotExist:
+        instance = None
 
-    serializer = ReadingStatusSerializer(instance, data=request.data, partial=True)
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_200_OK if not created else status.HTTP_201_CREATED)
-    else:
-        print(serializer.errors)  
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    if request.method == 'GET':
+        if instance:
+            serializer = ReadingStatusSerializer(instance)
+            return Response(serializer.data)
+        return Response({'detail': '독서 기록이 없습니다.'}, status=404)
+
+    elif request.method == 'POST':
+        if not instance:
+            instance = ReadingStatus(user=request.user, book=book)
+        serializer = ReadingStatusSerializer(instance, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
+
+    elif request.method == 'PATCH':
+        if not instance:
+            return Response({'detail': '기록이 없습니다.'}, status=404)
+        serializer = ReadingStatusSerializer(instance, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=400)
+
+    elif request.method == 'DELETE':
+        if not instance:
+            return Response({'detail': '삭제할 기록이 없습니다.'}, status=404)
+        instance.delete()
+        return Response(status=204)
 
 # 포스트 생성
 @api_view(['POST'])

@@ -20,7 +20,6 @@ urlpatterns = [
     # 검색
     path('books/search/', views.book_search, name='book_search'),
     path('books/<int:book_pk>/posts/list/', views.book_related_posts, name='book_related_posts'),
-    
 
     ### 포스트 ###
     path('posts/', views.post_list, name='post_list'),
@@ -29,8 +28,7 @@ urlpatterns = [
     path('books/<int:book_pk>/posts/<int:post_pk>/update/', views.post_update, name='post_update'),
     path('books/<int:book_pk>/posts/<int:post_pk>/delete/', views.post_delete, name='post_delete'),
     path('posts/category/<int:category_id>/', views.filter_posts_by_category, name='filter_posts_by_category'),
-    path('posts/mine/', views.my_posts, name='my_posts'), # 마이페이지에 가져올 포스트들
-
+    path('posts/mine/', views.my_posts, name='my_posts'), 
 
 
     # 댓글

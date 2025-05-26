@@ -38,25 +38,39 @@
 
       <button class="btn btn-record d-flex align-items-center justify-content-center gap-1" @click.prevent="openModal">
         <i class="bi bi-journal-text"></i>
-        <span>✏️ 독서 기록하기</span>
+        <span>
+          {{ readingStatus ? '✏️ 독서 기록 수정하기' : '✏️ 독서 기록하기' }}
+        </span>
       </button>
     </div>
   </div>
 
     <!-- 모달 컴포넌트 -->
     <BookCardModal
-    v-if="showModal"
-    :book-id="selectedBookId"
-    @close="closeModal"
-    @saved="handleSave"
-  />
+      v-if="showModal && modalType === 'create'"
+      :book-id="selectedBookId"
+      @close="closeModal"
+      @saved="handleSave"
+    />
+
+    <!-- 수정 모달 -->
+    <BookCardUpdateModal
+      v-if="showModal && modalType === 'edit'"
+      :book-id="selectedBookId"
+      :initial-data="readingStatus"
+      @close="closeModal"
+      @updated="handleSave"
+      @deleted="handleDelete"
+    />
+
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/users.js'
 import BookCardModal from '@/components/books/BookCardModal.vue'
+import BookCardUpdateModal from './BookCardUpdateModal.vue'
 import axios from 'axios'
 import Swal from 'sweetalert2'
 
@@ -112,8 +126,11 @@ const toggleLike = async () => {
 // 모달 처리
 const showModal = ref(false)
 const selectedBookId = ref(null)
+const readingStatus = ref(null)
+const modalType = ref('create')
 
-const openModal = () => {
+// 독서 기록하기 모달 관리
+const openModal = async () => {
   if (!userStore.token) {
     Swal.fire({
       icon: 'info',
@@ -131,37 +148,130 @@ const openModal = () => {
   }
 
   selectedBookId.value = book.id
-  showModal.value = true
-}
 
-const closeModal = () => {
-  showModal.value = false
-}
-
-// 📌 저장 이벤트에서 axios 요청 수행
-const handleSave = async ({ bookId, data }) => {
   try {
-    const res = await axios.post(
-      `http://localhost:8000/api/v1/books/${bookId}/reading-status/`,
-      data,
+    const res = await axios.get(
+      `http://localhost:8000/api/v1/books/${book.id}/reading-status/`,
       {
         headers: {
           Authorization: `Token ${userStore.token}`,
         },
       }
     )
-    console.log('저장 성공:', res.data)
+
+    readingStatus.value = res.data
+    modalType.value = 'edit'
+    showModal.value = true
   } catch (err) {
-    console.error('저장 실패:',err.response?.data)
+    if (err.response?.status === 404) {
+      // ✅ 기록 없음
+      readingStatus.value = null
+      modalType.value = 'create'
+      showModal.value = true
+    } else {
+      console.error('기록 조회 실패:', err)
+    }
   }
 }
 
-onMounted(() => {
+// 모달 닫는 창
+const closeModal = () => {
+  showModal.value = false
+  readingStatus.value = null
+  modalType.value = 'create'
+}
+
+// 📌 저장 이벤트에서 axios 요청 수행
+const handleSave = async ({ bookId, data, mode }) => {
+  try {
+    const url = `http://localhost:8000/api/v1/books/${bookId}/reading-status/`
+    const config = {
+      headers: {
+        Authorization: `Token ${userStore.token}`,
+      },
+    }
+
+    let res
+    if (mode === 'edit') {
+      res = await axios.patch(url, data, config)
+      Swal.fire({
+        icon: 'success',
+        title: '수정 완료!',
+        text: '독서 기록이 수정되었습니다.',
+        timer: 1500,
+        showConfirmButton: false,
+      })
+    } else {
+      res = await axios.post(url, data, config)
+      Swal.fire({
+        icon: 'success',
+        title: '저장 완료!',
+        text: '독서 기록이 저장되었습니다.',
+        timer: 1500,
+        showConfirmButton: false,
+      })
+    }
+    const statusRes = await axios.get(url, config)
+    readingStatus.value = statusRes.data
+    console.log('저장 성공:', res.data)
+    closeModal()
+  } catch (err) {
+    console.error(`${mode === 'edit' ? '수정' : '저장'} 실패:`, err.response?.data)
+    Swal.fire({
+      icon: 'error',
+      title: '오류 발생',
+      text: '저장 중 문제가 발생했습니다.',
+    })
+  }
+}
+
+
+// 독서 댓글 삭제
+const handleDelete = () => {
+  console.log('🗑 삭제 완료')
+  Swal.fire({
+    icon: 'info',
+    title: '삭제 완료',
+    text: '독서 기록이 삭제되었습니다.',
+    timer: 1500,
+    showConfirmButton: false,
+  })
+  readingStatus.value = null
+  modalType.value = 'create'
+  closeModal()
+}
+
+
+onMounted(async () => {
   if (book && book.id) {
     likeCount.value = book.like_count || 0
     liked.value = book.liked || false
+
+    // ✅ 로그인한 유저의 독서 기록이 있는지 미리 확인
+    if (userStore.token) {
+      try {
+        const res = await axios.get(
+          `http://localhost:8000/api/v1/books/${book.id}/reading-status/`,
+          {
+            headers: {
+              Authorization: `Token ${userStore.token}`,
+            },
+          }
+        )
+        readingStatus.value = res.data
+        modalType.value = 'edit'
+      } catch (err) {
+        if (err.response?.status === 404) {
+          readingStatus.value = null
+          modalType.value = 'create'
+        } else {
+          console.error('초기 상태 조회 실패:', err)
+        }
+      }
+    }
   }
 })
+
 
 </script>
 
