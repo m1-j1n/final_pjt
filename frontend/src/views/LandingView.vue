@@ -108,7 +108,7 @@ const goToSurvey = () => {
 
 // 포스트 추천
 const goToPost = () => {
-  router.push({ name: 'post_recommend_list' })
+  router.push({ name: 'posts-recommend' })
 }
 
 

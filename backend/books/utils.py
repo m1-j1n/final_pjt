@@ -140,7 +140,7 @@ def get_gpt_recommendation(answers, books):
     prompt = build_prompt(answers, books)
 
     response = client.chat.completions.create(
-        model="gpt-4o",
+        model="gpt-4o-mini",
         messages=[
             {"role": "system", "content": "당신은 책 추천 전문가입니다."},
             {"role": "user", "content": prompt}

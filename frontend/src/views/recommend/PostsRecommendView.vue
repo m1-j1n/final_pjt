@@ -7,7 +7,21 @@
         <RouterLink :to="{ name: 'posts-detail', params: { postId: post.id } }" class="text-decoration-none text-dark">
           <div class="card h-100">
             <div class="post-img-container">
-              <img v-if="post.cover_img" :src="post.cover_img" class="card-img-top" :alt="post.title">
+              <p>{{ post.cover_img }}</p> 
+              <img
+                v-if="post.cover_img"
+                :src="getCoverImgUrl(post.cover_img)"
+                class="card-img-top"
+                style="width: 100%; height: 100%; object-fit: cover;"
+                :alt="post.title"
+              />
+
+
+
+
+
+
+
             </div>
             <div class="card-body d-flex flex-column justify-content-between">
               <div>
@@ -39,7 +53,13 @@ import axios from 'axios'
 
 const posts = ref([])
 
-const uniquePosts = computed(() => posts.value.slice(0, 9))
+const uniquePosts = computed(() => posts.value.slice(0, 1))
+
+function getCoverImgUrl(coverImg) {
+  console.log('📸 coverImg:', coverImg)
+  if (!coverImg) return ''
+  return coverImg.startsWith('http') ? coverImg : `http://127.0.0.1:8000/media/${coverImg}`
+}
 
 
 // const uniquePosts = computed(() => {
@@ -56,11 +76,17 @@ onMounted(async () => {
   try {
     const res = await axios.get('http://127.0.0.1:8000/api/v1/post/recommend/')
     posts.value = res.data
+    console.log("📸 uniquePosts", uniquePosts.value)
     console.log('📦 받은 포스트:', res.data)  // ✅ 여기가 정확한 위치야!
+    console.log(uniquePosts.value.map(p => p.id))
+    console.log(posts.value[0]?.cover_img)
+
   } catch (err) {
     console.error('추천 포스트 로딩 실패:', err)
   }
 })
+
+
 </script>
 
 
@@ -86,4 +112,5 @@ onMounted(async () => {
   width: 100%;
   height: 100%;
 }
+
 </style>

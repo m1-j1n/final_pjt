@@ -3,10 +3,10 @@
     "model": "books.post",
     "pk": 1,
     "fields": {
-      "title": "Aut ut nobis fuga id.",
+      "title": "감동과 여운을 주는 시간 속에 남다.",
       "content": "Optio accusamus nulla maxime nemo qui. At asperiores ipsa facere. In incidunt in consequatur. Numquam assumenda nobis. Velit dolor labore aspernatur odit.",
       "reading_date": "2025-05-19",
-      "cover_img": "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f",
+      "cover_img": "post_cover_img/book1.jpg",
       "book": 118,
       "user": 16,
       "created_at": "2025-05-25T12:00:00Z",
