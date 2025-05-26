@@ -1,0 +1,107 @@
+[
+  {
+    "model": "accounts.avoidedkeyword",
+    "pk": 1,
+    "fields": {
+      "name": "지루해요"
+    }
+  },
+  {
+    "model": "accounts.avoidedkeyword",
+    "pk": 2,
+    "fields": {
+      "name": "책이 너무 두꺼우면 싫어요"
+    }
+  },
+  {
+    "model": "accounts.avoidedkeyword",
+    "pk": 3,
+    "fields": {
+      "name": "그림이 없으면 잘 안 봐요"
+    }
+  },
+  {
+    "model": "accounts.avoidedkeyword",
+    "pk": 4,
+    "fields": {
+      "name": "전문 용어가 많으면 힘들어요"
+    }
+  },
+  {
+    "model": "accounts.avoidedkeyword",
+    "pk": 5,
+    "fields": {
+      "name": "감정적으로 힘든 이야기는 피하고 싶어요"
+    }
+  },
+  {
+    "model": "accounts.avoidedkeyword",
+    "pk": 6,
+    "fields": {
+      "name": "사실 위주의 책은 잘 안 읽어요"
+    }
+  },
+  {
+    "model": "accounts.avoidedkeyword",
+    "pk": 7,
+    "fields": {
+      "name": "폭력적인 내용은 불편해요"
+    }
+  },
+  {
+    "model": "accounts.avoidedkeyword",
+    "pk": 8,
+    "fields": {
+      "name": "공포 분위기는 무서워요"
+    }
+  },
+  {
+    "model": "accounts.avoidedkeyword",
+    "pk": 9,
+    "fields": {
+      "name": "잔인한 장면이 싫어요"
+    }
+  },
+  {
+    "model": "accounts.avoidedkeyword",
+    "pk": 10,
+    "fields": {
+      "name": "주제가 너무 무거우면 힘들어요"
+    }
+  },
+  {
+    "model": "accounts.avoidedkeyword",
+    "pk": 11,
+    "fields": {
+      "name": "스토리가 없는 책은 지루해요"
+    }
+  },
+  {
+    "model": "accounts.avoidedkeyword",
+    "pk": 12,
+    "fields": {
+      "name": "등장인물이 너무 많으면 헷갈려요"
+    }
+  },
+  {
+    "model": "accounts.avoidedkeyword",
+    "pk": 13,
+    "fields": {
+      "name": "슬픈 이야기는 피하고 싶어요"
+    }
+  },
+  {
+    "model": "accounts.avoidedkeyword",
+    "pk": 14,
+    "fields": {
+      "name": "너무 추상적인 내용은 어려워요"
+    }
+  },
+  {
+    "model": "accounts.avoidedkeyword",
+    "pk": 15,
+    "fields": {
+      "name": "시간이 오래 걸리는 책은 부담돼요"
+    }
+  }
+]

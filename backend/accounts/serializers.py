@@ -2,7 +2,12 @@ from dj_rest_auth.registration.serializers import RegisterSerializer
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from books.models import Category
-from .models import UserPreference, LifestyleKeyword, ReadingStyle
+from .models import (
+    UserPreference,
+    LifestyleKeyword,
+    ReadingStyle,
+    AvoidedKeyword,
+)
 
 User = get_user_model()
 
@@ -40,21 +45,30 @@ class CustomRegisterSerializer(RegisterSerializer):
         return user
 
 # -------------------------------
-# 2. 설문 응답용
+# 2. 설문 저장/수정용
 # -------------------------------
 class UserPreferenceSerializer(serializers.ModelSerializer):
+    lifestyles = serializers.PrimaryKeyRelatedField(
+        queryset=LifestyleKeyword.objects.all(), many=True
+    )
+    preferred_reading_styles = serializers.PrimaryKeyRelatedField(
+        queryset=ReadingStyle.objects.all(), many=True
+    )
     interested_genres = serializers.PrimaryKeyRelatedField(
-        queryset=Category.objects.all(), many=True, required=False
+        queryset=Category.objects.all(), many=True
     )
     avoided_genres = serializers.PrimaryKeyRelatedField(
-        queryset=Category.objects.all(), many=True, required=False
+        queryset=Category.objects.all(), many=True
+    )
+    avoided_keywords = serializers.PrimaryKeyRelatedField(
+        queryset=AvoidedKeyword.objects.all(), many=True
     )
 
     class Meta:
         model = UserPreference
         fields = [
-            'lifestyle',
-            'preferred_reading_style',
+            'lifestyles',
+            'preferred_reading_styles',
             'interested_genres',
             'avoided_genres',
             'avoided_keywords',
@@ -63,7 +77,7 @@ class UserPreferenceSerializer(serializers.ModelSerializer):
         ]
 
 # -------------------------------
-# 3. 마이페이지용
+# 3. 마이페이지 조회용 (상세 정보 포함)
 # -------------------------------
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -80,17 +94,23 @@ class ReadingStyleSerializer(serializers.ModelSerializer):
         model = ReadingStyle
         fields = ['id', 'name']
 
+class AvoidedKeywordSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AvoidedKeyword
+        fields = ['id', 'name']
+
 class UserPreferenceDetailSerializer(serializers.ModelSerializer):
+    lifestyles = LifestyleKeywordSerializer(many=True)
+    preferred_reading_styles = ReadingStyleSerializer(many=True)
     interested_genres = CategorySerializer(many=True)
     avoided_genres = CategorySerializer(many=True)
-    lifestyle = LifestyleKeywordSerializer()
-    preferred_reading_style = ReadingStyleSerializer()
+    avoided_keywords = AvoidedKeywordSerializer(many=True)
 
     class Meta:
         model = UserPreference
         fields = [
-            'lifestyle',
-            'preferred_reading_style',
+            'lifestyles',
+            'preferred_reading_styles',
             'interested_genres',
             'avoided_genres',
             'avoided_keywords',
@@ -104,8 +124,8 @@ class CustomUserDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
-            'username',  # 로그인용 ID
-            'name',      # 사용자 이름
+            'username',
+            'name',
             'gender',
             'age',
             'profile_img',
