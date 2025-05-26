@@ -1,0 +1,362 @@
+[
+  {
+    "model": "accounts.user",
+    "pk": 1,
+    "fields": {
+      "username": "eunji76@daum.net",
+      "name": "서현정",
+      "gender": "F",
+      "age": 22,
+      "password": "pbkdf2_sha256$260000$abc123$FakeEncryptedPasswordHere",
+      "is_signup_complete": true
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 2,
+    "fields": {
+      "username": "jiwon45@gmail.com",
+      "name": "홍은지",
+      "gender": "F",
+      "age": 33,
+      "password": "pbkdf2_sha256$260000$abc123$FakeEncryptedPasswordHere",
+      "is_signup_complete": true
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 3,
+    "fields": {
+      "username": "jeonghun40@naver.com",
+      "name": "최은지",
+      "gender": "F",
+      "age": 32,
+      "password": "pbkdf2_sha256$260000$abc123$FakeEncryptedPasswordHere",
+      "is_signup_complete": true
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 4,
+    "fields": {
+      "username": "yujin24@gmail.com",
+      "name": "장현정",
+      "gender": "F",
+      "age": 29,
+      "password": "pbkdf2_sha256$260000$abc123$FakeEncryptedPasswordHere",
+      "is_signup_complete": true
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 5,
+    "fields": {
+      "username": "soojin15@gmail.com",
+      "name": "박지수",
+      "gender": "M",
+      "age": 37,
+      "password": "pbkdf2_sha256$260000$abc123$FakeEncryptedPasswordHere",
+      "is_signup_complete": true
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 6,
+    "fields": {
+      "username": "jiwon59@hanmail.net",
+      "name": "윤나영",
+      "gender": "F",
+      "age": 33,
+      "password": "pbkdf2_sha256$260000$abc123$FakeEncryptedPasswordHere",
+      "is_signup_complete": true
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 7,
+    "fields": {
+      "username": "jinwoo90@naver.com",
+      "name": "홍수진",
+      "gender": "M",
+      "age": 20,
+      "password": "pbkdf2_sha256$260000$abc123$FakeEncryptedPasswordHere",
+      "is_signup_complete": true
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 8,
+    "fields": {
+      "username": "minyoung08@hanmail.net",
+      "name": "장지훈",
+      "gender": "M",
+      "age": 28,
+      "password": "pbkdf2_sha256$260000$abc123$FakeEncryptedPasswordHere",
+      "is_signup_complete": true
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 9,
+    "fields": {
+      "username": "soojin17@gmail.com",
+      "name": "서현우",
+      "gender": "M",
+      "age": 38,
+      "password": "pbkdf2_sha256$260000$abc123$FakeEncryptedPasswordHere",
+      "is_signup_complete": true
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 10,
+    "fields": {
+      "username": "jiwon73@naver.com",
+      "name": "장지혜",
+      "gender": "M",
+      "age": 19,
+      "password": "pbkdf2_sha256$260000$abc123$FakeEncryptedPasswordHere",
+      "is_signup_complete": true
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 11,
+    "fields": {
+      "username": "yujin26@hanmail.net",
+      "name": "서유진",
+      "gender": "M",
+      "age": 30,
+      "password": "pbkdf2_sha256$260000$abc123$FakeEncryptedPasswordHere",
+      "is_signup_complete": true
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 12,
+    "fields": {
+      "username": "jiwon16@readers.io",
+      "name": "조민지",
+      "gender": "M",
+      "age": 21,
+      "password": "pbkdf2_sha256$260000$abc123$FakeEncryptedPasswordHere",
+      "is_signup_complete": true
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 13,
+    "fields": {
+      "username": "hyunjung03@naver.com",
+      "name": "장현정",
+      "gender": "M",
+      "age": 26,
+      "password": "pbkdf2_sha256$260000$abc123$FakeEncryptedPasswordHere",
+      "is_signup_complete": true
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 14,
+    "fields": {
+      "username": "minyoung25@readers.io",
+      "name": "조현정",
+      "gender": "F",
+      "age": 20,
+      "password": "pbkdf2_sha256$260000$abc123$FakeEncryptedPasswordHere",
+      "is_signup_complete": true
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 15,
+    "fields": {
+      "username": "nayoung72@readers.io",
+      "name": "정지수",
+      "gender": "F",
+      "age": 27,
+      "password": "pbkdf2_sha256$260000$abc123$FakeEncryptedPasswordHere",
+      "is_signup_complete": true
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 16,
+    "fields": {
+      "username": "sunwoo53@readers.io",
+      "name": "장지수",
+      "gender": "F",
+      "age": 34,
+      "password": "pbkdf2_sha256$260000$abc123$FakeEncryptedPasswordHere",
+      "is_signup_complete": true
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 17,
+    "fields": {
+      "username": "hyunjung28@daum.net",
+      "name": "장수진",
+      "gender": "M",
+      "age": 38,
+      "password": "pbkdf2_sha256$260000$abc123$FakeEncryptedPasswordHere",
+      "is_signup_complete": true
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 18,
+    "fields": {
+      "username": "hyunwoo45@readers.io",
+      "name": "이지수",
+      "gender": "M",
+      "age": 34,
+      "password": "pbkdf2_sha256$260000$abc123$FakeEncryptedPasswordHere",
+      "is_signup_complete": true
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 19,
+    "fields": {
+      "username": "jihoon24@readers.io",
+      "name": "이태현",
+      "gender": "F",
+      "age": 35,
+      "password": "pbkdf2_sha256$260000$abc123$FakeEncryptedPasswordHere",
+      "is_signup_complete": true
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 20,
+    "fields": {
+      "username": "jihoon68@daum.net",
+      "name": "최세영",
+      "gender": "F",
+      "age": 26,
+      "password": "pbkdf2_sha256$260000$abc123$FakeEncryptedPasswordHere",
+      "is_signup_complete": true
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 21,
+    "fields": {
+      "username": "jiwon23@daum.net",
+      "name": "조민지",
+      "gender": "F",
+      "age": 18,
+      "password": "pbkdf2_sha256$260000$abc123$FakeEncryptedPasswordHere",
+      "is_signup_complete": true
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 22,
+    "fields": {
+      "username": "minyoung74@readers.io",
+      "name": "서선우",
+      "gender": "M",
+      "age": 37,
+      "password": "pbkdf2_sha256$260000$abc123$FakeEncryptedPasswordHere",
+      "is_signup_complete": true
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 23,
+    "fields": {
+      "username": "minyoung40@naver.com",
+      "name": "김유진",
+      "gender": "M",
+      "age": 38,
+      "password": "pbkdf2_sha256$260000$abc123$FakeEncryptedPasswordHere",
+      "is_signup_complete": true
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 24,
+    "fields": {
+      "username": "jiwon92@hanmail.net",
+      "name": "조지현",
+      "gender": "M",
+      "age": 38,
+      "password": "pbkdf2_sha256$260000$abc123$FakeEncryptedPasswordHere",
+      "is_signup_complete": true
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 25,
+    "fields": {
+      "username": "yesul84@daum.net",
+      "name": "김유진",
+      "gender": "M",
+      "age": 59,
+      "password": "pbkdf2_sha256$260000$abc123$FakeEncryptedPasswordHere",
+      "is_signup_complete": true
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 26,
+    "fields": {
+      "username": "yerim47@daum.net",
+      "name": "김지혜",
+      "gender": "F",
+      "age": 45,
+      "password": "pbkdf2_sha256$260000$abc123$FakeEncryptedPasswordHere",
+      "is_signup_complete": true
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 27,
+    "fields": {
+      "username": "taehyun09@gmail.com",
+      "name": "홍진우",
+      "gender": "F",
+      "age": 48,
+      "password": "pbkdf2_sha256$260000$abc123$FakeEncryptedPasswordHere",
+      "is_signup_complete": true
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 28,
+    "fields": {
+      "username": "minji67@gmail.com",
+      "name": "서지훈",
+      "gender": "M",
+      "age": 43,
+      "password": "pbkdf2_sha256$260000$abc123$FakeEncryptedPasswordHere",
+      "is_signup_complete": true
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 29,
+    "fields": {
+      "username": "jiwon41@naver.com",
+      "name": "윤민지",
+      "gender": "F",
+      "age": 43,
+      "password": "pbkdf2_sha256$260000$abc123$FakeEncryptedPasswordHere",
+      "is_signup_complete": true
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 30,
+    "fields": {
+      "username": "jinwoo93@hanmail.net",
+      "name": "서정훈",
+      "gender": "M",
+      "age": 52,
+      "password": "pbkdf2_sha256$260000$abc123$FakeEncryptedPasswordHere",
+      "is_signup_complete": true
+    }
+  }
+]

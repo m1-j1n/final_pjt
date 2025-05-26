@@ -22,6 +22,7 @@ import SurveyView from '@/views/recommend/SurveyView.vue'
 import BasicRecommendView from '@/views/recommend/BasicRecommendView.vue'
 import UserProfileView from '@/views/account/UserProfileView.vue'
 import StyleRecommendView from '@/views/recommend/StyleRecommendView.vue'
+import PostsRecommendView from '@/views/recommend/PostsRecommendView.vue'
 
 // 인증이 필요한 라우트용 가드
 const requireAuth = async (to, from, next) => {
@@ -78,6 +79,12 @@ const routes = [
     name: 'user-profile',
     component: UserProfileView,
   },
+  {
+    path: '/recommend/posts',
+    name: 'posts-recommend',
+    component: PostsRecommendView
+  },
+
 ]
 
 
