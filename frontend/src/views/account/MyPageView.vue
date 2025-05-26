@@ -12,12 +12,12 @@
 
           <div class="d-flex justify-content-between my-4">
             <div>
-              <h5>{{ user.articles }}</h5>
-              <small class="text-muted">Articles</small>
+              <h5>{{ bookCount   }}</h5>
+              <small class="text-muted">Books</small>
             </div>
             <div>
-              <h5>{{ user.awards }}</h5>
-              <small class="text-muted">Awards</small>
+              <h5>{{ postCount }}</h5>
+              <small class="text-muted">Posts</small>
             </div>
             <div>
               <h5>{{ user.followers }}</h5>
@@ -93,8 +93,31 @@
         <!-- Book Tab Content -->
         <div v-if="activeTab === 'books'" class="book-grid">
           <div v-for="book in books" :key="book.id" class="book-card" @click="goToBookDetail(book.id)">
-            <img :src="book.cover" class="book-img" />
-            <span class="badge position-absolute top-0 end-0 m-2 bg-primary">{{ book.status }}</span>
+            <div class="book-img-wrapper position-relative">
+              <img :src="book.cover" class="book-img" />
+
+              <!-- ✅ 상태 뱃지: 왼쪽 상단 -->
+              <span
+                v-if="book.status === 'reading'"
+                class="status-badge status-left bg-success-subtle text-success-emphasis border"
+              >📖 읽는중</span>
+
+              <span
+                v-else-if="book.status === 'done'"
+                class="status-badge status-left bg-primary-subtle text-primary-emphasis border"
+              >✅ 완독</span>
+
+              <span
+                v-else-if="book.status === 'stop'"
+                class="status-badge status-left bg-dark-subtle text-dark-emphasis border"
+              >⛔ 중단</span>
+
+              <!-- ✅ 찜 뱃지: 오른쪽 상단 -->
+              <span
+                v-if="book.liked"
+                class="status-badge status-right bg-danger-subtle text-danger-emphasis border"
+              >❤️ 찜</span>
+            </div>
           </div>
         </div>
 
@@ -106,7 +129,7 @@
 
           <div class="col-md-6 mb-4" v-for="post in myPosts" :key="post.id">
             <div class="card h-100" @click="goToPostDetail(post.id)" style="cursor: pointer;">
-              <img :src="post.cover_img || post.book_cover" class="card-img-top" alt="포스트 이미지"
+              <img :src="getImageUrl(post.cover_img || post.book_cover)" class="card-img-top" alt="포스트 이미지"
                 style="height: 200px; object-fit: cover;" />
               <div class="card-body">
                 <h6 class="card-title">{{ post.title }}</h6>
@@ -143,8 +166,12 @@ const user = ref({
   followers: 0
 })
 
+const likedBooks = ref([])
+const readingBooks = ref([])
 const books = ref([])
 const myPosts = ref([])
+const postCount = ref(0)
+const bookCount = ref(0)
 
 const goToBookDetail = (bookId) => {
   router.push({ name: 'books-detail', params: { bookId } })
@@ -154,7 +181,25 @@ const goToPostDetail = (postId) => {
   router.push({ name: 'posts-detail', params: { postId } })
 }
 
+// 좋아요한 책 불러오고 독서 상태 기록한 책 불럴온거 합치기
+function mergeBooks() {
+  const bookMap = new Map()
+  const combined = [...readingBooks.value, ...likedBooks.value]
+
+  for (const book of combined) {
+    const existing = bookMap.get(book.id) || {}
+    bookMap.set(book.id, { ...existing, ...book })
+  }
+
+  const merged = Array.from(bookMap.values())
+  books.value = merged
+  bookCount.value = merged.length   // 👈 여기서 개수 저장
+}
+
+
 onMounted(() => {
+  const headers = { Authorization: `Token ${localStorage.getItem('access_token')}` }
+
   axios.get(`${API_ACCOUNT_URL}/mypage/`, {
     headers: {
       Authorization: `Token ${localStorage.getItem('access_token')}`
@@ -187,11 +232,42 @@ onMounted(() => {
       Authorization: `Token ${localStorage.getItem('access_token')}`
     }
   }).then(res => {
-    myPosts.value = res.data
+    myPosts.value = res.data.posts
+    console.log(myPosts.value)
+    postCount.value = res.data.count
   }).catch(err => {
     console.error('내 포스트 불러오기 실패:', err)
   })
+
+  // 독서 기록 불러오기
+  axios.get('http://127.0.0.1:8000/api/v1/books/mine/reading/', { headers })
+    .then(res => {
+      readingBooks.value = res.data.map(book => ({ ...book, source: 'reading' }))
+      mergeBooks()
+    })
+    .catch(err => {
+      console.error('독서기록 책 실패:', err)
+    })
+
+  // 좋아요한 책 불러오기
+  axios.get('http://127.0.0.1:8000/api/v1/books/mine/liked/', { headers })
+    .then(res => {
+      likedBooks.value = res.data.map(book => ({ ...book, liked: true }))
+      mergeBooks()
+    })
+    .catch(err => {
+      console.error('좋아요한 책 실패:', err)
+    })
 })
+
+// 이미지 url 형성
+const getImageUrl = (src) => {
+  if (!src) return ''
+  // 이미 절대 경로면 그대로 반환
+  if (src.startsWith('http')) return src
+  // 상대 경로일 경우 도메인 붙여줌
+  return `http://127.0.0.1:8000${src}`
+}
 </script>
 
 <style scoped>
@@ -207,18 +283,49 @@ onMounted(() => {
 
 .book-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 20px;
 }
+
 
 .book-card {
   position: relative;
   cursor: pointer;
-}
-
-.book-img {
-  width: 100%;
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
   border-radius: 12px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
+
+.book-img {
+  width: 200px;
+  height: 300px;
+  object-fit: cover;
+  transition: transform 0.2s ease;
+  border-radius: 12px;
+}
+
+.book-img:hover {
+  transform: scale(1.03); /* 🖱️ hover 시 약간 확대 효과 */
+}
+
+.status-badge {
+  position: absolute;
+  top: 10px;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+  white-space: nowrap;
+  z-index: 10;
+}
+
+.status-left {
+  left: 10px;
+}
+
+.status-right {
+  right: 10px;
+}
+
 </style>

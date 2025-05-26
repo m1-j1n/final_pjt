@@ -36,10 +36,14 @@
         <span>❤️ 읽고싶어요 {{ likeCount }}</span>
       </button>
 
-      <button class="btn btn-record d-flex align-items-center justify-content-center gap-1" @click.prevent="openModal">
+      <button
+        class="btn d-flex align-items-center justify-content-center gap-1"
+        :class="readingStatus ? 'btn-success text-white' : 'btn-record'"
+        @click.prevent="openModal"
+      >
         <i class="bi bi-journal-text"></i>
         <span>
-          {{ readingStatus ? '✏️ 독서 기록 수정하기' : '✏️ 독서 기록하기' }}
+          {{ readingStatus ? '✏️ 기록 수정하기' : '✏️ 독서 기록하기' }}
         </span>
       </button>
     </div>
@@ -59,7 +63,7 @@
       :book-id="selectedBookId"
       :initial-data="readingStatus"
       @close="closeModal"
-      @updated="handleSave"
+      @updated="handleSave" 
       @deleted="handleDelete"
     />
 
@@ -177,7 +181,6 @@ const openModal = async () => {
 // 모달 닫는 창
 const closeModal = () => {
   showModal.value = false
-  readingStatus.value = null
   modalType.value = 'create'
 }
 
@@ -211,8 +214,10 @@ const handleSave = async ({ bookId, data, mode }) => {
         showConfirmButton: false,
       })
     }
-    const statusRes = await axios.get(url, config)
-    readingStatus.value = statusRes.data
+
+    // ✅ 상태 즉시 반영 (GET 요청 생략)
+    readingStatus.value = { ...readingStatus.value, ...data }
+
     console.log('저장 성공:', res.data)
     closeModal()
   } catch (err) {
@@ -224,6 +229,7 @@ const handleSave = async ({ bookId, data, mode }) => {
     })
   }
 }
+
 
 
 // 독서 댓글 삭제
@@ -271,8 +277,6 @@ onMounted(async () => {
     }
   }
 })
-
-
 </script>
 
 <style scoped>

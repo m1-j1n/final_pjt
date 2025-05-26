@@ -17,7 +17,7 @@ from .utils import get_random_image_file, generate_recommendation_summary, extra
 from django.core.exceptions import PermissionDenied
 from .serializers import  ( BookSerializer, CategorySerializer, PostDetailSerializer, PostCreateSerializer, 
                            PostListSerializer, BookSimpleSerializer, CommentSerializer, ReadingStatusSerializer,
-                            StoppedBookSerializer,
+                            StoppedBookSerializer, LikedOrReadBookSerializer
 )
 
 ### 도서 ###
@@ -304,6 +304,43 @@ def dropped_books_summary(request):
     serializer = StoppedBookSerializer(dropped, many=True)
     return Response(serializer.data)
 
+# 내가 좋아요한 책 리스트
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def my_liked_books(request):
+    user = request.user
+    liked_books = Book.objects.filter(book_likes__user=user)
+
+    # 상태도 같이 내려주고 싶다면 추가
+    status_qs = ReadingStatus.objects.filter(user=user).values_list('book_id', 'status')
+    status_dict = dict(status_qs)
+
+    serializer = LikedOrReadBookSerializer(
+        liked_books,
+        many=True,
+        context={'request': request, 'status_dict': status_dict}
+    )
+    return Response(serializer.data)
+
+
+# 내가 기록을 남긴 책 리스트
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def my_reading_books(request):
+    user = request.user
+    reading_statuses = ReadingStatus.objects.filter(user=user).select_related('book')
+    status_dict = {rs.book.id: rs.status for rs in reading_statuses}
+    books = [rs.book for rs in reading_statuses]
+    
+    serializer = LikedOrReadBookSerializer(
+        books,
+        many=True,
+        context={'request': request, 'status_dict': status_dict}
+    )
+    return Response(serializer.data)
+
+
+
 # # 쓰레드 좋아요 처리
 # @login_required
 # @require_POST
@@ -355,15 +392,18 @@ def delete_comment(request, comment_pk):
     comment.delete()
     return Response({'message': '댓글이 삭제되었습니다.'}, status=status.HTTP_204_NO_CONTENT)
 
-
-# 내가 작성한 포스트 조회
+# 내 포스트 구하기
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def my_posts(request):
-    user = request.user
     # 뷰 코드에 추가해봐
     print(f"[DEBUG] 로그인 유저 ID: {request.user.id}")
     print(f"[DEBUG] 마이포스트 개수: {Post.objects.filter(user=request.user).count()}")
+    user = request.user
     posts = Post.objects.filter(user=user)
     serializer = PostListSerializer(posts, many=True)
-    return Response(serializer.data)
+
+    return Response({
+        'count': posts.count(),             # 🔸 개수 추가
+        'posts': serializer.data            # 🔸 포스트 리스트
+    })

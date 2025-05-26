@@ -64,7 +64,7 @@ class ReadingStatusSerializer(serializers.ModelSerializer):
             'end_date',
             'comment',
             'progress',
-            'stop_reason',
+            'stop_date',
             'stop_reason',
         ]
 
@@ -127,11 +127,30 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = ['id', 'content', 'user', 'created_at', 'updated_at', 'post']
         read_only_fields = ['user', 'created_at', 'updated_at', 'post']
 
-
-# Book + 상태를 같이 보내기 위한 Serializer (마이페이지 용)
-class BookWithStatusSerializer(serializers.ModelSerializer):
-    book = BookSimpleSerializer(read_only=True)
+# 🔹 LikedOrReadBookSerializer
+class LikedOrReadBookSerializer(serializers.ModelSerializer):
+    like_count = serializers.SerializerMethodField()
+    liked = serializers.SerializerMethodField()
+    status = serializers.SerializerMethodField()
 
     class Meta:
-        model = ReadingStatus
-        fields = ['book', 'status']
+        model = Book
+        fields = [
+            'id', 'title', 'description', 'cover', 'author',
+            'publisher', 'pub_date', 'category',
+            'like_count', 'liked', 'status',
+        ]
+
+    def get_like_count(self, obj):
+        return obj.book_likes.count()
+
+    def get_liked(self, obj):
+        user = self.context['request'].user
+        if user.is_authenticated:
+            return obj.book_likes.filter(user=user).exists()
+        return False
+
+    def get_status(self, obj):
+        # 읽은 책이라면 context에 status_dict가 들어 있음
+        status_dict = self.context.get('status_dict', {})
+        return status_dict.get(obj.id)  # 없으면 None

@@ -55,7 +55,7 @@ import axios from 'axios'
 import Swal from 'sweetalert2'
 import { useUserStore } from '@/stores/users'
 
-const { bookId, initialData } = defineProps({
+const props = defineProps({
   bookId: Number,
   initialData: Object,
 })
@@ -73,14 +73,14 @@ const progress = ref(0)
 const stopReason = ref('')
 
 onMounted(() => {
-  if (initialData) {
-    status.value = initialData.status || 'done'
-    startDate.value = initialData.start_date || ''
-    endDate.value = initialData.end_date || ''
-    stopDate.value = initialData.stop_date || ''
-    comment.value = initialData.comment || ''
-    progress.value = initialData.progress ?? 0
-    stopReason.value = initialData.stop_reason || ''
+  if (props.initialData) {
+    status.value = props.initialData.status || 'done'
+    startDate.value = props.initialData.start_date || ''
+    endDate.value = props.initialData.end_date || ''
+    stopDate.value = props.initialData.stop_date || ''
+    comment.value = props.initialData.comment || ''
+    progress.value = props.initialData.progress ?? 0
+    stopReason.value = props.initialData.stop_reason || ''
   }
 })
 
@@ -90,7 +90,7 @@ const formatDate = (val) => {
   return isNaN(date) ? null : date.toISOString().slice(0, 10)
 }
 
-const submitStatus = async () => {
+const submitStatus = () => {
   const payload = {
     status: status.value,
     start_date: formatDate(startDate.value),
@@ -101,21 +101,12 @@ const submitStatus = async () => {
     stop_reason: stopReason.value,
   }
 
-  try {
-    const res = await axios.patch(
-      `http://localhost:8000/api/v1/books/${bookId}/reading-status/`,
-      payload,
-      {
-        headers: {
-          Authorization: `Token ${userStore.token}`,
-        },
-      }
-    )
-    emit('updated', res.data)
-    emit('close')
-  } catch (err) {
-    console.error('수정 실패:', err)
-  }
+  emit('updated', {
+    bookId: props.bookId,
+    data: payload,
+    mode: 'edit',
+  })
+  emit('close')
 }
 
 const deleteStatus = async () => {
@@ -130,7 +121,7 @@ const deleteStatus = async () => {
 
   if (confirmed.isConfirmed) {
     try {
-      await axios.delete(`http://localhost:8000/api/v1/books/${bookId}/reading-status/`, {
+      await axios.delete(`http://localhost:8000/api/v1/books/${props.bookId}/reading-status/`, {
         headers: {
           Authorization: `Token ${userStore.token}`,
         },
