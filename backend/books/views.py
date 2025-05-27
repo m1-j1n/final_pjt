@@ -38,7 +38,7 @@ from .serializers import  ( BookSerializer, CategorySerializer, PostDetailSerial
 @permission_classes([AllowAny])
 def book_list(request):
     paginator = PageNumberPagination()
-    paginator.page_size = 10
+    paginator.page_size = 16
 
     books = Book.objects.all().order_by('id')
     # books = Book.objects.all()
@@ -48,6 +48,7 @@ def book_list(request):
 
 # 카테고리 조회
 @api_view(['GET'])
+@permission_classes([AllowAny])
 def category_list(request):
     categories = Category.objects.all()
     serializer = CategorySerializer(categories, many=True)
@@ -55,7 +56,7 @@ def category_list(request):
 
 # 장르별 필터링 - 책
 class StandardResultsSetPagination(PageNumberPagination):
-    page_size = 12  # 페이지당 도서 수
+    page_size = 16  # 페이지당 도서 수
 
 @api_view(['GET'])
 def filter_books_by_category(request, category_id):

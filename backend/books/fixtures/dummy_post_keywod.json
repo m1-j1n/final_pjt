@@ -1,0 +1,191 @@
+[
+  {
+    "model": "books.post_keywords",
+    "fields": {
+      "post": 1,
+      "keyword": 1
+    }
+  },
+  {
+    "model": "books.post_keywords",
+    "fields": {
+      "post": 1,
+      "keyword": 2
+    }
+  },
+  {
+    "model": "books.post_keywords",
+    "fields": {
+      "post": 1,
+      "keyword": 3
+    }
+  },
+  {
+    "model": "books.post_keywords",
+    "fields": {
+      "post": 8,
+      "keyword": 4
+    }
+  },
+  {
+    "model": "books.post_keywords",
+    "fields": {
+      "post": 8,
+      "keyword": 5
+    }
+  },
+  {
+    "model": "books.post_keywords",
+    "fields": {
+      "post": 8,
+      "keyword": 6
+    }
+  },
+  {
+    "model": "books.post_keywords",
+    "fields": {
+      "post": 3,
+      "keyword": 7
+    }
+  },
+  {
+    "model": "books.post_keywords",
+    "fields": {
+      "post": 3,
+      "keyword": 8
+    }
+  },
+  {
+    "model": "books.post_keywords",
+    "fields": {
+      "post": 3,
+      "keyword": 9
+    }
+  },
+  {
+    "model": "books.post_keywords",
+    "fields": {
+      "post": 4,
+      "keyword": 10
+    }
+  },
+  {
+    "model": "books.post_keywords",
+    "fields": {
+      "post": 4,
+      "keyword": 11
+    }
+  },
+  {
+    "model": "books.post_keywords",
+    "fields": {
+      "post": 4,
+      "keyword": 12
+    }
+  },
+  {
+    "model": "books.post_keywords",
+    "fields": {
+      "post": 5,
+      "keyword": 4
+    }
+  },
+  {
+    "model": "books.post_keywords",
+    "fields": {
+      "post": 5,
+      "keyword": 14
+    }
+  },
+  {
+    "model": "books.post_keywords",
+    "fields": {
+      "post": 5,
+      "keyword": 2
+    }
+  },
+  {
+    "model": "books.post_keywords",
+    "fields": {
+      "post": 6,
+      "keyword": 16
+    }
+  },
+  {
+    "model": "books.post_keywords",
+    "fields": {
+      "post": 6,
+      "keyword": 17
+    }
+  },
+  {
+    "model": "books.post_keywords",
+    "fields": {
+      "post": 6,
+      "keyword": 18
+    }
+  },
+  {
+    "model": "books.post_keywords",
+    "fields": {
+      "post": 7,
+      "keyword": 19
+    }
+  },
+  {
+    "model": "books.post_keywords",
+    "fields": {
+      "post": 7,
+      "keyword": 20
+    }
+  },
+  {
+    "model": "books.post_keywords",
+    "fields": {
+      "post": 7,
+      "keyword": 21
+    }
+  },
+  {
+    "model": "books.post_keywords",
+    "fields": {
+      "post": 2,
+      "keyword": 22
+    }
+  },
+  {
+    "model": "books.post_keywords",
+    "fields": {
+      "post": 2,
+      "keyword": 23
+    }
+  },
+  {
+    "model": "books.post_keywords",
+    "fields": {
+      "post": 2,
+      "keyword": 24
+    }
+  },
+  {
+    "model": "books.post_keywords",
+    "fields": {
+      "post": 9,
+      "keyword": 25
+    }
+  },
+  {
+    "model": "books.post_keywords",
+    "fields": {
+      "post": 9,
+      "keyword": 26
+    }
+  },
+  {
+    "model": "books.post_keywords",
+    "fields": {
+      "post": 9,
+      "keyword": 27
+    }
+  }
+]

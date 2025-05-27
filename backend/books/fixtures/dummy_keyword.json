@@ -1,0 +1,177 @@
+[
+  {
+    "model": "books.keyword",
+    "pk": 1,
+    "fields": {
+      "name": "습관"
+    }
+  },
+  {
+    "model": "books.keyword",
+    "pk": 2,
+    "fields": {
+      "name": "변화"
+    }
+  },
+  {
+    "model": "books.keyword",
+    "pk": 3,
+    "fields": {
+      "name": "루틴"
+    }
+  },
+  {
+    "model": "books.keyword",
+    "pk": 4,
+    "fields": {
+      "name": "사카모토"
+    }
+  },
+  {
+    "model": "books.keyword",
+    "pk": 5,
+    "fields": {
+      "name": "킬러"
+    }
+  },
+  {
+    "model": "books.keyword",
+    "pk": 6,
+    "fields": {
+      "name": "액션만화"
+    }
+  },
+  {
+    "model": "books.keyword",
+    "pk": 7,
+    "fields": {
+      "name": "삼체"
+    }
+  },
+  {
+    "model": "books.keyword",
+    "pk": 8,
+    "fields": {
+      "name": "우주"
+    }
+  },
+  {
+    "model": "books.keyword",
+    "pk": 9,
+    "fields": {
+      "name": "문명"
+    }
+  },
+  {
+    "model": "books.keyword",
+    "pk": 10,
+    "fields": {
+      "name": "덮밥"
+    }
+  },
+  {
+    "model": "books.keyword",
+    "pk": 11,
+    "fields": {
+      "name": "레시피"
+    }
+  },
+  {
+    "model": "books.keyword",
+    "pk": 12,
+    "fields": {
+      "name": "위로"
+    }
+  },
+  {
+    "model": "books.keyword",
+    "pk": 14,
+    "fields": {
+      "name": "코미디"
+    }
+  },
+  {
+    "model": "books.keyword",
+    "pk": 16,
+    "fields": {
+      "name": "악"
+    }
+  },
+  {
+    "model": "books.keyword",
+    "pk": 17,
+    "fields": {
+      "name": "본성"
+    }
+  },
+  {
+    "model": "books.keyword",
+    "pk": 18,
+    "fields": {
+      "name": "살인"
+    }
+  },
+  {
+    "model": "books.keyword",
+    "pk": 19,
+    "fields": {
+      "name": "로자"
+    }
+  },
+  {
+    "model": "books.keyword",
+    "pk": 20,
+    "fields": {
+      "name": "모모"
+    }
+  },
+  {
+    "model": "books.keyword",
+    "pk": 21,
+    "fields": {
+      "name": "사랑"
+    }
+  },
+  {
+    "model": "books.keyword",
+    "pk": 22,
+    "fields": {
+      "name": "관계"
+    }
+  },
+  {
+    "model": "books.keyword",
+    "pk": 23,
+    "fields": {
+      "name": "감정"
+    }
+  },
+  {
+    "model": "books.keyword",
+    "pk": 24,
+    "fields": {
+      "name": "기억"
+    }
+  },
+  {
+    "model": "books.keyword",
+    "pk": 25,
+    "fields": {
+      "name": "디스토피아"
+    }
+  },
+  {
+    "model": "books.keyword",
+    "pk": 26,
+    "fields": {
+      "name": "자유"
+    }
+  },
+  {
+    "model": "books.keyword",
+    "pk": 27,
+    "fields": {
+      "name": "통제사회"
+    }
+  }
+]

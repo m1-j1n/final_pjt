@@ -1,72 +1,76 @@
 <template>
-  <div class="card flex-row p-3" style="height: 180px; max-width: 720px;">
-    <!-- 책 표지 -->
-    <router-link
-      :to="{ name: 'books-detail', params: { bookId: book.id } }"
-      class="book-cover-wrapper me-3 text-decoration-none"
-    >
-      <img :src="book.cover" class="book-cover" alt="도서 표지" />
-    </router-link>
+  <div class="book-card-wrapper text-center">
+    <!-- 책 표지 + 버튼 -->
+    <div class="cover-wrapper position-relative">
+      <img :src="book.cover" class="cover-img" alt="도서 표지" />
+      <div class="cover-overlay d-flex align-items-center justify-content-center">
+        <h5 class="cover-title text-white text-center px-2">{{ book.title }}</h5>
+      </div>
 
-  <!-- 도서 정보 -->
-  <div class="flex-grow-1 h-100 d-flex flex-column justify-content-start align-self-start">
-    <div class="info-wrapper me-3">
-      <router-link
+      <!-- 버튼 아이콘 (우측 하단 고정) -->
+      <div class="action-buttons position-absolute bottom-0 end-0 d-flex gap-2 p-2">
+        <!-- ❤️ 하트 버튼 -->
+        <button
+          class="btn btn-icon-soft"
+          :class="liked ? 'btn-liked' : 'btn-unliked'"
+          @click.stop.prevent="toggleLike"
+        >
+          ❤️
+        </button>
+
+        <!-- ✏️ 기록 버튼 -->
+        <button
+          class="btn btn-icon-soft"
+          :class="readingStatus ? 'btn-recorded' : 'btn-unrecorded'"
+          @click.stop.prevent="openModal"
+        >
+          ✏️
+        </button>
+      </div>
+
+      <!-- 라우터 링크는 표지 전체에 -->
+      <RouterLink
         :to="{ name: 'books-detail', params: { bookId: book.id } }"
-        class="text-dark text-decoration-none"
-      >
-        <h5 class="card-title text-truncate-2">
-          {{ book.title }}
-        </h5>
-        <p class="card-text mb-1">{{ book.author }} | {{ book.pub_date }} | {{ book.publisher }}</p>
-        <p class="card-text mb-1">{{ book.description.slice(0, 50) }}{{ book.description.length > 50 ? '...' : '' }}</p>
-      </router-link>
+        class="router-cover-link"
+      ></RouterLink>
     </div>
-  </div>
-  
-    <!-- 버튼 영역 -->
-    <div class="button-column ms-2 d-flex flex-column justify-content-center gap-2">
-      <button
-        class="btn btn-like d-flex align-items-center justify-content-center gap-1"
-        :class="liked ? 'liked' : 'not-liked'"
-        @click.stop.prevent="toggleLike"
-      >
-        <i class="bi bi-heart-fill" v-if="liked"></i>
-        <i class="bi bi-heart" v-else></i>
-        <span>❤️ 읽고싶어요 {{ likeCount }}</span>
-      </button>
 
-      <button
-        class="btn d-flex align-items-center justify-content-center gap-1"
-        :class="readingStatus ? 'btn-success text-white' : 'btn-record'"
-        @click.prevent="openModal"
-      >
-        <i class="bi bi-journal-text"></i>
-        <span>
-          {{ readingStatus ? '✏️ 기록 수정하기' : '✏️ 독서 기록하기' }}
-        </span>
-      </button>
-    </div>
-  </div>
+      <!-- 작가 정보 -->
+      <div class="author-info mt-2 d-flex justify-content-start align-items-center">
+        <img
+          :src="book.author_photo || 'https://placehold.co/40x40?text=Author'"
+          alt="작가"
+          class="me-2"
+          style="width: 36px; height: 36px; object-fit: cover; border-radius: 8px;"
+        />
 
-    <!-- 모달 컴포넌트 -->
+        <div class="d-flex flex-column justify-content-start">
+          <p class="author-name text-muted text-truncate mb-0 text-start" style="max-width: 120px;">
+            {{ book.author }}
+          </p>
+          <small class="text-muted text-truncate text-start" style="max-width: 120px;">
+            {{ book.pub_date }}
+          </small>
+        </div>
+      </div>
+
+
+    <!-- 모달 -->
     <BookCardModal
       v-if="showModal && modalType === 'create'"
       :book-id="selectedBookId"
       @close="closeModal"
       @saved="handleSave"
     />
-
-    <!-- 수정 모달 -->
     <BookCardUpdateModal
       v-if="showModal && modalType === 'edit'"
       :book-id="selectedBookId"
       :initial-data="readingStatus"
       @close="closeModal"
-      @updated="handleSave" 
+      @updated="handleSave"
       @deleted="handleDelete"
     />
-
+  </div>
 </template>
 
 <script setup>
@@ -110,12 +114,18 @@ const toggleLike = async () => {
   } catch (err) {
     if (err.response?.status === 401) {
       Swal.fire({
-        icon: 'info',
-        title: '🛑 로그인 먼저 🛑',
-        text: '이 책이 맘에 들었다면, 로그인하고 찜해보세요 ✨',
-        confirmButtonText: '로그인하러 가기',
+        icon: 'warning',
+        title: '로그인이 필요합니다',
+        text: '이 책을 찜하시려면 로그인해주세요.',
+        confirmButtonText: '로그인',
         showCancelButton: true,
-        cancelButtonText: '나중에 할게요',
+        cancelButtonText: '취소',
+        buttonsStyling: false,
+        customClass: {
+          confirmButton: 'btn btn-dark rounded-pill px-4 me-2',
+          cancelButton: 'btn btn-outline-secondary rounded-pill px-4',
+          popup: 'rounded-4',
+        },
       }).then((result) => {
         if (result.isConfirmed) {
           router.push({ name: 'login' })
@@ -137,12 +147,18 @@ const modalType = ref('create')
 const openModal = async () => {
   if (!userStore.token) {
     Swal.fire({
-      icon: 'info',
-      title: '📝 독서 기록은 로그인 후에 📝',
-      text: '로그인하면 독서 기록을 남길 수 있어요 ✨',
-      confirmButtonText: '지금 로그인하기',
+      icon: 'warning',
+      title: '독서 기록은 로그인 후에 가능해요',
+      text: '로그인하면 독서 활동을 저장하고 관리할 수 있어요.',
+      confirmButtonText: '로그인',
       showCancelButton: true,
-      cancelButtonText: '나중에 할게요',
+      cancelButtonText: '닫기',
+      buttonsStyling: false,
+      customClass: {
+        confirmButton: 'btn btn-dark rounded-pill px-4 me-2',
+        cancelButton: 'btn btn-outline-secondary rounded-pill px-4',
+        popup: 'rounded-4',
+      },
     }).then((result) => {
       if (result.isConfirmed) {
         router.push({ name: 'login' })
@@ -150,7 +166,6 @@ const openModal = async () => {
     })
     return
   }
-
   selectedBookId.value = book.id
 
   try {
@@ -230,8 +245,6 @@ const handleSave = async ({ bookId, data, mode }) => {
   }
 }
 
-
-
 // 독서 댓글 삭제
 const handleDelete = () => {
   console.log('🗑 삭제 완료')
@@ -280,93 +293,149 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-/* 두 줄 말줄임 처리 */
-.book-cover-wrapper {
-  width: 120px;
-  height: 160px;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  /* border: 1px solid #ddd; */
-  /* border-radius: 4px; */
+.book-card-wrapper {
+  display: block;
+  max-width: 200px;
+  transition: all 0.3s ease;
 }
 
-.book-cover {
+.cover-wrapper {
+  position: relative;
+  height: 280px;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #fff;
+  border: 1px solid #eee;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.2s ease-in-out;
+}
+
+.cover-wrapper:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+.cover-img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
+  transition: 0.3s ease;
 }
 
-.info-wrapper {
-  flex-grow: 1;
-  min-width: 0;
-  max-width: 100%;
+.cover-overlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0);
+  transition: background-color 0.3s ease;
+  opacity: 0;
 }
 
-.card-title {
-  font-size: 1.1rem;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-  word-wrap: break-word;
-  white-space: normal;
+.book-card-wrapper:hover .cover-img {
+  filter: brightness(60%);
 }
 
-.button-column .btn {
-  white-space: nowrap;
-  padding: 0.4rem 0.8rem;
-  font-size: 0.85rem; /* 기존보다 약간 작은 크기 */
-  min-width: 130px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+.book-card-wrapper:hover .cover-overlay {
+  opacity: 1;
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
-.like-btn,
-.record-btn {
-  white-space: nowrap;         /* 줄바꿈 금지 */
-  overflow: hidden;            /* 넘치는 텍스트 숨기기 */
-  text-overflow: ellipsis;     /* 넘치면 ... 표시 */
-  font-size: 0.9rem;
-  padding: 0.4rem 0.4rem;
-  max-width: 100%;             /* 필요 시 지정 가능 */
+.cover-title {
+  font-size: 1rem;
+  font-weight: 600;
 }
 
-.liked {
-  background-color: #dc3545;
-  color: #fff;
-  border: none;
+.router-cover-link {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
 }
 
-.not-liked {
-  background-color: #fff;
-  color: #dc3545;
-  border: 1px solid #dc3545;
-}
-
-.not-liked:hover {
-  background-color: #ffe5e9;
-}
-
-.btn-record {
-  background-color: #f8f9fa;
-  border: 1px solid #198754;
-  color: #198754;
-}
-
-.btn-record:hover {
-  background-color: #e6f4ea;
-}
-
-.card {
+/* ❤️ ✏️ 버튼 공통 스타일 */
+.btn-icon-soft {
+  padding: 6px 10px;
+  font-size: 16px;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* 부드러운 그림자 */
-  border: 1px solid #eee;
-  transition: box-shadow 0.2s ease-in-out;
-  background-color: #fff;
+  background-color: #ffffffcc; /* 살짝 투명한 흰색 배경 */
+  border: 1px solid #dee2e6;
+  color: #495057;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  backdrop-filter: blur(4px); /* 자연스러운 유리 느낌 */
 }
 
-.card:hover {
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); /* 호버 시 살짝 강조 */
+.btn-icon-soft:hover {
+  background-color: #f1f3f5cc;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* ❤️ 좋아요 active */
+.btn-liked {
+  background-color: #ffe5e9;           /* 부드러운 연핑크 */
+  color: #d6336c;                      /* 살짝 선명한 핑크 텍스트 */
+  border: 1px solid #f8cfd7;           /* 테두리도 살짝 연핑크 */
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05); /* 은은한 그림자 */
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-liked:hover {
+  background-color: #fddbe3;
+  color: #c2255c;
+  border-color: #f3bac9;
+}
+
+.btn-unliked {
+  background-color: rgba(0, 0, 0, 0.1);  /* 불투명도 ↑ */
+  color: #6c757d;
+  border: 1px solid #d6dbe1;
+}
+
+.btn-unliked:hover {
+  background-color: rgba(0, 0, 0, 0.15); /* hover 시 더 진하게 */
+  color: #495057;
+  border-color: #cbd2da;
+}
+
+.btn-recorded {
+  background-color: #e2f4ea;           /* 산뜻한 민트톤 */
+  color: #198754;                      /* 중간 녹색 */
+  border: 1px solid #b7e1cb;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-recorded:hover {
+  background-color: #d5ecdf;
+  color: #157347;
+  border-color: #a9d9bc;
+}
+
+.btn-unrecorded {
+  background-color: rgba(0, 0, 0, 0.1);     /* 불투명한 회색 배경 */
+  color: #6c757d;                           /* 중간 회색 텍스트 */
+  border: 1px solid #d6dbe1;               /* 연한 회색 테두리 */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-unrecorded:hover {
+  background-color: rgba(0, 0, 0, 0.15);    /* hover 시 살짝 더 진하게 */
+  color: #495057;
+  border-color: #cbd2da;
+}
+
+/* 하단 버튼 정렬 */
+.action-buttons {
+  z-index: 2;
+}
+
+/* 작가 정보 */
+.author-info {
+  margin-top: 0.5rem;
+}
+
+.author-name {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>

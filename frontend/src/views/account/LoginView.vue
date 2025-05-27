@@ -51,7 +51,6 @@ const onLogIn = function () {
 
   userStore.logIn(userInfo)
     .then(() => {
-      alert('로그인 성공!')
       router.push({ name: 'landing' })
     })
     .catch(() => {

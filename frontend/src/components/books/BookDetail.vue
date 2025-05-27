@@ -26,7 +26,11 @@
       <h5 class="fw-bold mb-3">👤 작가 정보</h5>
       <div class="row g-3 align-items-center">
         <div class="col-3 text-center">
-          <img :src="book.author_photo" class="author-photo shadow-sm" alt="작가 사진" />
+          <img
+            :src="book.author_photo ? book.author_photo : 'https://www.gravatar.com/avatar/?d=mp'"
+            class="author-photo shadow-sm"
+            alt="작가 사진"
+          />
         </div>
         <div class="col-9">
           <h6 class="fw-semibold mb-2">{{ book.author }}</h6>

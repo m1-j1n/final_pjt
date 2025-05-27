@@ -10,7 +10,7 @@ export const useUserStore = defineStore('user', () => {
 
   const token = ref(localStorage.getItem('token') || '')
   const username = ref(localStorage.getItem('username') || '')
-  const currName = ref(localStorage.getItem('name') ||'')
+  const currName = ref(localStorage.getItem('name') || '')
 
   // 앱 시작 시 토큰 있으면 axios 헤더 세팅
   if (token.value) {
@@ -55,6 +55,10 @@ export const useUserStore = defineStore('user', () => {
   // 로그아웃
   const logOut = () => {
     token.value = ''
+    username.value = ''
+    currName.value = ''
+    localStorage.removeItem('username')
+    localStorage.removeItem('name')
     localStorage.removeItem('token')
     delete axios.defaults.headers.common.Authorization
     console.log('로그아웃 완료')

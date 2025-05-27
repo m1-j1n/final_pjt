@@ -12,11 +12,6 @@
       <textarea v-model="content" class="form-control" rows="5" />
     </div>
 
-    <!-- <div class="mb-3">
-      <label class="form-label">읽은 날짜</label>
-      <input v-model="datetime" type="datetime-local" class="form-control" />
-    </div> -->
-
       <!-- 기존 이미지 미리보기 (서버에서 불러온) -->
       <img v-if="existingImageUrl && !previewUrl" :src="existingImageUrl" alt="기존 이미지"
         class="img-thumbnail mb-2 preview-img" />

@@ -65,11 +65,17 @@
       if (res.data.books.length === 0) {
         Swal.fire({
           icon: 'info',
-          title: '추천 도서가 없습니다 🧐',
-          text: '먼저 책을 읽고 독서 상태를 기록해보세요!',
-          confirmButtonText: '기록하러 가기',
+          title: '추천 도서가 아직 없어요',
+          text: '책을 읽고 독서 상태를 기록하면, 더 정확한 추천이 가능해져요.',
+          confirmButtonText: '독서 기록하러 가기',
           showCancelButton: true,
-          cancelButtonText: '나중에 할게요',
+          cancelButtonText: '닫기',
+          buttonsStyling: false,
+          customClass: {
+            confirmButton: 'btn btn-dark rounded-pill px-4 me-2',
+            cancelButton: 'btn btn-outline-secondary rounded-pill px-4',
+            popup: 'rounded-4',
+          },
         }).then(result => {
           if (result.isConfirmed) {
             router.push({ name: 'books' })

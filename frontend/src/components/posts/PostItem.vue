@@ -7,7 +7,7 @@
       <div class="col" v-for="post in selectedPosts" :key="post.id">
         <RouterLink :to="{ name: 'posts-detail', params: { postId: post.id } }" class="text-decoration-none text-dark">
           <div class="card h-100 shadow-sm" style="cursor: pointer;">
-            <img :src="getImageUrl(post.cover_img)" class="card-img-top post-image" :alt="post.title" />
+            <img v-if="post.cover_img" :src="getImageUrl(post.cover_img)" class="card-img-top post-image" :alt="post.title" />
             <div class="card-body d-flex flex-column">
               <p class="text-muted mb-1">
                 <strong>{{ post.user }}</strong> · 
@@ -19,11 +19,11 @@
               </p>
               <p class="text-muted mt-auto small">💬 댓글 {{ post.comment_count || 0 }}개</p>
               <!-- 키워드 해시태그 -->
-              <p class="small mt-1">
+              <p class="mt-2">
                 <span
                   v-for="(kw, i) in post.keywords.slice(0, 3)"
                   :key="i"
-                  class="me-1 text-primary"
+                  class="badge rounded-pill bg-light text-dark me-1 border"
                 >
                   #{{ kw.name }}
                 </span>
@@ -37,11 +37,9 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watchEffect } from 'vue'
+import { ref, onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
 import { usePostStore } from '@/stores/post'
-import { useBookStore } from '@/stores/books'
-import axios from 'axios'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 dayjs.extend(relativeTime)
@@ -51,22 +49,14 @@ const formatTimeAgo = (isoString) => {
 }
 
 const postStore = usePostStore()
-const bookStore = useBookStore()
-const posts = computed(() => postStore.posts)
 const selectedPosts = ref([])
-
-// onMounted(async () => {
-//   if (postStore.posts.length === 0) {
-//     await postStore.fetchPosts()
-//   }
-//   selectedPosts.value = postStore.posts
-// })
-
+const BASE_API_URL = 'http://localhost:8000'
 
 // 포스트 이미지 불러오기
 const getImageUrl = (path) => {
-  if (!path) return `https://picsum.photos/seed/${Math.floor(Math.random() * 1000)}/400/300`
-  return `http://localhost:8000${path}`
+  if (!path) return ''
+  if (path.startsWith('http')) return path
+  return `${BASE_API_URL}/media/${path.replace(/^\/?media\//, '')}`
 }
 
 onMounted(async () => {

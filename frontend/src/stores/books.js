@@ -22,7 +22,11 @@ export const useBookStore = defineStore('book', () => {
 
   // 🔹 카테고리 API 요청 
   const fetchCategories = () => {
-    axios.get(`${BASE_API_URL}/api/v1/categories/`)
+    axios.get(`${BASE_API_URL}/api/v1/categories/`, {
+      headers: {
+        Authorization: undefined,
+      }
+    })
       .then(res => {
         categories.value = res.data
       })

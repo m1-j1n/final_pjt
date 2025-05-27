@@ -26,7 +26,6 @@
         </div>
         <h2 class="fw-bold mb-3">{{ post.title }}</h2>
         <p class="fs-5" style="line-height: 1.8;" v-html="formattedContent"></p>
-        <!-- <p class="fs-5" style="line-height: 1.8;">{{ post.content }}</p> -->
       </div>
 
       <!-- 오른쪽: 책 정보 (작게) -->
@@ -73,6 +72,8 @@
 
 <script setup>
 import axios from 'axios'
+import { RouterLink } from 'vue-router'
+
 import { useRoute, useRouter } from 'vue-router'
 import { usePostStore } from '@/stores/post'
 import { useBookStore } from '@/stores/books'
