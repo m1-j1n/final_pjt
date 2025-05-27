@@ -10,43 +10,28 @@
 
     <!-- 추천 결과 -->
     <div v-else-if="books.length">
-      <!-- 책 1 : 텍스트 왼쪽, 이미지 오른쪽 -->
-      <div class="book-section light row flex-lg-row flex-column align-items-center mb-5">
+      <div
+        v-for="(book, i) in books.slice(0, 3)"
+        :key="book.id"
+        :class="['book-section', i % 2 === 0 ? 'light' : 'soft-bg', 'row', 'flex-lg-row', 'flex-column', 'align-items-center', 'mb-5']"
+      >
         <div class="col-lg-6 text-start">
           <span class="badge bg-light text-dark mb-2">추천 도서</span>
-          <h3 class="book-title">{{ books[currentIndex]?.title }}</h3>
-          <p class="book-desc">{{ books[currentIndex]?.description }}</p>
-          <button class="btn-detail" @click="goToDetail(books[currentIndex]?.id)">자세히 보기 →</button>
+          <h3 class="book-title">{{ book.title }}</h3>
+          <p class="book-desc">{{ truncateWords(book.description, 20) }}</p>
+
+          <button class="btn-detail" @click="goToDetail(book.id)">이 책이 더 궁금하다면? →</button>
         </div>
         <div class="col-lg-6 text-center mt-4 mt-lg-0">
-          <img :src="books[currentIndex]?.cover" class="book-image" alt="book" />
+          <img :src="book.cover" class="book-image" :alt="book.title" />
         </div>
-      </div>
-
-      <!-- 책 2 : 이미지 왼쪽, 텍스트 오른쪽 -->
-      <div v-if="books[currentIndex + 1]" class="book-section soft-bg row flex-lg-row-reverse flex-column align-items-center mb-5">
-        <div class="col-lg-6 text-start">
-          <span class="badge bg-light text-dark mb-2">추천 도서</span>
-          <h3 class="book-title">{{ books[currentIndex + 1]?.title }}</h3>
-          <p class="book-desc">{{ books[currentIndex + 1]?.description }}</p>
-          <button class="btn-detail" @click="goToDetail(books[currentIndex + 1]?.id)">자세히 보기 →</button>
-        </div>
-        <div class="col-lg-6 text-center mt-4 mt-lg-0">
-          <img :src="books[currentIndex + 1]?.cover" class="book-image" alt="book" />
-        </div>
-      </div>
-
-      <!-- 이전/다음 버튼 -->
-      <div class="buttons d-flex justify-content-center gap-3">
-        <button @click="prev" :disabled="currentIndex === 0" class="btn btn-outline-secondary">← 이전</button>
-        <button @click="next" :disabled="currentIndex + 2 >= books.length" class="btn btn-primary">다음 →</button>
       </div>
     </div>
 
     <!-- 책 없음 -->
-    <div v-else class="text-center text-muted mt-5">
+    <!-- <div v-else class="text-center text-muted mt-5">
       추천된 책이 없습니다.
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -58,8 +43,21 @@ import axios from 'axios'
 const route = useRoute()
 const router = useRouter()
 const books = ref([])
-const currentIndex = ref(0)
 const isLoading = ref(true)
+
+// onMounted(async () => {
+//   isLoading.value = true
+//   try {
+//     const answers = route.query
+//     const res = await axios.post('http://localhost:8000/api/v1/recommend/basic/', { answers })
+//     books.value = res.data.recommended_books
+//   } catch (err) {
+//     console.error('❌ 추천 실패:', err)
+//   } finally {
+//     isLoading.value = false
+//   }
+// })
+
 
 onMounted(async () => {
   isLoading.value = true
@@ -67,6 +65,12 @@ onMounted(async () => {
     const answers = route.query
     const res = await axios.post('http://localhost:8000/api/v1/recommend/basic/', { answers })
     books.value = res.data.recommended_books
+
+    // 📌 추천 결과가 없다면 랜덤 3권 요청
+    if (!books.value.length) {
+      const fallback = await axios.get('http://localhost:8000/api/v1/books/random/?count=3')
+      books.value = fallback.data
+    }
   } catch (err) {
     console.error('❌ 추천 실패:', err)
   } finally {
@@ -74,15 +78,23 @@ onMounted(async () => {
   }
 })
 
-const next = () => {
-  if (currentIndex.value + 2 < books.value.length) currentIndex.value += 2
-}
-const prev = () => {
-  if (currentIndex.value >= 2) currentIndex.value -= 2
-}
+
 const goToDetail = (bookId) => {
   if (bookId) router.push({ name: 'books-detail', params: { bookId } })
 }
+
+const truncateWords = (text, maxWords) => {
+  if (!text) return ''
+  const words = text.trim().split(/\s+/)  // 공백 기준으로 단어 나눔
+  console.log('📚 단어 수:', words.length)
+
+  return words.length > maxWords
+    ? words.slice(0, maxWords).join(' ') + '...'
+    : text
+    
+}
+
+
 </script>
 
 <style scoped>
@@ -90,10 +102,12 @@ const goToDetail = (bookId) => {
   max-width: 1000px;
   margin: 0 auto;
   padding: 5vh 2rem;
+  font-family: 'Pretendard', sans-serif;
+  color: #333;
 }
 
 .title {
-  font-size: 2rem;
+  font-size: 2.2rem;
   font-weight: bold;
   margin-bottom: 3rem;
   text-align: center;
@@ -102,16 +116,17 @@ const goToDetail = (bookId) => {
 
 .book-section {
   padding: 4rem 2rem;
-  border-radius: 1rem;
+  border-radius: 1.2rem;
   margin-bottom: 3rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
 }
 
 .book-section.light {
-  background-color: #ffffff;
+  background-color: #fff9f4;
 }
 
 .book-section.soft-bg {
-  background-color: #f7f3ee;
+  background-color: #f3efe8;
 }
 
 .book-title {
@@ -119,12 +134,14 @@ const goToDetail = (bookId) => {
   font-weight: 700;
   color: #222;
   margin-bottom: 1rem;
+  word-break: keep-all;
 }
 
 .book-desc {
   font-size: 1.1rem;
   color: #555;
-  line-height: 1.6;
+  line-height: 1.7;
+  word-break: keep-all;
 }
 
 .book-image {
@@ -134,12 +151,21 @@ const goToDetail = (bookId) => {
   margin: 0 auto;
   display: block;
   border-radius: 1rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+.badge {
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  background-color: #fff;
+  border: 1px solid #ccc;
 }
 
 .btn-detail {
-  margin-top: 1.2rem;
-  padding: 0.6rem 1.4rem;
+  margin-top: 1.4rem;
+  padding: 0.6rem 1.6rem;
   font-size: 1rem;
   font-weight: 600;
   color: white;
@@ -149,18 +175,11 @@ const goToDetail = (bookId) => {
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
-
 .btn-detail:hover {
   background-color: #e9962a;
 }
 
-.book-spinner {
-  font-size: 5rem;
-  animation: spin 2s linear infinite;
-  margin-bottom: 1.2rem;
-  text-align: center;
-}
-
+/* 로딩 화면 */
 .loading-area {
   height: 60vh;
   display: flex;
@@ -168,26 +187,28 @@ const goToDetail = (bookId) => {
   justify-content: center;
   align-items: center;
 }
-
+.book-spinner {
+  font-size: 4.5rem;
+  animation: spin 2s linear infinite;
+  margin-bottom: 1.2rem;
+  text-align: center;
+}
 .loading-text {
   font-size: 1.4rem;
   text-align: center;
   color: #444;
 }
-
 .dot-animation::after {
   content: '';
   display: inline-block;
   animation: dots 1.5s steps(3, end) infinite;
 }
-
 @keyframes dots {
   0% { content: ''; }
   33% { content: '.'; }
   66% { content: '..'; }
   100% { content: '...'; }
 }
-
 @keyframes spin {
   from { transform: rotate(0); }
   to { transform: rotate(360deg); }
