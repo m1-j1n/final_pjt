@@ -139,7 +139,7 @@ const prevStep = () => {
 <style scoped>
 .survey-container {
   min-height: 100vh;
-  padding: 5vh 1rem;
+  /* padding: 5vh 1rem; */
   display: flex;
   flex-direction: column;
   justify-content: center;

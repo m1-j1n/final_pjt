@@ -4,7 +4,9 @@
 
     <!-- 추천 콘텐츠 (비회원용) -->
     <section class="mb-5">
-      <h3 class="mb-4 fw-bold">📚 당신을 위한 추천 콘텐츠</h3>
+      <h3 class="mb-4 fw-bold">
+        <i class="bi bi-stars me-2 text-primary"></i>당신을 위한 추천 콘텐츠
+      </h3>
       <div class="row g-3">
         <div class="col-md-8">
           <div class="card recommendation-card large-card text-white position-relative overflow-hidden"
@@ -65,7 +67,9 @@
 
     <!-- 인기 책 섹션 -->
     <section class="mb-5">
-      <h3 class="mb-4 fw-bold">🔥 인기 책</h3>
+      <h3 class="mb-4 fw-bold">
+        <i class="bi bi-bookmark-star-fill me-2 text-danger"></i>인기 책
+      </h3>
       <Swiper :modules="[Autoplay]" :slides-per-view="3" :space-between="30" :loop="true"
         :autoplay="{ delay: 3000, disableOnInteraction: false }">
         <SwiperSlide v-for="book in topBooks" :key="book.id">
@@ -117,12 +121,18 @@ const goToReadingRecommend = () => {
   if (!userStore.token) {
     Swal.fire({
       icon: 'info',
-      title: '🔒 로그인 필요',
-      text: '추천 시스템을 이용하려면 먼저 로그인해주세요 😊',
-      confirmButtonText: '로그인하러 가기',
+      title: '로그인이 필요해요',
+      text: '추천 기능은 로그인 후 이용하실 수 있어요.',
+      confirmButtonText: '로그인',
       showCancelButton: true,
-      cancelButtonText: '나중에 할게요',
-    }).then(result => {
+      cancelButtonText: '닫기',
+      buttonsStyling: false,
+      customClass: {
+        confirmButton: 'btn btn-dark rounded-pill px-4 me-2',
+        cancelButton: 'btn btn-outline-secondary rounded-pill px-4',
+        popup: 'rounded-4',
+      },
+    }).then((result) => {
       if (result.isConfirmed) {
         router.push({ name: 'login' })
       }

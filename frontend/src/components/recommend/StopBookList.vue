@@ -1,6 +1,6 @@
 <template>
   <div class="container my-5">
-    <h2 class="mb-4 fw-bold">📚 많은 사람들이 읽다 그만둔 책</h2>
+    <h2 class="mb-4 fw-bold">많은 사람들이 읽다 그만둔 책</h2>
     <!-- 데이터가 있을 때만 카드 보여줌 -->
     <div v-if="droppedBooks.length" class="row row-cols-1 row-cols-md-3 g-4">
       <div

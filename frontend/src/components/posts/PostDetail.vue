@@ -4,31 +4,41 @@
     <div v-if="post.cover_img" class="mb-4">
       <img
         :src="getImageUrl(post.cover_img)"
-        class="w-100 rounded shadow-sm"
-        style="max-height: 400px; object-fit: cover;"
+        class="w-100 rounded-4 shadow-sm"
+        style="max-height: 460px; object-fit: cover;"
         :alt="post.title"
       />
     </div>
 
-    <!-- 본문 + 사이드 (책 정보) -->
+    <!-- 제목 -->
+    <h2 class="fw-bold mb-3">{{ post.title }}</h2>
+
+    <!-- 작성자 프로필 및 정보 -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div class="d-flex align-items-center">
+        <RouterLink
+          :to="{ name: 'user-profile', params: { userId: post.user_id } }"
+          class="text-decoration-none text-dark fw-semibold"
+        >
+          ✍️ {{ post.user }}
+        </RouterLink>
+      </div>
+      <div class="text-muted small">
+        {{ formatDate(post.created_at) }} · 💬 {{ post.comment_count || 0 }} Comments
+      </div>
+    </div>
+
+    <!-- 구분선 -->
+    <hr />
+
+    <!-- 본문 + 책 정보 -->
     <div class="row">
-      <!-- 왼쪽: 본문 영역 -->
+      <!-- 왼쪽: 본문 -->
       <div class="col-lg-8 mb-4">
-        <div class="mb-2 text-muted small">
-          ✍️
-          <RouterLink
-            :to="{ name: 'user-profile', params: { userId: post.user_id } }"
-            class="text-decoration-none text-dark fw-medium"
-          >
-            {{ post.user }}
-          </RouterLink>
-          · 🕒 {{ formatDate(post.created_at) }}
-        </div>
-        <h2 class="fw-bold mb-3">{{ post.title }}</h2>
         <p class="fs-5" style="line-height: 1.8;" v-html="formattedContent"></p>
       </div>
 
-      <!-- 오른쪽: 책 정보 (작게) -->
+      <!-- 오른쪽: 책 정보 -->
       <div class="col-lg-4">
         <div class="card shadow-sm">
           <img :src="book.cover" class="card-img-top" :alt="book.title" style="height: 400px; object-fit: cover;" />
@@ -41,34 +51,36 @@
         </div>
       </div>
 
-        <!-- 키워드 해시태그 -->
-        <div v-if="post.keywords && post.keywords.length" class="mt-3 d-flex flex-wrap gap-2 justify-content-end">
-          <span
-            v-for="(kw, i) in post.keywords"
-            :key="i"
-            class="badge rounded-pill bg-light text-dark border"
-          >
-            #{{ kw.name }}
-          </span>
-        </div>
+      <!-- 키워드 해시태그 -->
+      <div v-if="post.keywords?.length" class="mt-3 d-flex flex-wrap gap-2 justify-content-end">
+        <span
+          v-for="(kw, i) in post.keywords"
+          :key="i"
+          class="badge rounded-pill bg-light text-dark border"
+        >
+          #{{ kw.name }}
+        </span>
+      </div>
 
-        <!-- 수정/삭제 (작성자만 가능) -->
-        <div class="d-flex justify-content-end mt-4" v-if="isOwner">
-          <button class="btn btn-outline-primary me-2" @click="goToEdit(book.id, post.id)">수정</button>
-          <button class="btn btn-outline-danger" @click="deleteThread(book.id, post.id)">삭제</button>
-        </div>
+      <!-- 수정/삭제 -->
+      <div class="d-flex justify-content-end my-4" v-if="isOwner">
+        <button class="btn btn-outline-primary me-2" @click="goToEdit(book.id, post.id)">수정</button>
+        <button class="btn btn-outline-danger" @click="deleteThread(book.id, post.id)">삭제</button>
+      </div>
     </div>
 
-    <!-- 댓글 컴포넌트 -->
-    <div class="mt-5">
-          <PostComments :postId="postId" />
-        </div>
+    <!-- 댓글 -->
+    <hr />
+    <div class="mb-5">
+      <PostComments :postId="postId" />
+    </div>
   </div>
 
   <div v-else class="container mt-5">
     <p>❗ 해당 스레드를 찾을 수 없습니다.</p>
   </div>
 </template>
+
 
 <script setup>
 import axios from 'axios'
@@ -143,4 +155,5 @@ const formatDate = (iso) => {
   font-size: 1.1rem;
   font-weight: 600;
 }
+
 </style>

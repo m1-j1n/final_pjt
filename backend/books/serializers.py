@@ -115,10 +115,12 @@ class PostDetailSerializer(serializers.ModelSerializer):
 class PostListSerializer(serializers.ModelSerializer):
     category_id = serializers.IntegerField(source='book.category.id', read_only=True)
     book_cover = serializers.ImageField(source='book.cover', read_only=True)
+    user_name = serializers.CharField(source='user.username', read_only=True)
+    user_profile = serializers.ImageField(source='user.profile_image', read_only=True)
 
     class Meta:
         model = Post
-        fields = ['id', 'title', 'content', 'created_at', 'book_cover', 'category_id', 'cover_img']
+        fields = ['id', 'title', 'content', 'created_at', 'book_cover', 'category_id', 'cover_img', 'user_name','user_profile']
 
 # 🔹 Comment Serializer
 class CommentSerializer(serializers.ModelSerializer):

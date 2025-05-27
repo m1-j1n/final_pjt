@@ -1,6 +1,6 @@
 <template>
   <div class="recommend-container">
-    <h2 class="title">📚 당신을 위한 책 추천</h2>
+    <h2 class="title">당신을 위한 책 추천</h2>
 
     <!-- 로딩 화면 -->
     <div v-if="isLoading" class="loading-area">

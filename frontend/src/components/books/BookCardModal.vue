@@ -76,6 +76,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import Swal from 'sweetalert2'
 
 const props = defineProps({
   bookId: Number
@@ -102,6 +103,40 @@ const formatDate = (val) => {
 
 // 제출 버튼
 const submitStatus = () => {
+  // 유효성 검사
+  if (status.value === 'done') {
+    if (!startDate.value || !endDate.value) {
+      Swal.fire({
+        icon: 'info',
+        title: '입력이 필요합니다',
+        text: '완독 상태를 저장하려면 시작일과 완독일을 모두 입력해주세요.',
+        confirmButtonText: '확인',
+      })
+      return
+    }
+  } else if (status.value === 'reading') {
+    if (!startDate.value) {
+      Swal.fire({
+        icon: 'info',
+        title: '입력이 필요합니다',
+        text: '읽는 중 상태를 저장하려면 시작일을 입력해주세요.',
+        confirmButtonText: '확인',
+      })
+      return
+    }
+  } else if (status.value === 'stop') {
+    if (!startDate.value || !stopDate.value) {
+      Swal.fire({
+        icon: 'info',
+        title: '입력이 필요합니다',
+        text: '중단 상태를 저장하려면 시작일과 중단일을 모두 입력해주세요.',
+        confirmButtonText: '확인',
+      })
+      return
+    }
+  }
+
+  // 유효하면 저장 진행
   const payload = {
     status: status.value,
     start_date: formatDate(startDate.value),
@@ -115,6 +150,7 @@ const submitStatus = () => {
   emit('saved', { bookId: props.bookId, data: payload })
   emit('close')
 
+  // 초기화
   status.value = 'done'
   startDate.value = ''
   endDate.value = ''

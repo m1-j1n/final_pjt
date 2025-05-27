@@ -250,9 +250,9 @@ const handleDelete = () => {
   console.log('🗑 삭제 완료')
   Swal.fire({
     icon: 'info',
-    title: '삭제 완료',
-    text: '독서 기록이 삭제되었습니다.',
-    timer: 1500,
+    title: '삭제되었습니다',
+    text: '독서 기록이 정리되었습니다.',
+    timer: 1200,
     showConfirmButton: false,
   })
   readingStatus.value = null

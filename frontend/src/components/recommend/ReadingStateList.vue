@@ -1,6 +1,6 @@
 <template>
   <div class="container mt-5">
-    <h2 class="mb-4 fw-bold">📚 현재 읽고 있는 책과 유사한 추천 도서</h2>
+    <h2 class="mb-4 fw-bold">현재 읽고 있는 책과 유사한 추천 도서</h2>
 
      <!-- GPT 추천 멘트 -->
      <p v-if="recommendSummary" class="text-muted fst-italic mb-4 px-2">

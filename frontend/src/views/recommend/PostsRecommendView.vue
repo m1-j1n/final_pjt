@@ -69,9 +69,6 @@ onMounted(async () => {
   try {
     const res = await axios.get('http://127.0.0.1:8000/api/v1/post/recommend/')
     posts.value = res.data
-    console.log(uniquePosts.value.map(p => p.id))
-    console.log(posts.value[0]?.cover_img)
-
   } catch (err) {
     console.error('추천 포스트 로딩 실패:', err)
   }

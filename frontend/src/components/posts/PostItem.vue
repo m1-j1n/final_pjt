@@ -19,11 +19,11 @@
               </p>
               <p class="text-muted mt-auto small">💬 댓글 {{ post.comment_count || 0 }}개</p>
               <!-- 키워드 해시태그 -->
-              <p class="mt-2">
+              <p>
                 <span
                   v-for="(kw, i) in post.keywords.slice(0, 3)"
                   :key="i"
-                  class="badge rounded-pill bg-light text-dark me-1 border"
+                  class="badge rounded-pill bg-light text-dark border"
                 >
                   #{{ kw.name }}
                 </span>

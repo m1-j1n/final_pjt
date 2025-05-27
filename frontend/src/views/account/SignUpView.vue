@@ -139,62 +139,88 @@ const onSignUp = async () => {
 .signup-container {
   display: flex;
   justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background: #f5f5fa;
+  min-height: 65vh;
+  background-color: #f8f9fa;
+  padding: 2rem 1rem;
 }
+
 .card {
-  background: white;
-  padding: 2rem;
+  background: #ffffff;
+  padding: 2.5rem 2rem;
   border-radius: 1rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
   max-width: 500px;
   width: 100%;
+  border: 1px solid #e9ecef;
 }
+
 .title {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-bottom: 1.5rem;
+  font-size: 1.7rem;
+  font-weight: 700;
   text-align: center;
+  color: #343a40;
+  margin-bottom: 2rem;
 }
+
 .form-group {
-  margin-bottom: 1rem;
+  margin-bottom: 1.3rem;
   display: flex;
   flex-direction: column;
 }
+
 label {
-  font-weight: 600;
-  margin-bottom: 0.5rem;
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: #495057;
+  margin-bottom: 0.4rem;
 }
+
 input,
 select {
-  padding: 0.6rem;
-  border: 1px solid #ccc;
-  border-radius: 0.5rem;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #ced4da;
+  border-radius: 0.6rem;
   font-size: 1rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  background-color: #fff;
 }
+
+input:focus,
+select:focus {
+  border-color: #74b9ff;
+  box-shadow: 0 0 0 0.15rem rgba(116, 185, 255, 0.25);
+  outline: none;
+}
+
 .error-message {
-  color: red;
-  font-size: 0.9rem;
+  color: #d9534f;
+  font-size: 0.85rem;
   margin-top: 0.3rem;
 }
+
 .submit-group {
-  margin-top: 1.5rem;
+  margin-top: 2rem;
   display: flex;
   justify-content: center;
 }
+
 input[type="submit"] {
-  background: #4caf50;
-  color: white;
-  padding: 0.75rem 1.5rem;
+  background-color: #f8a33b;
+  color: #fff;
+  padding: 0.75rem 2rem;
   font-size: 1rem;
-  font-weight: bold;
+  font-weight: 600;
   border: none;
-  border-radius: 0.5rem;
+  border-radius: 999px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
 }
+
 input[type="submit"]:hover {
-  background-color: #388e3c;
+  background-color: #f29b2f;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
 }
+
 </style>
