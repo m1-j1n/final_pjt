@@ -2,12 +2,19 @@
   <div class="container mt-5">
     <h2 class="mb-4 fw-bold">현재 읽고 있는 책과 유사한 추천 도서</h2>
 
-     <!-- GPT 추천 멘트 -->
-     <p v-if="recommendSummary" class="text-muted fst-italic mb-4 px-2">
+    <!-- GPT 추천 멘트 -->
+    <p v-if="recommendSummary" class="alert alert-light text-muted fst-italic mb-4 px-2">
       📌 {{ recommendSummary }}
     </p>
 
-    <div v-if="recommendedBooks.length">
+    <!-- 📖 로딩 상태 -->
+    <div v-if="isLoading" class="loading-area text-center py-5">
+      <div class="book-spinner fs-1">📖</div>
+      <p class="loading-text text-muted mt-3">당신의 책을 찾고 있어요<span class="dot-animation">...</span></p>
+    </div>
+
+    <!-- 📚 추천 도서 -->
+    <div v-else-if="recommendedBooks.length">
       <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-3">
         <div class="col" v-for="book in recommendedBooks" :key="book.id">
           <RouterLink
@@ -32,8 +39,9 @@
       </div>
     </div>
 
+    <!-- 추천 없음 -->
     <div v-else class="text-center mt-4 text-muted">
-      <p>추천 도서를 불러오는 중입니다.</p>
+      <p>추천 도서를 찾지 못했어요.</p>
     </div>
   </div>
 </template>
@@ -49,6 +57,7 @@
   const recommendSummary = ref('')
   const userStore = useUserStore()
   const router = useRouter()
+  const isLoading = ref(true)
   
   onMounted(() => {
     axios.get('http://localhost:8000/api/v1/recommend/content-based/', {
@@ -86,5 +95,33 @@
     .catch(err => {
       console.error('❗ 추천 실패:', err)
     })
+    .finally(() => {
+    isLoading.value = false 
+  })
   })
   </script>
+
+<style scoped>
+.book-spinner {
+  animation: bounce 1s infinite;
+}
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.dot-animation::after {
+  content: '';
+  display: inline-block;
+  animation: dots 1.5s infinite steps(3, jump-none);
+  width: 1em;
+  text-align: left;
+}
+
+@keyframes dots {
+  0% { content: ''; }
+  33% { content: '.'; }
+  66% { content: '..'; }
+  100% { content: '...'; }
+}
+</style>

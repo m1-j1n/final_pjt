@@ -217,7 +217,7 @@ def post_list(request):
 # 포스트 추천 리스트
 @api_view(['GET'])
 def post_recommend_list(request):
-    posts = Post.objects.select_related('book', 'user').all()
+    posts = Post.objects.select_related('book', 'user').order_by('-created_at')[:3]  
     serializer = PostListSerializer(posts, many=True)
     return Response(serializer.data)
 

@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <h3 class="mb-3 text-heading">요즘 유저들이 남긴 포스트</h3>
+    <h3 class="mb-3 fw-bold text-heading">요즘 유저들이 남긴 포스트</h3>
 
     <!-- 포스트 카드 (2열 고정) -->
     <div class="row row-cols-1 row-cols-md-2 g-4">
@@ -54,9 +54,11 @@ const BASE_API_URL = 'http://localhost:8000'
 
 // 포스트 이미지 불러오기
 const getImageUrl = (path) => {
-  if (!path) return ''
-  if (path.startsWith('http')) return path
-  return `${BASE_API_URL}/media/${path.replace(/^\/?media\//, '')}`
+  if (!path) {
+    return 'https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?fit=crop&w=600&h=400&auto=format'; // 책 느낌의 기본 이미지
+  }
+  if (path.startsWith('http')) return path;
+  return `${BASE_API_URL}/media/${path.replace(/^\/?media\//, '')}`;
 }
 
 onMounted(async () => {

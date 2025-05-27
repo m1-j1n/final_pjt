@@ -1,6 +1,6 @@
 <template>
   <div class="container blogy-theme">
-    <h3 class="mb-3 text-heading">카테고리별 도서 보기</h3>
+    <h3 class="mb-3 fw-bold text-heading">카테고리별 도서 보기</h3>
     <div class="row">
       <!-- ─── 좌측 사이드바 ─── -->
       <div class="col-4">

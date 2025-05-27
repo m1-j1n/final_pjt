@@ -100,7 +100,7 @@ router.beforeEach(async (to, from, next) => {
     try {
       const res = await axios.get('/accounts/mypage/', {
         headers: {
-          Authorization: `Token ${localStorage.getItem('access_token')}`,
+          Authorization: `Token ${localStorage.getItem('token')}`,
         },
         withCredentials: true,
       })

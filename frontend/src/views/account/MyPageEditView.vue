@@ -1,54 +1,57 @@
 <template>
-  <div class="container py-5" style="max-width: 600px">
+  <div class="edit-container">
     <div class="card shadow p-4">
-      <h4 class="mb-4 text-center">내 정보 수정</h4>
+      <h2 class="form-title">내 정보 수정</h2>
 
       <!-- 비밀번호 확인 단계 -->
       <div v-if="!verified">
-        <label class="form-label">현재 비밀번호</label>
-        <input type="password" class="form-control mb-3" v-model="password" />
-
-        <button class="btn btn-dark w-100" @click="verify">비밀번호 확인</button>
+        <div class="form-group">
+          <label>현재 비밀번호</label>
+          <input type="password" class="form-control" v-model="password" />
+        </div>
+          <div class="text-center">
+            <button class="submit-btn mt-3" @click="verify">비밀번호 확인</button>
+          </div>
       </div>
 
       <!-- 수정 폼 -->
-      <form v-else @submit.prevent="submit">
-        <div class="mb-3">
-          <label class="form-label">이름</label>
+      <form v-else @submit.prevent="submit" class="edit-form">
+        <div class="form-group">
+          <label>이름</label>
           <input type="text" class="form-control" v-model="form.name" readonly />
         </div>
 
-        <div class="mb-3">
-          <label class="form-label">성별</label>
+        <div class="form-group">
+          <label>성별</label>
           <input type="text" class="form-control" :value="form.gender === 'M' ? '남성' : '여성'" readonly />
         </div>
 
-        <div class="mb-3">
-          <label class="form-label">나이</label>
+        <div class="form-group">
+          <label>나이</label>
           <input type="text" class="form-control" :value="form.age + '세'" readonly />
         </div>
 
-        <div class="mb-3">
-          <label class="form-label">아이디</label>
+        <div class="form-group">
+          <label>아이디</label>
           <input type="text" class="form-control" v-model="form.username" required />
         </div>
 
-        <div class="mb-3">
-          <label class="form-label">새 비밀번호 (선택)</label>
+        <div class="form-group">
+          <label>새 비밀번호 (선택)</label>
           <input type="password" class="form-control" v-model="form.password1" />
         </div>
 
-        <div class="mb-3">
-          <label class="form-label">새 비밀번호 확인</label>
+        <div class="form-group">
+          <label>새 비밀번호 확인</label>
           <input type="password" class="form-control" v-model="form.password2" />
         </div>
 
-        <div class="mb-3">
-          <label class="form-label">프로필 이미지</label>
+        <div class="form-group">
+          <label>프로필 이미지</label>
           <input type="file" class="form-control" @change="handleImage" />
         </div>
 
-        <button class="btn btn-primary w-100" type="submit">수정 완료</button>
+        <button type="submit" class="submit-btn mt-4">수정 완료</button>
       </form>
     </div>
   </div>
@@ -78,7 +81,7 @@ const form = ref({
 onMounted(() => {
   axios.get(`${API_URL}/mypage/`, {
     headers: {
-      Authorization: `Token ${localStorage.getItem('access_token')}`
+      Authorization: `Token ${localStorage.getItem('token')}`
     }
   }).then(res => {
     const data = res.data
@@ -93,7 +96,7 @@ const verify = async () => {
   try {
     await axios.post(`${API_URL}/verify-password/`, { password: password.value }, {
       headers: {
-        Authorization: `Token ${localStorage.getItem('access_token')}`
+        Authorization: `Token ${localStorage.getItem('token')}`
       }
     })
     verified.value = true
@@ -121,7 +124,7 @@ const submit = async () => {
   try {
     await axios.patch(`${API_URL}/mypage/`, formData, {
       headers: {
-        Authorization: `Token ${localStorage.getItem('access_token')}`,
+        Authorization: `Token ${localStorage.getItem('token')}`,
         'Content-Type': 'multipart/form-data'
       }
     })
@@ -134,7 +137,78 @@ const submit = async () => {
 </script>
 
 <style scoped>
-input {
+.edit-container {
+  max-width: 480px;
+  margin: 80px auto;
+  background-color: #fff;
+}
+
+.card {
+  border-radius: 1rem;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+}
+
+.form-title {
+  font-size: 1.7rem;
+  font-weight: 700;
+  text-align: center;
+  color: #343a40;
+  margin-bottom: 2rem;
+}
+
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.3rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+label {
+  margin-bottom: 0.4rem;
+  font-weight: 500;
   font-size: 0.95rem;
+  color: #495057;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="file"] {
+  padding: 0.6rem 0.8rem;
+  font-size: 1rem;
+  border-radius: 0.6rem;
+  border: 1px solid #ced4da;
+  background-color: #fff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input:focus {
+  border-color: #74b9ff;
+  box-shadow: 0 0 0 0.15rem rgba(116, 185, 255, 0.25);
+  outline: none;
+}
+
+.submit-btn {
+  padding: 0.75rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  background-color: #f8a33b;
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.submit-btn:hover {
+  background-color: #f29b2f;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
 }
 </style>

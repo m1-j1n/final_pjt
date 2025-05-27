@@ -64,8 +64,12 @@
 
       <!-- 수정/삭제 -->
       <div class="d-flex justify-content-end my-4" v-if="isOwner">
-        <button class="btn btn-outline-primary me-2" @click="goToEdit(book.id, post.id)">수정</button>
-        <button class="btn btn-outline-danger" @click="deleteThread(book.id, post.id)">삭제</button>
+        <button class="btn btn-outline-secondary rounded-pill px-4 me-2" @click="goToEdit(book.id, post.id)">
+          수정
+        </button>
+        <button class="btn btn-outline-danger rounded-pill px-4" @click="deleteThread(book.id, post.id)">
+          삭제
+        </button>
       </div>
     </div>
 
@@ -85,7 +89,7 @@
 <script setup>
 import axios from 'axios'
 import { RouterLink } from 'vue-router'
-
+import Swal from 'sweetalert2'
 import { useRoute, useRouter } from 'vue-router'
 import { usePostStore } from '@/stores/post'
 import { useBookStore } from '@/stores/books'
@@ -134,15 +138,53 @@ const goToEdit = (bookId, postId) => {
 
 // 삭제 버튼
 const deleteThread = (bookId, postId) => {
-  if (!confirm('정말 삭제하시겠습니까?')) return
-
-  axios.delete(`http://localhost:8000/api/v1/books/${bookId}/posts/${postId}/delete/`)
-    .then(() => postStore.fetchPosts())
-    .then(() => router.push({ name: 'posts' }))
-    .catch((err) => {
-      console.error('❌ 삭제 실패:', err)
-      alert('삭제에 실패했습니다.')
-    })
+  Swal.fire({
+    icon: 'warning',
+    title: '정말 삭제하시겠어요?',
+    text: '기록이 완전히 삭제됩니다.',
+    showCancelButton: true,
+    confirmButtonText: '삭제',
+    cancelButtonText: '취소',
+    buttonsStyling: false,
+    customClass: {
+      confirmButton: 'btn btn-danger rounded-pill px-4 me-2',
+      cancelButton: 'btn btn-outline-secondary rounded-pill px-4',
+      popup: 'rounded-4',
+    },
+  }).then((result) => {
+    if (result.isConfirmed) {
+      axios.delete(`http://localhost:8000/api/v1/books/${bookId}/posts/${postId}/delete/`)
+        .then(() => {
+          Swal.fire({
+            icon: 'success',
+            title: '삭제 완료',
+            text: '포스트가 성공적으로 삭제되었습니다.',
+            confirmButtonText: '확인',
+            buttonsStyling: false,
+            customClass: {
+              confirmButton: 'btn btn-dark rounded-pill px-4',
+              popup: 'rounded-4',
+            },
+          })
+          return postStore.fetchPosts()
+        })
+        .then(() => router.push({ name: 'posts' }))
+        .catch((err) => {
+          console.error('❌ 삭제 실패:', err)
+          Swal.fire({
+            icon: 'error',
+            title: '삭제 실패',
+            text: '문제가 발생했습니다. 다시 시도해주세요.',
+            confirmButtonText: '확인',
+            buttonsStyling: false,
+            customClass: {
+              confirmButton: 'btn btn-outline-secondary rounded-pill px-4',
+              popup: 'rounded-4',
+            },
+          })
+        })
+    }
+  })
 }
 
 const formatDate = (iso) => {
@@ -155,5 +197,19 @@ const formatDate = (iso) => {
   font-size: 1.1rem;
   font-weight: 600;
 }
+.btn-outline-secondary:hover {
+  background-color: #f1f3f5;
+  color: #343a40;
+  border-color: #ced4da;
+}
 
+.btn-outline-danger {
+  border-color: #fa5252;
+  color: #fa5252;
+}
+.btn-outline-danger:hover {
+  background-color: #fff5f5;
+  color: #c92a2a;
+  border-color: #c92a2a;
+}
 </style>

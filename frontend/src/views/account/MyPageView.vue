@@ -1,5 +1,5 @@
 <template>
-  <div class="mypage-wrapper container py-5">
+  <div class="mypage-wrapper container pb-5">
     <!-- 상단 제목 -->
     <div class="text-start mb-4">
       <h2 class="shelf-title">{{ user.name }}님의 서재</h2>
@@ -15,7 +15,10 @@
         <div class="card-section shadow-block text-center py-4">
           <img :src="profileImg" class="profile-img-large mb-3" alt="프로필" />
           <h5 class="fw-semibold">{{ user.username }}</h5>
-          <p class="text-muted small">{{ user.about }}</p>
+          <p class="text-muted small">
+            팔로잉 {{ user.followings_count }} · 팔로워 {{ user.followers_count }}
+          </p>
+          <RouterLink :to="{ name: 'mypage-edit' }" class="btn btn-mypage-edit">프로필 편집</RouterLink>
         </div>
 
         <!-- About Me -->
@@ -23,7 +26,7 @@
           <h5 class="fw-semibold mb-3">About Me</h5>
 
           <!-- ✅ 설문 안한 경우 -->
-        <div v-if="!user.is_signup || Object.keys(user.preference).length === 0" class="survey-guide text-center mt-4">
+        <div v-if="!user.is_signup_complete" class="survey-guide text-center mt-4">
           <p class="survey-text text-muted">
             좋아하는 스타일, 관심 있는 주제를 알려주세요!<br />
             설문을 통해 당신만의 책장을 채워드릴게요.
@@ -73,8 +76,6 @@
           </div>
         </div>
 
-
-
       </div>
 
       <!-- 오른쪽 -->
@@ -100,11 +101,17 @@
             <template v-else>
               <div class="shelf-row" v-for="(row, index) in bookRows" :key="index">
                 <div v-for="book in row" :key="book.id" class="book-item">
+                    <div class="book-img-wrapper position-relative">
                   <img :src="book.cover" class="book-img" @click="goToBookDetail(book.id)" />
-                  <span v-if="book.status === 'reading'" class="badge-status green">읽는 중</span>
-                  <span v-else-if="book.status === 'done'" class="badge-status blue">완독</span>
-                  <span v-else-if="book.status === 'stop'" class="badge-status gray">중단</span>
-                  <span v-if="book.liked" class="badge-status red">❤️</span>
+
+                  <!-- 왼쪽 상단: 읽기 상태 뱃지 -->
+                  <span v-if="book.status === 'reading'" class="badge-status green left-top">읽는 중</span>
+                  <span v-else-if="book.status === 'done'" class="badge-status blue left-top">완독</span>
+                  <span v-else-if="book.status === 'stop'" class="badge-status gray left-top">중단</span>
+
+                  <!-- 오른쪽 상단: 좋아요 하트 뱃지 -->
+                  <span v-if="book.liked" class="badge-status red right-top">❤️</span>
+                </div>
                 </div>
                 <div class="shelf-line"></div>
               </div>
@@ -143,7 +150,8 @@ import { ref, onMounted, computed } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
 import defaultImg from '@/assets/img/default-profile.png'
-
+import { useUserStore } from '@/stores/users.js'
+const userStore = useUserStore()
 const router = useRouter()
 const API_ACCOUNT_URL = 'http://127.0.0.1:8000/api/v1/accounts'
 
@@ -154,6 +162,9 @@ const user = ref({
   name: '',
   username: '',
   about: '',
+  is_signup_complete: false,
+  followers_count: 0,
+  followings_count: 0,
   preference: {
     lifestyles: [],
     preferred_reading_styles: [],
@@ -183,6 +194,8 @@ const goToSurvey = () => {
 function mergeBooks() {
   const bookMap = new Map()
   const combined = [...readingBooks.value, ...likedBooks.value]
+  console.log('📚 병합 전 책들:', combined)
+  
 
   for (const book of combined) {
     const existing = bookMap.get(book.id) || {}
@@ -201,16 +214,25 @@ const bookRows = computed(() => {
 })
 
 onMounted(() => {
-  const headers = { Authorization: `Token ${localStorage.getItem('access_token')}` }
+  const headers = { Authorization: `Token ${userStore.token}` }
 
   axios.get(`${API_ACCOUNT_URL}/mypage/`, { headers }).then(res => {
     const data = res.data
+    console.log(data)
     user.value.name = data.name
     user.value.username = data.username
     user.value.preference = data.preference || {}
+    user.value.is_signup_complete = data.is_signup_complete
+
+    user.value.followers_count = data.followers_count
+    user.value.followings_count = data.followings_count 
 
     if (data.profile_img) {
-      profileImg.value = data.profile_img.startsWith('http') ? data.profile_img : `http://127.0.0.1:8000${data.profile_img}`
+      profileImg.value = data.profile_img.startsWith('http')
+        ? data.profile_img
+        : `http://127.0.0.1:8000${data.profile_img}`
+    } else {
+      profileImg.value = 'https://www.gravatar.com/avatar/?d=mp'
     }
 
     user.value.about = data.preference
@@ -439,7 +461,6 @@ body {
   color: #455a64;
 }
 
-
 .survey-guide {
   padding: 1rem;
   margin-top: 1.5rem;
@@ -450,4 +471,32 @@ body {
   line-height: 1.6;
 }
 
+.badge-status.left-top {
+  top: 6px;
+  left: 6px;
+}
+
+.badge-status.right-top {
+  top: 6px;
+  right: 6px;
+  left: auto; /* 왼쪽 위치 초기화 */
+}
+
+.btn-mypage-edit {
+  background-color: #f8f9fa;
+  color: #343a40;
+  border: 1px solid #ced4da;
+  border-radius: 999px;
+  padding: 0.5rem 1.25rem;
+  font-weight: 600;
+  font-size: 0.8rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.btn-mypage-edit:hover {
+  background-color: #e9ecef;
+  color: #212529;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
 </style>

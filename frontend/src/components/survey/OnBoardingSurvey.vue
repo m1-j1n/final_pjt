@@ -137,7 +137,7 @@ const submitSurvey = async () => {
   try {
     await axios.put('http://127.0.0.1:8000/api/v1/accounts/preference/', form.value, {
       headers: {
-        Authorization: `Token ${localStorage.getItem('access_token')}`,
+        Authorization: `Token ${localStorage.getItem('token')}`,
       },
     })
     isComplete.value = true

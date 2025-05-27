@@ -95,6 +95,10 @@ const userStore = useUserStore()
 
 const toggleLike = async () => {
   try {
+    // UI 먼저 반영
+    liked.value = !liked.value
+
+    // 서버 요청
     const res = await axios.post(
       `http://localhost:8000/api/v1/books/${book.id}/like/`,
       {},
@@ -104,12 +108,15 @@ const toggleLike = async () => {
         }
       }
     )
-    
+
+    // 3️⃣ 서버 응답 기반으로 상태 보정 (이때는 명시적으로 값을 설정)
     const updatedBook = res.data.book
     liked.value = updatedBook.liked
     likeCount.value = updatedBook.like_count
 
-    Object.assign(book, updatedBook)
+    // ✅ 반응성을 위해 명시적으로 필드 지정
+    book.liked = updatedBook.liked
+    book.like_count = updatedBook.like_count
 
   } catch (err) {
     if (err.response?.status === 401) {
@@ -264,7 +271,7 @@ const handleDelete = () => {
 onMounted(async () => {
   if (book && book.id) {
     likeCount.value = book.like_count || 0
-    liked.value = book.liked || false
+    liked.value = typeof book.liked === 'boolean' ? book.liked : false
 
     // ✅ 로그인한 유저의 독서 기록이 있는지 미리 확인
     if (userStore.token) {

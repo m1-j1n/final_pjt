@@ -123,7 +123,7 @@ const onSignUp = async () => {
 
     // 토큰 저장
     const token = loginRes.data.key
-    localStorage.setItem('access_token', token)
+    localStorage.setItem('token', token)
 
     // 설문 페이지로 이동
     router.push({ name: 'onboarding-survey' })

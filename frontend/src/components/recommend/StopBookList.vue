@@ -1,12 +1,20 @@
 <template>
   <div class="container my-5">
     <h2 class="mb-4 fw-bold">많은 사람들이 읽다 그만둔 책</h2>
+    <div class="alert alert-light">
+      <p class="mb-0">
+        사람들은 
+        <strong>어떤 이유로</strong>
+        책 읽기를 멈췄을까요?
+      </p>
+    </div>
     <!-- 데이터가 있을 때만 카드 보여줌 -->
     <div v-if="droppedBooks.length" class="row row-cols-1 row-cols-md-3 g-4">
       <div
         v-for="(book, index) in droppedBooks.slice(0, 3)"
         :key="index"
         class="col"
+        style="min-height: 600px;"
       >
         <RouterLink
           :to="{ name: 'books-detail', params: { bookId: book.book_id } }"
@@ -17,7 +25,7 @@
               :src="book.book_cover"
               alt="책 표지"
               class="card-img-top object-fit-cover"
-              style="height: 300px"
+              style="height: 400px"
             />
             <div class="card-body">
               <h5 class="card-title">{{ book.book_title }}</h5>

@@ -1,6 +1,6 @@
 <template>
   <div class="container py-5">
-    <h2 class="fw-bold text-center mb-5">✨ 다른 사람들의 인생 책이 궁금하다면?</h2>
+    <h2 class="fw-bold mb-5">다른 사람들의 인생 책이 궁금하다면?</h2>
 
     <div class="row row-cols-1 row-cols-md-3 g-4">
       <div v-for="post in uniquePosts" :key="post.id" class="col">
@@ -16,15 +16,6 @@
             </div>
             <div class="card-body d-flex flex-column justify-content-between">
               <div>
-                <!-- <div class="mb-2">
-                  <span
-                    v-for="(kw, i) in post.keywords.slice(0, 3)"
-                    :key="i"
-                    class="badge bg-light text-dark border me-1"
-                  >
-                    #{{ kw.name }}
-                  </span>
-                </div> -->
                 <h5 class="card-title">{{ post.title }}</h5>
                 <p class="card-text text-muted mb-3">
                   {{ post.content.slice(0, 100) }}<span v-if="post.content.length > 100">...</span>
@@ -56,7 +47,7 @@ import axios from 'axios'
 
 const posts = ref([])
 
-const uniquePosts = computed(() => posts.value.slice(0, 1))
+const uniquePosts = computed(() => posts.value.slice(0, 3))
 
 const BASE_API_URL = 'http://localhost:8000'
 const getImageUrl = (path) => {
@@ -73,8 +64,6 @@ onMounted(async () => {
     console.error('추천 포스트 로딩 실패:', err)
   }
 })
-
-
 </script>
 
 

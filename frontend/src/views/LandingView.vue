@@ -1,11 +1,9 @@
 <template>
-  <div class="container py-5">
-
-
+  <div class="container pb-5">
     <!-- 추천 콘텐츠 (비회원용) -->
     <section class="mb-5">
       <h3 class="mb-4 fw-bold">
-        <i class="bi bi-stars me-2 text-primary"></i>당신을 위한 추천 콘텐츠
+        당신을 위한 추천 콘텐츠
       </h3>
       <div class="row g-3">
         <div class="col-md-8">
@@ -25,7 +23,7 @@
             <img src="@/assets/img/book-cover/b.jpg" class="card-img object-fit-cover" alt="추천 콘텐츠">
             <div class="card-img-overlay d-flex flex-column justify-content-end bg-dark bg-opacity-50 p-3">
               <small>Curated for your taste</small>
-              <h5 class="fw-bold">당신이 읽고 있는 책과 유사한 리스트</h5>
+              <h5 class="fw-bold">당신이 읽은 책과 유사한 리스트</h5>
             </div>
           </div>
         </div>
@@ -35,7 +33,7 @@
         <div class="col-md-4">
           <div class="card recommendation-card small-card text-white position-relative overflow-hidden"
             @click="goToPost">
-            <img src="@/assets/img/book-cover/d.jpg" class="card-img object-fit-cover" alt="추천 콘텐츠">
+            <img src="@/assets/img/book-cover/c.jpg" class="card-img object-fit-cover" alt="추천 콘텐츠">
             <div class="card-img-overlay d-flex flex-column justify-content-end bg-dark bg-opacity-50 p-3">
               <small>:-)</small>
               <h6 class="fw-bold">다른 사람의 인생 책이 궁금하신가요?</h6>
@@ -45,7 +43,7 @@
         <div class="col-md-4">
           <div class="card recommendation-card small-card text-white position-relative overflow-hidden"
             @click="gotoStyleRecommned">
-            <img src="@/assets/img/book-cover/a.jpg" class="card-img object-fit-cover" alt="추천 콘텐츠">
+            <img src="@/assets/img/book-cover/d.jpg" class="card-img object-fit-cover" alt="추천 콘텐츠">
             <div class="card-img-overlay d-flex flex-column justify-content-end bg-dark bg-opacity-50 p-3">
               <small>책을 고르기 망설여질 때,</small>
               <h6 class="fw-bold">당신이 선호하는 스타일의 책은 ?</h6>
@@ -55,7 +53,7 @@
         <div class="col-md-4">
           <div class="card recommendation-card small-card text-white position-relative overflow-hidden"
             @click="gotoStopBookList">
-            <img src="@/assets/img/book-cover/b.jpg" class="card-img object-fit-cover" alt="추천 콘텐츠">
+            <img src="@/assets/img/book-cover/e.jpg" class="card-img object-fit-cover" alt="추천 콘텐츠">
             <div class="card-img-overlay d-flex flex-column justify-content-end bg-dark bg-opacity-50 p-3">
               <small>책을 덮은 사람들이 궁금할 때,</small>
               <h6 class="fw-bold">사람들이 많이 중단한 책.. 그 이유는 ?</h6>
@@ -68,12 +66,13 @@
     <!-- 인기 책 섹션 -->
     <section class="mb-5">
       <h3 class="mb-4 fw-bold">
-        <i class="bi bi-bookmark-star-fill me-2 text-danger"></i>인기 책
+        인기 책
       </h3>
       <Swiper :modules="[Autoplay]" :slides-per-view="3" :space-between="30" :loop="true"
         :autoplay="{ delay: 3000, disableOnInteraction: false }">
         <SwiperSlide v-for="book in topBooks" :key="book.id">
-          <RouterLink :to="{ name: 'books-detail', params: { bookId: book.id } }">
+          <RouterLink :to="{ name: 'books-detail', params: { bookId: book.id } }"
+          class="text-decoration-none text-dark">
             <div class="card h-100">
               <img :src="book.cover" class="card-img-top" :alt="book.title">
               <div class="card-body">
@@ -176,20 +175,40 @@ onMounted(() => {
 
 <style scoped>
 .card {
+  height: 100%;
   cursor: pointer;
   transition: transform 0.2s ease-in-out;
   border-radius: 16px;
   overflow: hidden;
+  height: 100%;
+  flex-direction: column;
 }
 
 .card:hover {
   transform: scale(1.02);
 }
 
+.card-img-top {
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  width: 100%;
+  height: auto;
+  flex-shrink: 0;
+}
+
 .card-img {
   object-fit: cover;
   width: 100%;
   height: 100%;
+}
+
+
+.card-body {
+  padding: 1rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .recommendation-card.large-card {
@@ -202,5 +221,10 @@ onMounted(() => {
 
 .recommendation-card.small-card {
   height: 200px;
+}
+
+.card-title,
+.card-text {
+  text-decoration: none !important;
 }
 </style>
