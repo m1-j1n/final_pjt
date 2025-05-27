@@ -32,6 +32,8 @@ from .serializers import  ( BookSerializer, CategorySerializer, PostDetailSerial
 
 
 
+import random
+
 ### 도서 ###
 # 책 전체 조회
 @api_view(['GET'])
@@ -483,3 +485,13 @@ def recommend_books(request):
     },
     'books': BookSimpleSerializer(sorted_books, many=True, context={'request': request}).data
 })
+
+
+
+@api_view(['GET'])
+def random_books(request):
+    count = int(request.GET.get('count', 3))
+    all_books = list(Book.objects.all())
+    sampled_books = random.sample(all_books, min(count, len(all_books)))
+    serializer = BookSerializer(sampled_books, many=True)
+    return Response(serializer.data)
