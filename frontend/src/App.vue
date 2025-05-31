@@ -6,12 +6,16 @@
     <main class="pt-5">
       <RouterView />
     </main>
+    <footer>
+    <Footer/>
+  </footer>
   </div>
 </template>
 
 <script setup>
 import NavBar from '@/components/layout/NavBar.vue'
 import { RouterLink, RouterView } from 'vue-router'
+import Footer from '@/components/layout/Footer.vue'
 
 
 </script>

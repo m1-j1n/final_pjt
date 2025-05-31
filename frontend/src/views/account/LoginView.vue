@@ -51,7 +51,6 @@ const onLogIn = function () {
 
   userStore.logIn(userInfo)
     .then(() => {
-      alert('로그인 성공!')
       router.push({ name: 'landing' })
     })
     .catch(() => {
@@ -62,19 +61,27 @@ const onLogIn = function () {
 
 <style scoped>
 .login-container {
-  max-width: 400px;
+  max-width: 460px;
   margin: 100px auto;
-  padding: 2rem;
-  border-radius: 12px;
-  background-color: #f2f2f2;
-  box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+  padding: 2.25rem 2rem;
+  border-radius: 1rem;
+  background-color: #ffffff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e9ecef;
+}
+
+h2 {
+  font-size: 1.7rem;
+  font-weight: 700;
   text-align: center;
+  color: #343a40;
+  margin-bottom: 2rem;
 }
 
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.3rem;
 }
 
 .form-group {
@@ -84,30 +91,70 @@ const onLogIn = function () {
 }
 
 label {
-  margin-bottom: 0.3rem;
-  font-weight: bold;
+  margin-bottom: 0.4rem;
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: #495057;
 }
 
 input {
-  padding: 0.6rem;
+  padding: 0.6rem 0.8rem;
   font-size: 1rem;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+  border-radius: 0.6rem;
+  border: 1px solid #ced4da;
+  background-color: #fff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input:focus {
+  border-color: #74b9ff;
+  box-shadow: 0 0 0 0.15rem rgba(116, 185, 255, 0.25);
+  outline: none;
+}
+
+.error-messages {
+  color: #d9534f;
+  font-size: 0.85rem;
+  text-align: left;
+  margin-top: -0.5rem;
+  margin-bottom: -0.5rem;
 }
 
 .login-btn {
-  padding: 0.7rem;
+  padding: 0.75rem 2rem;
   font-size: 1rem;
-  font-weight: bold;
-  background-color: #4caf50;
-  color: white;
+  font-weight: 600;
+  background-color: #f8a33b;
+  color: #fff;
   border: none;
-  border-radius: 8px;
+  border-radius: 999px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
 }
 
 .login-btn:hover {
-  background-color: #45a049;
+  background-color: #f29b2f;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
 }
+
+.signup-link {
+  margin-top: 1rem;
+  font-size: 0.95rem;
+  color: #6c757d;
+  text-align: center;
+}
+
+.signup-link a {
+  color: #f8a33b;
+  text-decoration: none;
+  font-weight: 600;
+  margin-left: 0.25rem;
+}
+
+.signup-link a:hover {
+  text-decoration: underline;
+}
+
 </style>

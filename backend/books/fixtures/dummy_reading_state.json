@@ -1,0 +1,77 @@
+[
+  {
+    "model": "books.readingstatus",
+    "pk": 1,
+    "fields": {
+      "user": 1,
+      "book": 805,
+      "status": "stop",
+      "start_date": "2024-01-01",
+      "stop_date": "2024-01-15",
+      "stop_reason": "처음엔 재밌을 줄 알았는데, 점점 집중이 안 돼서 멈췄어요.",
+      "comment": "",
+      "progress": null,
+      "updated_at": "2024-06-01T12:00:00Z"
+    }
+  },
+  {
+    "model": "books.readingstatus",
+    "pk": 2,
+    "fields": {
+      "user": 2,
+      "book": 806,
+      "status": "stop",
+      "start_date": "2024-02-10",
+      "stop_date": "2024-02-20",
+      "stop_reason": "생각보다 내용이 딱딱해서 손이 잘 안 가더라고요.",
+      "comment": "",
+      "progress": null,
+      "updated_at": "2024-06-01T12:00:00Z"
+    }
+  },
+  {
+    "model": "books.readingstatus",
+    "pk": 3,
+    "fields": {
+      "user": 3,
+      "book": 805,
+      "status": "stop",
+      "start_date": "2024-03-05",
+      "stop_date": "2024-03-10",
+      "stop_reason": "읽다가 너무 어려워서 몇 번 시도하다가 그냥 중단했어요.",
+      "comment": "",
+      "progress": null,
+      "updated_at": "2024-06-01T12:00:00Z"
+    }
+  },
+  {
+    "model": "books.readingstatus",
+    "pk": 4,
+    "fields": {
+      "user": 4,
+      "book": 806,
+      "status": "stop",
+      "start_date": "2024-04-01",
+      "stop_date": "2024-04-12",
+      "stop_reason": "다른 책 읽느라 이건 잠시 멈춰놨어요. 다시 읽을진 모르겠네요.",
+      "comment": "",
+      "progress": null,
+      "updated_at": "2024-06-01T12:00:00Z"
+    }
+  },
+  {
+    "model": "books.readingstatus",
+    "pk": 5,
+    "fields": {
+      "user": 5,
+      "book": 805,
+      "status": "stop",
+      "start_date": "2024-05-01",
+      "stop_date": "2024-05-08",
+      "stop_reason": "내용이 비슷비슷하게 느껴져서 금방 흥미가 떨어졌어요.",
+      "comment": "",
+      "progress": null,
+      "updated_at": "2024-06-01T12:00:00Z"
+    }
+  }
+]

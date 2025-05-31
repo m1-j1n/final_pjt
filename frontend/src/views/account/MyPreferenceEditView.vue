@@ -106,7 +106,7 @@ const form = ref({
 })
 
 onMounted(async () => {
-  const headers = { Authorization: `Token ${localStorage.getItem('access_token')}` }
+  const headers = { Authorization: `Token ${localStorage.getItem('token')}` }
   const [life, read, cat, avoid, user] = await Promise.all([
     axios.get(`${API_URL}/lifestyles/`, { headers }),
     axios.get(`${API_URL}/readingstyles/`, { headers }),
@@ -135,7 +135,7 @@ const submit = async () => {
   try {
     await axios.put(`${API_URL}/preference/`, form.value, {
       headers: {
-        Authorization: `Token ${localStorage.getItem('access_token')}`
+        Authorization: `Token ${localStorage.getItem('token')}`
       }
     })
     alert('설문 정보가 수정되었습니다.')

@@ -4,32 +4,41 @@
     <div v-if="post.cover_img" class="mb-4">
       <img
         :src="getImageUrl(post.cover_img)"
-        class="w-100 rounded shadow-sm"
-        style="max-height: 400px; object-fit: cover;"
+        class="w-100 rounded-4 shadow-sm"
+        style="max-height: 460px; object-fit: cover;"
         :alt="post.title"
       />
     </div>
 
-    <!-- 본문 + 사이드 (책 정보) -->
+    <!-- 제목 -->
+    <h2 class="fw-bold mb-3">{{ post.title }}</h2>
+
+    <!-- 작성자 프로필 및 정보 -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div class="d-flex align-items-center">
+        <RouterLink
+          :to="{ name: 'user-profile', params: { userId: post.user_id } }"
+          class="text-decoration-none text-dark fw-semibold"
+        >
+          ✍️ {{ post.user }}
+        </RouterLink>
+      </div>
+      <div class="text-muted small">
+        {{ formatDate(post.created_at) }} · 💬 {{ post.comment_count || 0 }} Comments
+      </div>
+    </div>
+
+    <!-- 구분선 -->
+    <hr />
+
+    <!-- 본문 + 책 정보 -->
     <div class="row">
-      <!-- 왼쪽: 본문 영역 -->
+      <!-- 왼쪽: 본문 -->
       <div class="col-lg-8 mb-4">
-        <div class="mb-2 text-muted small">
-          ✍️
-          <RouterLink
-            :to="{ name: 'user-profile', params: { userId: post.user_id } }"
-            class="text-decoration-none text-dark fw-medium"
-          >
-            {{ post.user }}
-          </RouterLink>
-          · 🕒 {{ formatDate(post.created_at) }}
-        </div>
-        <h2 class="fw-bold mb-3">{{ post.title }}</h2>
         <p class="fs-5" style="line-height: 1.8;" v-html="formattedContent"></p>
-        <!-- <p class="fs-5" style="line-height: 1.8;">{{ post.content }}</p> -->
       </div>
 
-      <!-- 오른쪽: 책 정보 (작게) -->
+      <!-- 오른쪽: 책 정보 -->
       <div class="col-lg-4">
         <div class="card shadow-sm">
           <img :src="book.cover" class="card-img-top" :alt="book.title" style="height: 400px; object-fit: cover;" />
@@ -42,28 +51,33 @@
         </div>
       </div>
 
-        <!-- 키워드 해시태그 -->
-        <div v-if="post.keywords && post.keywords.length" class="mt-3 d-flex flex-wrap gap-2 justify-content-end">
-          <span
-            v-for="(kw, i) in post.keywords"
-            :key="i"
-            class="badge rounded-pill bg-light text-dark border"
-          >
-            #{{ kw.name }}
-          </span>
-        </div>
+      <!-- 키워드 해시태그 -->
+      <div v-if="post.keywords?.length" class="mt-3 d-flex flex-wrap gap-2 justify-content-end">
+        <span
+          v-for="(kw, i) in post.keywords"
+          :key="i"
+          class="badge rounded-pill bg-light text-dark border"
+        >
+          #{{ kw.name }}
+        </span>
+      </div>
 
-        <!-- 수정/삭제 (작성자만 가능) -->
-        <div class="d-flex justify-content-end mt-4" v-if="isOwner">
-          <button class="btn btn-outline-primary me-2" @click="goToEdit(book.id, post.id)">수정</button>
-          <button class="btn btn-outline-danger" @click="deleteThread(book.id, post.id)">삭제</button>
-        </div>
+      <!-- 수정/삭제 -->
+      <div class="d-flex justify-content-end my-4" v-if="isOwner">
+        <button class="btn btn-outline-secondary rounded-pill px-4 me-2" @click="goToEdit(book.id, post.id)">
+          수정
+        </button>
+        <button class="btn btn-outline-danger rounded-pill px-4" @click="deleteThread(book.id, post.id)">
+          삭제
+        </button>
+      </div>
     </div>
 
-    <!-- 댓글 컴포넌트 -->
-    <div class="mt-5">
-          <PostComments :postId="postId" />
-        </div>
+    <!-- 댓글 -->
+    <hr />
+    <div class="mb-5">
+      <PostComments :postId="postId" />
+    </div>
   </div>
 
   <div v-else class="container mt-5">
@@ -71,8 +85,11 @@
   </div>
 </template>
 
+
 <script setup>
 import axios from 'axios'
+import { RouterLink } from 'vue-router'
+import Swal from 'sweetalert2'
 import { useRoute, useRouter } from 'vue-router'
 import { usePostStore } from '@/stores/post'
 import { useBookStore } from '@/stores/books'
@@ -121,15 +138,53 @@ const goToEdit = (bookId, postId) => {
 
 // 삭제 버튼
 const deleteThread = (bookId, postId) => {
-  if (!confirm('정말 삭제하시겠습니까?')) return
-
-  axios.delete(`http://localhost:8000/api/v1/books/${bookId}/posts/${postId}/delete/`)
-    .then(() => postStore.fetchPosts())
-    .then(() => router.push({ name: 'posts' }))
-    .catch((err) => {
-      console.error('❌ 삭제 실패:', err)
-      alert('삭제에 실패했습니다.')
-    })
+  Swal.fire({
+    icon: 'warning',
+    title: '정말 삭제하시겠어요?',
+    text: '기록이 완전히 삭제됩니다.',
+    showCancelButton: true,
+    confirmButtonText: '삭제',
+    cancelButtonText: '취소',
+    buttonsStyling: false,
+    customClass: {
+      confirmButton: 'btn btn-danger rounded-pill px-4 me-2',
+      cancelButton: 'btn btn-outline-secondary rounded-pill px-4',
+      popup: 'rounded-4',
+    },
+  }).then((result) => {
+    if (result.isConfirmed) {
+      axios.delete(`http://localhost:8000/api/v1/books/${bookId}/posts/${postId}/delete/`)
+        .then(() => {
+          Swal.fire({
+            icon: 'success',
+            title: '삭제 완료',
+            text: '포스트가 성공적으로 삭제되었습니다.',
+            confirmButtonText: '확인',
+            buttonsStyling: false,
+            customClass: {
+              confirmButton: 'btn btn-dark rounded-pill px-4',
+              popup: 'rounded-4',
+            },
+          })
+          return postStore.fetchPosts()
+        })
+        .then(() => router.push({ name: 'posts' }))
+        .catch((err) => {
+          console.error('❌ 삭제 실패:', err)
+          Swal.fire({
+            icon: 'error',
+            title: '삭제 실패',
+            text: '문제가 발생했습니다. 다시 시도해주세요.',
+            confirmButtonText: '확인',
+            buttonsStyling: false,
+            customClass: {
+              confirmButton: 'btn btn-outline-secondary rounded-pill px-4',
+              popup: 'rounded-4',
+            },
+          })
+        })
+    }
+  })
 }
 
 const formatDate = (iso) => {
@@ -141,5 +196,20 @@ const formatDate = (iso) => {
 .card-title {
   font-size: 1.1rem;
   font-weight: 600;
+}
+.btn-outline-secondary:hover {
+  background-color: #f1f3f5;
+  color: #343a40;
+  border-color: #ced4da;
+}
+
+.btn-outline-danger {
+  border-color: #fa5252;
+  color: #fa5252;
+}
+.btn-outline-danger:hover {
+  background-color: #fff5f5;
+  color: #c92a2a;
+  border-color: #c92a2a;
 }
 </style>

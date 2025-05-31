@@ -1,80 +1,82 @@
 <template>
-  <!-- 모달 코드를 넣어요 -->
   <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content fixed-modal">
-          <div class="modal-header">
-            <h5 class="modal-title">📘 독서 상태 기록</h5>
-            <button type="button" class="btn-close" @click="closeModal"></button>
-          </div>
-          <div class="modal-body">
-          <p class="mb-2 small text-muted">독서 상태를 선택해주세요</p>
-          <div class="btn-group w-100 mb-3" role="group">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 rounded-4 shadow fixed-modal">
+        <div class="modal-header border-0 pb-2">
+          <h5 class="modal-title fw-bold">독서 상태 기록</h5>
+          <button type="button" class="btn-close" @click="closeModal"></button>
+        </div>
+
+        <div class="modal-body pt-0">
+          <p class="small text-muted mb-3">현재 책의 독서 상태를 선택해주세요.</p>
+          <div class="btn-group w-100 mb-4" role="group">
             <input type="radio" class="btn-check" id="btn-done" value="done" v-model="status" autocomplete="off" />
-            <label class="btn btn-outline-primary" for="btn-done">✅ 완독</label>
+            <label class="btn btn-outline-secondary rounded-start-pill" for="btn-done">완독</label>
 
             <input type="radio" class="btn-check" id="btn-reading" value="reading" v-model="status" autocomplete="off" />
-            <label class="btn btn-outline-success" for="btn-reading">📖 읽는 중</label>
+            <label class="btn btn-outline-secondary" for="btn-reading">읽는 중</label>
 
             <input type="radio" class="btn-check" id="btn-stop" value="stop" v-model="status" autocomplete="off" />
-            <label class="btn btn-outline-danger" for="btn-stop">⛔ 중단</label>
+            <label class="btn btn-outline-secondary rounded-end-pill" for="btn-stop">중단</label>
           </div>
 
-          <!-- 완독 -->
-          <div v-if="status === 'done'">
-            <p class="mb-2 small text-muted">책을 읽기 시작한 날짜를 입력하세요</p>
-            <input type="date" v-model="startDate" class="form-control mb-2" />
+          <!-- ✅ 완독 -->
+          <div v-if="status === 'done'" class="mb-3">
+            <label class="form-label small text-muted">시작일</label>
+            <input type="date" v-model="startDate" class="form-control mb-3" />
 
-            <p class="mb-2 small text-muted">책을 모두 읽은 날짜를 입력하세요</p>
-            <input type="date" v-model="endDate" class="form-control mb-2" />
+            <label class="form-label small text-muted">완독일</label>
+            <input type="date" v-model="endDate" class="form-control mb-3" />
 
-            <p class="mb-2 small text-muted">한줄평을 남겨주세요 (선택사항)</p>
-            <textarea v-model="comment" class="form-control" placeholder="한줄평 작성" />
+            <label class="form-label small text-muted">한줄평 (선택)</label>
+            <textarea v-model="comment" class="form-control" rows="3" placeholder="예: 몰입감 넘치는 이야기였습니다." />
           </div>
 
-          <!-- 읽는 중 -->
-          <div v-if="status === 'reading'">
-            <p class="mb-2 small text-muted">책을 읽기 시작한 날짜를 입력하세요</p>
-            <input type="date" v-model="startDate" class="form-control mb-2" />
+          <!-- ✅ 읽는 중 -->
+          <div v-if="status === 'reading'" class="mb-3">
+            <label class="form-label small text-muted">시작일</label>
+            <input type="date" v-model="startDate" class="form-control mb-3" />
 
-            <div class="reading-progress mb-3">
-              <label class="form-label d-flex justify-content-between align-items-center mb-1">
-                <span class="text-muted">📈 현재까지 읽은 비율</span>
-                <span class="badge bg-success">{{ progress }}%</span>
-              </label>
-              <input
-                type="range"
-                class="form-range custom-range"
-                v-model="progress"
-                min="0"
-                max="100"
-              />
-            </div>
+            <label class="form-label small d-flex justify-content-between align-items-center mb-2 text-secondary">
+              <span class="fw-medium">읽은 비율</span>
+              <span class="badge bg-light text-dark border">{{ progress }}%</span>
+            </label>
+            <input
+              type="range"
+              class="form-range progress-range"
+              v-model="progress"
+              min="0"
+              max="100"
+            />
           </div>
 
-          <!-- 중단 -->
-          <div v-if="status === 'stop'">
-            <p class="mb-2 small text-muted">책을 읽기 시작한 날짜를 입력하세요</p>
-            <input type="date" v-model="startDate" class="form-control mb-2" />
+          <!-- ✅ 중단 -->
+          <div v-if="status === 'stop'" class="mb-3">
+            <label class="form-label small text-muted">시작일</label>
+            <input type="date" v-model="startDate" class="form-control mb-3" />
 
-            <p class="mb-2 small text-muted">책을 중단한 날짜를 입력하세요</p>
-            <input type="date" v-model="stopDate" class="form-control mb-2" />
+            <label class="form-label small text-muted">중단일</label>
+            <input type="date" v-model="stopDate" class="form-control mb-3" />
 
-            <p class="mb-2 small text-muted">중단한 이유를 입력해주세요</p>
-            <textarea v-model="stopReason" class="form-control" placeholder="중단한 이유를 적어주세요" />
+            <label class="form-label small text-muted">중단한 이유</label>
+            <textarea v-model="stopReason" class="form-control" rows="3" placeholder="예: 흥미가 가지 않았어요." />
           </div>
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-secondary" @click="closeModal">닫기</button>
-            <button class="btn btn-primary" @click="submitStatus">저장</button>
-          </div>
+        </div>
+
+        <div class="modal-footer border-0 pt-0">
+          <button class="btn btn-outline-dark rounded-pill px-4" @click="closeModal">닫기</button>
+          <button class="btn btn-dark rounded-pill px-4" @click="submitStatus">저장</button>
         </div>
       </div>
     </div>
+  </div>
 </template>
+
+
 
 <script setup>
 import { ref } from 'vue'
+import Swal from 'sweetalert2'
 
 const props = defineProps({
   bookId: Number
@@ -101,6 +103,40 @@ const formatDate = (val) => {
 
 // 제출 버튼
 const submitStatus = () => {
+  // 유효성 검사
+  if (status.value === 'done') {
+    if (!startDate.value || !endDate.value) {
+      Swal.fire({
+        icon: 'info',
+        title: '입력이 필요합니다',
+        text: '완독 상태를 저장하려면 시작일과 완독일을 모두 입력해주세요.',
+        confirmButtonText: '확인',
+      })
+      return
+    }
+  } else if (status.value === 'reading') {
+    if (!startDate.value) {
+      Swal.fire({
+        icon: 'info',
+        title: '입력이 필요합니다',
+        text: '읽는 중 상태를 저장하려면 시작일을 입력해주세요.',
+        confirmButtonText: '확인',
+      })
+      return
+    }
+  } else if (status.value === 'stop') {
+    if (!startDate.value || !stopDate.value) {
+      Swal.fire({
+        icon: 'info',
+        title: '입력이 필요합니다',
+        text: '중단 상태를 저장하려면 시작일과 중단일을 모두 입력해주세요.',
+        confirmButtonText: '확인',
+      })
+      return
+    }
+  }
+
+  // 유효하면 저장 진행
   const payload = {
     status: status.value,
     start_date: formatDate(startDate.value),
@@ -114,6 +150,7 @@ const submitStatus = () => {
   emit('saved', { bookId: props.bookId, data: payload })
   emit('close')
 
+  // 초기화
   status.value = 'done'
   startDate.value = ''
   endDate.value = ''
@@ -131,8 +168,9 @@ const closeModal = () => {
 
 <style scoped>
 .fixed-modal {
-  min-height: 480px; 
+  height: 550px;
   display: flex;
+  max-height: 90vh;
   flex-direction: column;
 }
 

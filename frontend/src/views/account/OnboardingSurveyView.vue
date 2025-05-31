@@ -93,10 +93,12 @@ button {
   font-weight: bold;
   color: #fff;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, box-shadow 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
 }
 
 button:hover {
-  background-color: #e99724;
+  background-color: #f29b2f;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
 }
 </style>

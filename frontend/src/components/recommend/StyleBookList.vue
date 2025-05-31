@@ -62,7 +62,7 @@ onMounted(async () => {
   try {
     const res = await axios.get('http://localhost:8000/api/v1/recommend/personal/', {
       headers: {
-        Authorization: `Token ${localStorage.getItem('access_token')}`,
+        Authorization: `Token ${localStorage.getItem('token')}`,
       },
     })
     recommendedBooks.value = res.data.books

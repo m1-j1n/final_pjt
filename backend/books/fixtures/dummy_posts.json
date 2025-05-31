@@ -3,80 +3,80 @@
     "model": "books.post",
     "pk": 1,
     "fields": {
-      "title": "감동과 여운을 주는 시간 속에 남다.",
-      "content": "Optio accusamus nulla maxime nemo qui. At asperiores ipsa facere. In incidunt in consequatur. Numquam assumenda nobis. Velit dolor labore aspernatur odit.",
-      "reading_date": "2025-05-19",
-      "cover_img": "post_cover_img/book1.jpg",
+      "title": "나는 왜 변화하지 못했을까? 이 책을 덮고서야 알게 됐다.",
+      "content": "자기계발서를 많이 읽는 편이다. 그런데 대부분 책을 덮고 나면 ‘좋은 말이네’ 하고 끝날 뿐, 실제 삶은 변하지 않았다. 그런데 『아주 작은 습관의 힘』은 달랐다. 처음엔 단순한 습관 이론일 거라 생각했다. 그러나 이 책은 ‘왜 우리는 변하지 못하는가’라는 근본적인 질문을 던지며, 변화의 출발점이 의지가 아니라 ‘환경과 시스템’이라는 점을 일깨워주었다.\n\n가장 인상 깊었던 건 ‘1%의 법칙’이다. 하루에 단 1%만 나아져도 1년 후엔 전혀 다른 삶을 살고 있을 수 있다는 믿음. 나는 항상 뭔가 크게 바꾸려고 했기에 실패했고, 작고 사소한 반복을 하찮게 여겼던 것 같다. 하지만 이 책은 아주 작고 사소한 변화가 어떻게 삶 전체를 바꿔놓는지를 실제 사례와 과학적 근거로 설명한다.\n\n책을 읽은 후 나는 ‘매일 10분 스트레칭’, ‘출근 전 책 3쪽 읽기’ 같은 작은 루틴을 시작했다. 처음엔 이게 무슨 의미가 있을까 싶었는데, 어느새 몸이 가벼워지고 아침이 달라졌다. 마치 나도 모르게 인생의 페이스가 바뀐 느낌이다. 지금은 일기를 쓰고, 아침에 명상을 하며 하루를 정리하는 루틴까지 생겼다.\n\n자기계발서에 회의적인 사람, ‘나는 왜 항상 작심삼일일까’ 고민하는 사람이라면 꼭 한 번 읽어봤으면 한다. 변화는 대단한 결심이 아니라, 아주 작은 습관에서 시작된다는 걸 진심으로 느끼게 해주는 책이다.",
+      "reading_date": "2025-05-25",
+      "cover_img": "post_cover_img/post2.jpg",
       "book": 118,
       "user": 16,
-      "created_at": "2025-05-25T12:00:00Z",
-      "updated_at": "2025-05-25T12:00:00Z"
+      "created_at": "2025-05-24T12:00:00Z",
+      "updated_at": "2025-05-24T12:00:00Z"
     }
   },
   {
     "model": "books.post",
-    "pk": 2,
+    "pk": 8,
     "fields": {
-      "title": "Delectus dolores iste.",
-      "content": "Quasi in blanditiis velit excepturi nisi. Sequi dolorum officiis tempore sapiente maiores. Laudantium sequi aperiam. Fugit id consectetur ex. Quis nobis quo neque.",
+      "title": "킬러 만화인데 이렇게 웃기고 긴장감 넘겨도 돼요?",
+      "content": "『사카모토 데이즈』 시리즈는 원래도 좋아했지만, 이번 4권은 특히 몰입감이 남달랐어요. 단순히 액션 만화라고 생각하면 큰 오산. 이건 말 그대로 ‘폭소와 서스펜스의 하이브리드’입니다.\n\n이번 권에서는 사카모토와 신이 루를 구출하기 위해 움직이는데, 여기에 카시마와 세바까지 얽히면서 본격적으로 세 세력의 충돌이 시작돼요. 특히 객차 안에서 벌어지는 전투는 숨 막힐 정도로 박진감 넘치면서도, 중간중간 유쾌한 장면들이 터져 나와서 웃음을 멈출 수 없었어요.\n\n사카모토라는 캐릭터는 평범한 아저씨처럼 보이지만, 전직 전설급 킬러답게 상황을 장악하는 능력이 압도적이에요. 그런데 동시에 가족을 사랑하고, 동료를 챙기고, 라멘을 좋아하는 인간적인 면이 정말 매력적이에요. 그래서 더 몰입하게 되고, 긴장과 감동 사이를 오가게 되는 것 같아요.\n\n만화이지만 설정도 꽤 탄탄하고, 각 세력의 복선이나 캐릭터성도 잘 짜여 있어서 단순한 배틀물에 그치지 않아요. 마지막 페이지를 넘기고 나면 '다음 권 빨리 보고 싶다!'는 말이 절로 나옵니다.\n\n액션, 개그, 스릴, 휴먼드라마까지… 만화에 원하는 모든 요소가 다 들어있는 작품. 이런 게 바로 ‘킬러 만화’의 정점 아닐까요?",
       "reading_date": "2025-05-12",
-      "cover_img": "https://images.unsplash.com/photo-1512820790803-83ca734da794",
+      "cover_img": "post_cover_img/post_2.jpg",
       "book": 183,
       "user": 19,
-      "created_at": "2025-05-25T12:00:00Z",
-      "updated_at": "2025-05-25T12:00:00Z"
+      "created_at": "2025-05-20T12:00:00Z",
+      "updated_at": "2025-05-20T12:00:00Z"
     }
   },
   {
     "model": "books.post",
     "pk": 3,
     "fields": {
-      "title": "Molestiae et culpa.",
-      "content": "Eveniet illum consectetur repellat excepturi quibusdam voluptates. Voluptatum blanditiis iure non repellat ut. Quia debitis molestiae nostrum in accusamus corporis porro. Vero suscipit sit maiores. Aut saepe ducimus totam vero dicta.",
+      "title": "『삼체』, 인간과 우주 사이의 끝없는 응시",
+      "content": "정말 오랜만에 책 한 세트를 읽고 머릿속이 멍해졌다. 『삼체』 3부작은 단순히 ‘흥미로운 SF 소설’이 아니다. 이건 인간이란 존재가 우주 안에서 얼마나 작고도 위대한지를 동시에 자각하게 만드는 철학적인 여정이다.\n\n1부 『삼체문제』에서 시작된 이 서사는, 문화대혁명이라는 어두운 역사 속에서 외계 생명체에게 신호를 보낸 한 인물의 선택으로 시작된다. 그 작은 불꽃 같은 순간이 어떻게 인류 전체의 운명을 바꾸는지를 따라가다 보면, 어느새 나는 인간의 ‘의지’란 무엇이고 ‘문명’이란 무엇인지에 대해 끝없이 생각하고 있다.\n\n2부 『암흑의 숲』에 등장하는 '암흑의 숲 이론'은 나에게 큰 충격이었다. 우주는 생존을 위한 경쟁의 무대이며, 모든 문명은 자신의 존재를 숨겨야만 살아남을 수 있다는 무자비한 전제가 너무나 논리적이라서 섬뜩했다. 그리고 그 속에서 인류가 어떤 선택을 하게 되는지를 읽으며, 우리는 언제나 위협 앞에서 도망칠 수밖에 없는 존재인지, 아니면 끝까지 맞설 수 있는 존재인지를 스스로에게 묻게 된다.\n\n3부 『사신의 영생』에서는 인간과 외계 문명의 전면전, 그리고 그 이후의 세계를 다룬다. 시간과 공간, 존재와 비존재, 생존과 소멸의 경계가 흐려지면서, 이 이야기는 단순한 SF를 넘어선다. 이 책을 읽는다는 건 단지 스토리를 따라가는 것이 아니라, 철저히 사고하고 질문하고 상상하는 체험이다.\n\n『삼체』는 내 독서 인생의 큰 전환점이었다. 과학적 상상력, 문명에 대한 깊이 있는 성찰, 인간 존재에 대한 질문이 유기적으로 얽혀 있어서, 다 읽고 나면 ‘내가 지금껏 읽은 것 중 가장 거대한 이야기를 만났구나’라는 감탄이 절로 나온다. 쉽지 않은 여정이었지만, 나는 그 우주 속에서 인간이라는 존재를 새롭게 이해하게 되었다.",
       "reading_date": "2025-05-14",
-      "cover_img": "https://images.unsplash.com/photo-1495446815901-a7297e633e8d",
+      "cover_img": "post_cover_img/post1.jpeg",
       "book": 136,
       "user": 25,
-      "created_at": "2025-05-25T12:00:00Z",
-      "updated_at": "2025-05-25T12:00:00Z"
+      "created_at": "2025-05-23T12:00:00Z",
+      "updated_at": "2025-05-23T12:00:00Z"
     }
   },
   {
     "model": "books.post",
     "pk": 4,
     "fields": {
-      "title": "Perspiciatis nesciunt aliquid.",
-      "content": "Deleniti fuga explicabo cum delectus. Reprehenderit nihil atque distinctio. Neque dolore unde quis blanditiis veritatis sint aspernatur. Eos similique quas adipisci facilis. Aut necessitatibus earum sit ratione. Dignissimos tenetur ratione distinctio.",
+      "title": "오늘 하루의 끝을 덮밥으로 마무리하다",
+      "content": "요즘처럼 하루가 정신없이 지나가는 날, 저녁 메뉴를 고민하는 것도 피곤할 때가 있다. 그런 날, 『오늘은 아무래도 덮밥』은 정말 큰 위로가 되어준다. 이 책은 단순한 요리책이 아니다. 마치 누군가의 따뜻한 조언처럼, '오늘은 무리하지 말고 덮밥 하나로도 괜찮아'라고 말해주는 느낌이다.\n\n책은 기분이나 상황에 따라 고를 수 있는 다양한 덮밥 레시피를 소개한다. 예를 들면, 아무것도 하기 싫은 날엔 전자레인지 하나로 만드는 간단한 덮밥, 허기가 강하게 느껴지는 날엔 든든한 볼륨 덮밥을, 늦은 밤 부담 없이 즐길 수 있는 야식용 덮밥까지 세세하게 나눠준다. 덮밥이라는 익숙한 요리를 이렇게 감성적이고 실용적으로 풀어낸 책은 처음이었다.\n\n특히 인상 깊었던 건 ‘폭신한 달걀 덮밥’ 파트였다. 만드는 법은 간단했지만, 그 부드러운 식감과 따끈한 밥의 조화가 하루의 피로를 몽글몽글 녹여줬다. 무엇보다 사진과 문장 하나하나가 참 따뜻하고 정갈해서, 요리를 잘 모르는 사람도 도전하고 싶게 만드는 매력이 있다.\n\n책을 읽고 나서 나는 ‘덮밥’이라는 음식을 다시 보게 됐다. 대단한 재료가 없어도, 마음을 담아 조리하고 조용히 한 끼를 채우는 행위만으로도 위로받을 수 있다는 걸. 매일 고급진 요리를 할 수는 없지만, 『오늘은 아무래도 덮밥』 덕분에 나는 오늘도 나만의 작은 밥상을 즐긴다.",
       "reading_date": "2025-05-18",
-      "cover_img": "https://images.unsplash.com/photo-1528207776546-365bb710ee93",
+      "cover_img": "post_cover_img/post4.jpg",
       "book": 187,
       "user": 7,
-      "created_at": "2025-05-25T12:00:00Z",
-      "updated_at": "2025-05-25T12:00:00Z"
+      "created_at": "2025-05-20T12:00:00Z",
+      "updated_at": "2025-05-20T12:00:00Z"
     }
   },
   {
     "model": "books.post",
     "pk": 5,
     "fields": {
-      "title": "Quibusdam maiores repellat.",
-      "content": "Nemo odit et consequatur magni. Repudiandae tenetur dolore quibusdam illum similique. Impedit aliquam blanditiis ad dignissimos itaque quasi.",
+      "title": "킬러였던 그 아저씨, 너무 귀엽고 너무 강하다",
+      "content": "『사카모토 데이즈』 1권을 읽고 느낀 첫 감정은 '이렇게 귀엽고 통쾌한 액션 만화가 있었어?'였다. 주인공 사카모토는 과거 전설로 불리던 킬러였지만, 지금은 푸근한 체형에 안경을 낀 동네 잡화점 아저씨. 그런데도 여전히 강하고 빠르고 냉정하다. 그 간극에서 오는 유쾌한 매력이 이 작품의 핵심이다.\n\n스토리는 단순하지만 개성 넘치는 캐릭터와 코믹한 연출 덕분에 지루할 틈이 없다. 특히 킬러 시절의 습관이 아직 남아있는 사카모토가 평범한 일상 속에서 ‘살인청부업자의 감각’으로 위기를 넘기는 장면들은 진심으로 웃기면서도 멋지다. \n\n인상적인 점은 그의 변화다. 가족을 지키기 위해 살인을 멈추고 평범한 삶을 살겠다고 결심한 전설의 킬러라니. 이 설정이 단순한 개그를 넘어서는 정서적인 깊이를 만들어낸다. 어떤 이유로든 지켜야 할 것이 생기면, 사람이 얼마나 강해질 수 있는지를 보여주는 인물이다.\n\n1권은 이야기의 도입부라 액션보단 캐릭터 소개에 집중되지만, 그만큼 앞으로의 전개가 기대된다. 사카모토를 둘러싼 인물들도 하나같이 개성 넘치고 매력적이다. 주간 소년 점프 출신답게 빠른 전개와 깔끔한 작화, 그리고 코믹한 타이밍이 아주 좋다.\n\n킬러물이지만 어둡지 않고, 가족 코미디 같지만 진지하다. 『사카모토 데이즈』는 그런 모순적인 조합을 멋지게 소화해내는 작품이다. 가볍게 시작했지만 이제 완전히 빠져버렸다. 이건 앞으로도 시리즈 전권 소장 예약이다.",
       "reading_date": "2025-05-11",
-      "cover_img": "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c",
+      "cover_img": "post_cover_img/post_2.jpg",
       "book": 190,
       "user": 7,
-      "created_at": "2025-05-25T12:00:00Z",
-      "updated_at": "2025-05-25T12:00:00Z"
+      "created_at": "2025-05-19T12:00:00Z",
+      "updated_at": "2025-05-19T12:00:00Z"
     }
   },
   {
     "model": "books.post",
     "pk": 6,
     "fields": {
-      "title": "Voluptatem quo maxime in possimus.",
-      "content": "Saepe quidem vero ea. Ut illo quae consequuntur. Laudantium veritatis sed corporis repellendus nemo.",
+      "title": "『종의 기원』, 악을 보는 것이 아니라 악이 되는 독서",
+      "content": "정유정 작가의 소설은 언제나 인간 본성의 가장 어두운 지점을 직시하게 만든다. 『종의 기원』은 그 중에서도 가장 ‘깊고 무서운 곳’까지 데려가는 작품이었다. 단순한 살인 사건이 아니라, 인간이라는 종(種)의 본능과 한계, 그리고 파괴 본능에 대한 질문을 끝까지 밀어붙인다.\n\n주인공 유진은 아주 조용하고 차분하게, 자신의 내면에 있는 '악'을 관찰하고 묘사한다. 그는 공감 능력이 없으며, 사회적 규범에 대해 감정적으로 반응하지 않는다. 그런데 바로 그 점이 무섭다. 너무도 이성적이고 차분하게 살인을 수행하고, 그걸 정당화한다. 읽는 내내 나는 그가 정말 실존하는 사람 같다는 착각에 빠졌고, 그래서 더욱 등골이 서늘했다.\n\n작가는 유진이라는 인물을 통해 “악은 태어나는가, 만들어지는가”라는 질문을 던진다. 독자로서 나는 어느 순간부터 그 질문에 답하려 하기보다는, 그저 유진의 시선에 빠져들어 그의 생각을 따라가고 있었다. 그게 이 책의 가장 무서운 지점이다. 악을 관찰하는 독서가 아니라, 악에 감정이입하는 독서를 하게 되는 경험.\n\n『종의 기원』은 단순한 범죄 소설이 아니다. 인간의 본성과 윤리, 감정과 생물학 사이에서 흔들리는 존재를 고요하지만 끈질기게 해부해낸 소설이다. 다 읽고 나서야 문득 숨을 참았다는 걸 깨달았다. 읽는 내내 긴장을 놓을 수 없었고, 마지막 페이지를 덮고도 한동안은 아무 말도 할 수 없었다. 이 소설은, 그냥 읽는 책이 아니다. 버텨내야 하는 책이다.",
       "reading_date": "2025-05-19",
-      "cover_img": "https://images.unsplash.com/photo-1529655683826-aba9b3e77383",
+      "cover_img": "post_cover_img/post6.jpg",
       "book": 132,
       "user": 29,
       "created_at": "2025-05-25T12:00:00Z",
@@ -87,10 +87,10 @@
     "model": "books.post",
     "pk": 7,
     "fields": {
-      "title": "Provident ducimus excepturi impedit eos veniam.",
-      "content": "Corporis mollitia quia accusamus beatae magni. Perferendis quas maxime facilis amet error. Mollitia debitis at officia praesentium ullam. Fugit nobis eveniet aliquam libero fuga. At est porro facere blanditiis ut ut odit.",
+      "title": "모모의 눈으로 본 세상, 그 앞에서 내가 배운 것",
+      "content": "『자기 앞의 생』은 내가 생각하는 ‘진짜 인생 소설’이다. 유년기의 순수함으로 세상의 가장 어두운 면을 바라보는 어린 소년, 모모. 그의 눈으로 보는 세상은 거칠고 모질지만, 동시에 너무도 인간적이고 따뜻하다.\n\n이 소설은 말 그대로 ‘살아내야만 하는’ 사람들의 이야기다. 유태인 로자 아줌마, 아랍계 소년 모모, 거리의 여성들, 늙고 병든 이들. 모두가 사회의 가장자리에서 버텨내고 있을 뿐이지만, 그들 사이엔 분명 사랑이 있고 존엄이 있다. 작가는 그 감정을 ‘자기 앞의 생’이라는 말로 표현해냈고, 나는 그 말에 오래 멈춰 있었다.\n\n모모와 로자 아줌마 사이의 관계는 단순한 보호자와 아이 그 이상이다. 말없이 서로의 존재를 감싸 안고, 때로는 모른 척하며, 서툴지만 가장 진심으로 연결되어 있다. 죽음을 앞둔 로자 아줌마를 바라보는 모모의 눈빛과 마음은, 읽는 이의 가슴을 조용히 무너뜨린다.\n\n작품 전체를 감싸는 감정은 ‘사랑’이지만, 그것은 우리가 흔히 말하는 따뜻하고 밝은 감정보다는 더 깊고 어두운 곳에서 오는 것 같다. 조건도 없고 정의도 불분명한, 그러나 누구보다 진심인 감정. 그것이 이 소설의 힘이다.\n\n『자기 앞의 생』을 읽고 나면, 문득 세상을 보는 시선이 달라진다. 당연하게 생각했던 것들이 불편해지고, 스쳐지나던 사람들이 마음에 남는다. 그리고 이렇게 말하고 싶어진다. “그는 자기 앞의 생을 살아가고 있었을 뿐이야.” 이 책은 아프지만, 반드시 읽어야 할 이야기다.",
       "reading_date": "2025-05-20",
-      "cover_img": "https://images.unsplash.com/photo-1586483213133-985b58da94f3",
+      "cover_img": "post_cover_img/book7.jpg",
       "book": 178,
       "user": 3,
       "created_at": "2025-05-25T12:00:00Z",
@@ -99,12 +99,12 @@
   },
   {
     "model": "books.post",
-    "pk": 8,
+    "pk": 2,
     "fields": {
-      "title": "Id non ex dicta.",
-      "content": "Corporis perspiciatis vel nostrum. At vel dolorem harum. Minima culpa saepe numquam ab.",
+      "title": "희미하지만 확실하게 마음에 남는 이야기들",
+      "content": "『아주 희미한 빛으로도』를 읽는 동안, 나는 자꾸만 멈춰야 했다. 너무 조용한 문장들이 내 감정의 표면을 조용히 두드리며 지나갔기 때문이다. 최은영 작가의 이야기는 늘 그렇다. 큰 사건 없이도 마음 한가운데를 정직하게 울리는 감정들이 조용히 쌓여 간다.\n\n이번 소설집에 담긴 이야기들은 유독 ‘어긋난 관계들’에 대한 생각을 많이 하게 했다. 우리가 서로를 온전히 이해한다는 건 가능할까? 왜 진심은 때로 가장 가까운 이에게 닿지 못할까? 어쩌면 이 책은 그런 질문을 독자 스스로에게 던지도록 만든다.\n\n등장인물들은 모두 현실에서 만날 법한 이들이다. 누군가는 친구 같고, 누군가는 나 자신 같았다. 누구도 선하지 않고, 누구도 완전히 나쁘지 않다. 그래서 더 마음이 갔다. 각자의 이유로 불완전한 사람들, 그들이 세상과, 서로와, 자기 자신과 조심스럽게 부딪히는 장면들은 오래 남는다.\n\n책을 덮고 난 후에도 나는 한동안 인물들을 떠올리게 되었다. 어떤 이야기는 내가 예전의 나로 살았던 시절을, 어떤 이야기는 아직 말하지 못한 감정들을 꺼내게 만들었다. 그것은 마치 희미하지만 분명한 빛처럼, 내 안에서 잔잔하게 퍼지고 있었다.\n\n이 소설집은 쉽게 잊히지 않을 것이다. 말보다 마음이 앞섰던 날들, 설명보다 체념이 익숙했던 시간들, 그 모든 순간에 ‘빛’이 되어줄 이야기를 만났다는 느낌. 조용하지만 강하게, 오래 남는다.",
       "reading_date": "2025-05-17",
-      "cover_img": "https://images.unsplash.com/photo-1509021436665-8f07dbf5bf1d",
+      "cover_img": "post_cover_img/book8.jpg",
       "book": 156,
       "user": 18,
       "created_at": "2025-05-25T12:00:00Z",
@@ -115,10 +115,10 @@
     "model": "books.post",
     "pk": 9,
     "fields": {
-      "title": "Dolore dolorum unde.",
-      "content": "Dolores ipsam doloribus maiores tenetur nesciunt. Eius voluptate provident deleniti ex pariatur cum deleniti. Minus quisquam nam atque fugit doloribus explicabo.",
+      "title": "편안함 뒤에 숨겨진 섬뜩한 통제 사회",
+      "content": "『멋진 신세계』는 처음부터 끝까지 나를 불편하게 만든 소설이었다. 그런데 이상하게도 그 불편함에서 눈을 뗄 수 없었다. 모든 것이 완벽하게 통제되고, 갈등도, 고통도, 슬픔도 사라진 세계. 언뜻 보면 우리가 꿈꾸던 유토피아일지 모르지만, 이 소설은 그 이면에 있는 디스토피아를 무자비하게 드러낸다.\n\n계급에 따라 존재의 가치가 미리 결정되고, 삶의 목적은 '쾌락'에만 맞춰져 있는 세계. 아이들은 수면 학습을 통해 철저히 세뇌당하고, 불만이 생기면 '소마'라는 약을 먹어 금세 행복해진다. 고통이나 불안이 없는 삶은 과연 행복한 삶일까? 생각할 자유조차 박탈당한 채, 스스로의 감정도 잊고 살아가는 존재는 정말 사람이라고 할 수 있을까?\n\n무엇보다도 야만인 '존'의 등장은 이 이야기의 핵심을 통렬하게 보여준다. 원시적이지만 인간적인 삶을 살아온 그가 '멋진 신세계'에 던져졌을 때, 오히려 그가 더 이질적 존재가 되어버린 아이러니. 그와 사회의 충돌은 작가가 말하고 싶은 바를 가장 극단적으로 보여준다.\n\n읽는 내내 소름이 끼쳤고, 문장을 곱씹을수록 현재 우리의 모습도 겹쳐 보였다. 편리함과 쾌락만을 추구하며 스스로 사고하기를 포기한 사회. 과연 우리가 나아가는 방향은 '신세계'가 아닐까 하는 생각도 들었다.\n\n『멋진 신세계』는 결코 쉽게 넘길 수 있는 이야기가 아니다. 이 책을 읽고 나면, '인간답게 사는 것'이 무엇인지에 대한 질문을 오랫동안 품게 된다. 불편하지만 반드시 읽어야 할 고전이다.",
       "reading_date": "2025-05-07",
-      "cover_img": "https://images.unsplash.com/photo-1495446815901-a7297e633e8d",
+      "cover_img": "post_cover_img/book9.jpg",
       "book": 179,
       "user": 5,
       "created_at": "2025-05-25T12:00:00Z",

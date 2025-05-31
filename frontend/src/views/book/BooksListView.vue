@@ -1,9 +1,9 @@
 <template>
   <div class="container blogy-theme">
-    <h3 class="mb-3 text-heading">카테고리별 도서 보기</h3>
+    <h3 class="mb-3 fw-bold text-heading">카테고리별 도서 보기</h3>
     <div class="row">
       <!-- ─── 좌측 사이드바 ─── -->
-      <div class="col-3">
+      <div class="col-4">
         <!-- 검색바 -->
         <div class="card mb-4 blogy-card blogy-search">
           <div class="card-body">
@@ -41,9 +41,10 @@
       </div>
 
       <!-- ─── 메인 콘텐츠: 도서 카드 리스트 ─── -->
-      <div class="col-9">
-        <div class="d-flex flex-column gap-3">
+      <div class="col-8 mb-2">
+        <div class="row g-4">
           <div
+            class="col-12 col-sm-6 col-md-3"
             v-for="book in searched ? results : bookStore.books"
             :key="book.id"
           >
@@ -52,13 +53,14 @@
         </div>
       </div>
        <!-- ─── 페이지네이션 (전체 폭) ─── -->
-    <div class="row">
+    <div class="row my-4">
       <div class="col-12 d-flex justify-content-center">
         <nav v-if="!searched">
-          <ul class="pagination pagination-sm justify-content-center">
+          <ul class="pagination pagination-sm justify-content-center gap-1">
             <li class="page-item" :class="{ disabled: pageGroupStart === 1 }">
-              <button class="page-link" @click="goToPrevGroup">이전</button>
+              <button class="page-link rounded-pill shadow-sm px-3" @click="goToPrevGroup">←</button>
             </li>
+
             <li
               v-for="n in pageGroupEnd - pageGroupStart + 1"
               :key="n"
@@ -66,14 +68,16 @@
               :class="{ active: currentPage === pageGroupStart + n - 1 }"
             >
               <button
-                class="page-link"
+                class="page-link rounded-pill shadow-sm px-3"
+                :class="{ 'bg-primary text-white border-0': currentPage === pageGroupStart + n - 1 }"
                 @click="fetchBooksByCategory(bookStore.selectedCategory, pageGroupStart + n - 1)"
               >
                 {{ pageGroupStart + n - 1 }}
               </button>
             </li>
+
             <li class="page-item" :class="{ disabled: pageGroupEnd === totalPages }">
-              <button class="page-link" @click="goToNextGroup">다음</button>
+              <button class="page-link rounded-pill shadow-sm px-3" @click="goToNextGroup">→</button>
             </li>
           </ul>
         </nav>
@@ -172,7 +176,11 @@ const fetchBooksByCategory = async (categoryId, page = 1) => {
   : `${BASE_API_URL}/api/v1/books/category/${categoryId}/?page=${page}`
   
   try {
-    const res = await axios.get(url)
+    const res = await axios.get(url, {
+      headers: {
+        Authorization: undefined 
+      }
+    })
     bookStore.books = res.data.results     
     totalCount.value = res.data.count 
 
@@ -206,8 +214,7 @@ const fetchBooksByCategory = async (categoryId, page = 1) => {
   top: 0.1rem;
   width: 4px;
   height: 100%;
-  background-color: #f7a76c; /* 부드러운 주황색 */
-  border-radius: 2px;
+  background-color: #f7a76c; 
 }
 
 .blogy-search .input-group {
@@ -237,5 +244,40 @@ const fetchBooksByCategory = async (categoryId, page = 1) => {
   box-shadow: none;
 }
 
+.category-item {
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+  color: #343a40;
+}
+
+.category-item:hover {
+  background-color: #f0f2f5;
+}
+
+.category-item.active {
+  background-color: #e9ecef; /* 밝은 회색 */
+  font-weight: 500;
+  color: #212529; /* 진한 텍스트 */
+}
+
+.page-link {
+  background-color: #f8f9fa;
+  color: #495057;
+  border: 1px solid #dee2e6;
+  transition: all 0.2s ease-in-out;
+}
+
+.page-link:hover {
+  background-color: #e9ecef;
+  color: #212529;
+}
+
+.page-item.active .page-link {
+  background-color: #f7a76c !important;  /* 블로기 포인트 색상 */
+  color: #fff !important;
+  border: none !important;
+}
 
 </style>

@@ -3,7 +3,7 @@
     <div class="container">
       <!-- 로고 -->
       <RouterLink class="navbar-brand fw-bold text-dark fs-4" :to="{ name: 'landing' }">
-        Booksy
+        Bookie
       </RouterLink>
 
       <!-- 모바일 토글 버튼 -->

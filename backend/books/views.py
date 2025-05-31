@@ -32,13 +32,15 @@ from .serializers import  ( BookSerializer, CategorySerializer, PostDetailSerial
 
 
 
+import random
+
 ### 도서 ###
 # 책 전체 조회
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def book_list(request):
     paginator = PageNumberPagination()
-    paginator.page_size = 10
+    paginator.page_size = 16
 
     books = Book.objects.all().order_by('id')
     # books = Book.objects.all()
@@ -48,6 +50,7 @@ def book_list(request):
 
 # 카테고리 조회
 @api_view(['GET'])
+@permission_classes([AllowAny])
 def category_list(request):
     categories = Category.objects.all()
     serializer = CategorySerializer(categories, many=True)
@@ -55,7 +58,7 @@ def category_list(request):
 
 # 장르별 필터링 - 책
 class StandardResultsSetPagination(PageNumberPagination):
-    page_size = 12  # 페이지당 도서 수
+    page_size = 16  # 페이지당 도서 수
 
 @api_view(['GET'])
 def filter_books_by_category(request, category_id):
@@ -214,7 +217,7 @@ def post_list(request):
 # 포스트 추천 리스트
 @api_view(['GET'])
 def post_recommend_list(request):
-    posts = Post.objects.select_related('book', 'user').all()
+    posts = Post.objects.select_related('book', 'user').order_by('-created_at')[:3]  
     serializer = PostListSerializer(posts, many=True)
     return Response(serializer.data)
 
@@ -483,3 +486,13 @@ def recommend_books(request):
     },
     'books': BookSimpleSerializer(sorted_books, many=True, context={'request': request}).data
 })
+
+
+
+@api_view(['GET'])
+def random_books(request):
+    count = int(request.GET.get('count', 3))
+    all_books = list(Book.objects.all())
+    sampled_books = random.sample(all_books, min(count, len(all_books)))
+    serializer = BookSerializer(sampled_books, many=True)
+    return Response(serializer.data)

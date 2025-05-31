@@ -2,8 +2,8 @@
   <div class="container mt-4" v-if="book">
     <!-- 도서 상세 정보 -->
     <div class="mt-4 text-end">
-      <button class="btn btn-outline-dark" @click="handleClick">
-        포스트 작성
+      <button class="btn btn-post-create" @click="handleClick">
+        + 포스트 작성
       </button>
     </div>
     <BookDetail :book="book" />
@@ -47,4 +47,23 @@ const handleClick = () => {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.btn-post-create {
+  background-color: #f8f9fa;
+  color: #343a40;
+  border: 1px solid #ced4da;
+  border-radius: 999px;
+  padding: 0.6rem 1.4rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.btn-post-create:hover {
+  background-color: #e9ecef;
+  color: #212529;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+</style>

@@ -10,7 +10,7 @@ export const useUserStore = defineStore('user', () => {
 
   const token = ref(localStorage.getItem('token') || '')
   const username = ref(localStorage.getItem('username') || '')
-  const currName = ref(localStorage.getItem('name') ||'')
+  const currName = ref(localStorage.getItem('name') || '')
 
   // 앱 시작 시 토큰 있으면 axios 헤더 세팅
   if (token.value) {
@@ -32,6 +32,7 @@ export const useUserStore = defineStore('user', () => {
           Authorization: `Token ${token.value}`,
         }
       })
+      console.log('📌 현재 사용자:', res.data.username, res.data.email)
       username.value = res.data.username
       currName.value = res.data.name
       localStorage.setItem('username', res.data.username)
@@ -42,6 +43,8 @@ export const useUserStore = defineStore('user', () => {
 
   // ✅ 로그인
   const logIn = async ({ username, password }) => {
+    axios.defaults.headers.common.Authorization
+
     const res = await axios.post(`${AUTH_API_URL}/login/`, { username, password })
     const key = res.data.key
     token.value = key
@@ -55,9 +58,16 @@ export const useUserStore = defineStore('user', () => {
   // 로그아웃
   const logOut = () => {
     token.value = ''
+    username.value = ''
+    currName.value = ''
+    localStorage.removeItem('username')
+    localStorage.removeItem('name')
     localStorage.removeItem('token')
     delete axios.defaults.headers.common.Authorization
-    console.log('로그아웃 완료')
+    console.log('👋 로그아웃 완료, 상태 초기화됨')
+
+    localStorage.clear()
+    window.location.reload()
   }
 
   // 로그인 여부

@@ -36,7 +36,10 @@ def my_page_view(request):
 
     if request.method == 'GET':
         serializer = CustomUserDetailSerializer(user)
-        return Response(serializer.data)
+        data = serializer.data
+        data['followers_count'] = user.followers.count()
+        data['followings_count'] = user.followings.count()
+        return Response(data)
 
     elif request.method == 'PATCH':
         serializer = CustomUserDetailSerializer(user, data=request.data, partial=True)
