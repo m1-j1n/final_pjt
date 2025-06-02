@@ -63,7 +63,7 @@ import axios from 'axios'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
-const API_URL = 'http://127.0.0.1:8000/api/v1/accounts'
+const API_URL = 'http://13.124.181.201:8000/api/v1/accounts'
 
 const verified = ref(false)
 const password = ref('')

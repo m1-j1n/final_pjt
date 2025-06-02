@@ -96,10 +96,10 @@ const avoidedKeywords = ref([])
 
 onMounted(async () => {
   const [life, read, cat, avoid] = await Promise.all([
-    axios.get('http://127.0.0.1:8000/api/v1/accounts/lifestyles/'),
-    axios.get('http://127.0.0.1:8000/api/v1/accounts/readingstyles/'),
-    axios.get('http://127.0.0.1:8000/api/v1/categories/'),
-    axios.get('http://127.0.0.1:8000/api/v1/accounts/avoided-keywords/'),
+    axios.get('/api/v1/accounts/lifestyles/'),
+    axios.get('http://13.124.181.201:8000/api/v1/accounts/readingstyles/'),
+    axios.get('http://13.124.181.201:8000/api/v1/categories/'),
+    axios.get('http://13.124.181.201:8000/api/v1/accounts/avoided-keywords/'),
   ])
   lifestyles.value = life.data
   readingStyles.value = read.data
@@ -135,7 +135,7 @@ const prevStep = () => {
 }
 const submitSurvey = async () => {
   try {
-    await axios.put('http://127.0.0.1:8000/api/v1/accounts/preference/', form.value, {
+    await axios.put('http://13.124.181.201:8000/api/v1/accounts/preference/', form.value, {
       headers: {
         Authorization: `Token ${localStorage.getItem('token')}`,
       },

@@ -49,7 +49,7 @@ const posts = ref([])
 
 const uniquePosts = computed(() => posts.value.slice(0, 3))
 
-const BASE_API_URL = 'http://localhost:8000'
+const BASE_API_URL = 'http://13.124.181.201:8000'
 const getImageUrl = (path) => {
   if (!path) return ''
   if (path.startsWith('http')) return path
@@ -58,7 +58,7 @@ const getImageUrl = (path) => {
 
 onMounted(async () => {
   try {
-    const res = await axios.get('http://127.0.0.1:8000/api/v1/post/recommend/')
+    const res = await axios.get('http://13.124.181.201:8000/api/v1/post/recommend/')
     posts.value = res.data
   } catch (err) {
     console.error('추천 포스트 로딩 실패:', err)

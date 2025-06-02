@@ -153,7 +153,7 @@ import defaultImg from '@/assets/img/default-profile.png'
 import { useUserStore } from '@/stores/users.js'
 const userStore = useUserStore()
 const router = useRouter()
-const API_ACCOUNT_URL = 'http://127.0.0.1:8000/api/v1/accounts'
+const API_ACCOUNT_URL = 'http://13.124.181.201:8000/api/v1/accounts'
 
 const profileImg = ref(defaultImg)
 const activeTab = ref('books')
@@ -230,7 +230,7 @@ onMounted(() => {
     if (data.profile_img) {
       profileImg.value = data.profile_img.startsWith('http')
         ? data.profile_img
-        : `http://127.0.0.1:8000${data.profile_img}`
+        : `http://13.124.181.201:8000${data.profile_img}`
     } else {
       profileImg.value = 'https://www.gravatar.com/avatar/?d=mp'
     }
@@ -241,16 +241,16 @@ onMounted(() => {
 
   })
 
-  axios.get('http://127.0.0.1:8000/api/v1/posts/mine/', { headers }).then(res => {
+  axios.get('http://13.124.181.201:8000/api/v1/posts/mine/', { headers }).then(res => {
     myPosts.value = res.data.posts
   })
 
-  axios.get('http://127.0.0.1:8000/api/v1/books/mine/reading/', { headers }).then(res => {
+  axios.get('http://13.124.181.201:8000/api/v1/books/mine/reading/', { headers }).then(res => {
     readingBooks.value = res.data.map(book => ({ ...book, source: 'reading' }))
     mergeBooks()
   })
 
-  axios.get('http://127.0.0.1:8000/api/v1/books/mine/liked/', { headers }).then(res => {
+  axios.get('http://13.124.181.201:8000/api/v1/books/mine/liked/', { headers }).then(res => {
     likedBooks.value = res.data.map(book => ({ ...book, liked: true }))
     mergeBooks()
   })
@@ -258,7 +258,7 @@ onMounted(() => {
 
 const getImageUrl = (src) => {
   if (!src) return ''
-  return src.startsWith('http') ? src : `http://127.0.0.1:8000${src}`
+  return src.startsWith('http') ? src : `http://13.124.181.201:8000${src}`
 }
 </script>
 

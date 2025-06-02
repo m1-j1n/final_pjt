@@ -45,30 +45,16 @@ const router = useRouter()
 const books = ref([])
 const isLoading = ref(true)
 
-// onMounted(async () => {
-//   isLoading.value = true
-//   try {
-//     const answers = route.query
-//     const res = await axios.post('http://localhost:8000/api/v1/recommend/basic/', { answers })
-//     books.value = res.data.recommended_books
-//   } catch (err) {
-//     console.error('❌ 추천 실패:', err)
-//   } finally {
-//     isLoading.value = false
-//   }
-// })
-
-
 onMounted(async () => {
   isLoading.value = true
   try {
     const answers = route.query
-    const res = await axios.post('http://localhost:8000/api/v1/recommend/basic/', { answers })
+    const res = await axios.post('http://13.124.181.201:8000/api/v1/recommend/basic/', { answers })
     books.value = res.data.recommended_books
 
     // 📌 추천 결과가 없다면 랜덤 3권 요청
     if (!books.value.length) {
-      const fallback = await axios.get('http://localhost:8000/api/v1/books/random/?count=3')
+      const fallback = await axios.get('http://13.124.181.201:8000/api/v1/books/random/?count=3')
       books.value = fallback.data
     }
   } catch (err) {

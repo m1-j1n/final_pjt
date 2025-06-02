@@ -100,7 +100,7 @@ const toggleLike = async () => {
 
     // 서버 요청
     const res = await axios.post(
-      `http://localhost:8000/api/v1/books/${book.id}/like/`,
+      `http://13.124.181.201:8000/api/v1/books/${book.id}/like/`,
       {},
       {
         headers: {
@@ -177,7 +177,7 @@ const openModal = async () => {
 
   try {
     const res = await axios.get(
-      `http://localhost:8000/api/v1/books/${book.id}/reading-status/`,
+      `http://13.124.181.201:8000/api/v1/books/${book.id}/reading-status/`,
       {
         headers: {
           Authorization: `Token ${userStore.token}`,
@@ -209,7 +209,7 @@ const closeModal = () => {
 // 📌 저장 이벤트에서 axios 요청 수행
 const handleSave = async ({ bookId, data, mode }) => {
   try {
-    const url = `http://localhost:8000/api/v1/books/${bookId}/reading-status/`
+    const url = `http://13.124.181.201:8000/api/v1/books/${bookId}/reading-status/`
     const config = {
       headers: {
         Authorization: `Token ${userStore.token}`,
@@ -277,7 +277,7 @@ onMounted(async () => {
     if (userStore.token) {
       try {
         const res = await axios.get(
-          `http://localhost:8000/api/v1/books/${book.id}/reading-status/`,
+          `http://13.124.181.201:8000/api/v1/books/${book.id}/reading-status/`,
           {
             headers: {
               Authorization: `Token ${userStore.token}`,

@@ -2,15 +2,15 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import axios from 'axios'
 import { useUserStore } from '@/stores/users'
+import { API } from '@/api/api'
 
 export const usePostStore = defineStore('post', () => {
-  const BASE_API_URL = 'http://localhost:8000/api/v1'
   const posts = ref([])
   const selectedPost = ref(null)
 
   // 📌 전체 포스트
   const fetchPosts = () => {
-    return axios.get(`${BASE_API_URL}/posts/`)
+    return axios.get(API.POST.LIST)
       .then((res) => {
         posts.value = res.data
       })
@@ -21,7 +21,7 @@ export const usePostStore = defineStore('post', () => {
 
   // 📌 책 id로 post 찾기
   const fetchPostsByBook = (bookId) => {
-    return axios.get(`${BASE_API_URL}/books/${bookId}/posts/`)
+    return axios.get(API.POST.BY_BOOK(bookId))
       .then((res) => {
         posts.value = res.data
       })
@@ -30,9 +30,9 @@ export const usePostStore = defineStore('post', () => {
       })
   }
 
-  // 📌 포스트 하나
+  // 📌 포스트 하나 상세
   const fetchPostDetail = (bookId, postId) => {
-    return axios.get(`${BASE_API_URL}/books/${bookId}/posts/${postId}/`)
+    return axios.get(API.POST.DETAIL(bookId, postId))
       .then((res) => {
         selectedPost.value = res.data
       })
@@ -44,11 +44,9 @@ export const usePostStore = defineStore('post', () => {
   // 📌 포스트 생성
   const createPost = (bookId, payload) => {
     const userStore = useUserStore()
-    console.log(userStore.token);
-
 
     return axios.post(
-      `${BASE_API_URL}/books/${bookId}/posts/create/`,
+      API.POST.CREATE(bookId),
       payload,
       {
         headers: {
@@ -64,7 +62,7 @@ export const usePostStore = defineStore('post', () => {
 
   // 📌 포스트 수정
   const updatePost = (bookId, postId, payload) => {
-    return axios.put(`${BASE_API_URL}/books/${bookId}/posts/${postId}/update/`, payload)
+    return axios.put(API.POST.UPDATE(bookId, postId), payload)
       .then(() => fetchPostDetail(bookId, postId))
       .catch((err) => {
         console.error('📛 포스트 수정 실패:', err)
@@ -73,13 +71,12 @@ export const usePostStore = defineStore('post', () => {
 
   // 📌 포스트 삭제
   const deletePost = (bookId, postId) => {
-    return axios.delete(`${BASE_API_URL}/books/${bookId}/posts/${postId}/delete/`)
+    return axios.delete(API.POST.DELETE(bookId, postId))
       .then(() => fetchPostsByBook(bookId))
       .catch((err) => {
         console.error('📛 포스트 삭제 실패:', err)
       })
   }
-
 
   return {
     posts,

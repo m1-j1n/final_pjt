@@ -1,17 +1,17 @@
 // 도서 목록, 도서 상세, 카테고리별 필터 정보
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import axios from 'axios'
+import { API } from '@/api/api'
 
 export const useBookStore = defineStore('book', () => {
   const books = ref([])
   const categories = ref([])
   const selectedCategory = ref(0)
-  const BASE_API_URL = 'http://localhost:8000'
 
   // 🔹 도서 API 요청 
   const fetchBooks = () => {
-    axios.get(`${BASE_API_URL}/api/v1/books/`)
+    axios.get(API.BOOK.LIST)
       .then(res => {
         books.value = res.data
       })
@@ -20,9 +20,9 @@ export const useBookStore = defineStore('book', () => {
       })
   }
 
-  // 🔹 카테고리 API 요청 
+  // 🔹 카테고리 목록 불러오기
   const fetchCategories = () => {
-    axios.get(`${BASE_API_URL}/api/v1/categories/`, {
+    axios.get(API.CATEGORY.LIST, {
       headers: {
         Authorization: undefined,
       }
@@ -41,17 +41,9 @@ export const useBookStore = defineStore('book', () => {
     return match ? match.name : '기타'
   }
 
-
-  // // 🔹 선택된 카테고리로 필터링
-  // const filteredBooks = computed(() => {
-  //   return books.value.filter(book =>
-  //     book.category && book.category.id === selectedCategory.value
-  //   )
-  // })
-
-  // 🔹 bookId로 책 찾기
+  // 🔹 bookId로 도서 상세 정보 불러오기
   const fetchBookDetail = (bookId) => {
-    return axios.get(`${BASE_API_URL}/api/v1/books/${bookId}/`)
+    return axios.get(API.BOOK.DETAIL(bookId))
       .then(res => res.data)
       .catch(err => {
         console.error('도서 상세 정보 요청 실패:', err)
@@ -59,15 +51,59 @@ export const useBookStore = defineStore('book', () => {
       })
   }
 
+  // 🔹 좋아요 버튼
+const toggleLike = async (book, likedRef, likeCountRef) => {
+    const userStore = useUserStore()
+
+    try {
+      // UI 반영 먼저
+      likedRef.value = !likedRef.value
+
+      const res = await axios.post(
+        API.BOOK.TOGGLE_LIKE(book.id),
+        {},
+        {
+          headers: {
+            Authorization: `Token ${userStore.token}`,
+          },
+        }
+      )
+
+      const updatedBook = res.data.book
+      likedRef.value = updatedBook.liked
+      likeCountRef.value = updatedBook.like_count
+
+      // 원본 book 객체도 업데이트 (선택)
+      book.liked = updatedBook.liked
+      book.like_count = updatedBook.like_count
+    } catch (err) {
+      if (err.response?.status === 401) {
+        Swal.fire({
+          icon: 'warning',
+          title: '로그인이 필요합니다',
+          text: '이 책을 찜하시려면 로그인해주세요.',
+          confirmButtonText: '로그인',
+          showCancelButton: true,
+          cancelButtonText: '취소',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = '/login'
+          }
+        })
+      } else {
+        console.error('좋아요 실패:', err)
+      }
+    }
+  }
 
   return {
     books,
     categories,
     selectedCategory,
-    // filteredBooks,
     fetchBooks,
     fetchCategories,
     getCategoryNameById,
     fetchBookDetail,
+    toggleLike,
   }
 })

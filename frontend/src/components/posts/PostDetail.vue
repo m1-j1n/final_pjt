@@ -107,7 +107,7 @@ const postId = Number(route.params.postId)
 const post = computed(() => postStore.posts.find(p => p.id === postId))
 const book = ref(null)
 
-const getImageUrl = (path) => `http://localhost:8000${path}`
+const getImageUrl = (path) => `http://13.124.181.201:8000${path}`
 // 포스트 출력 형식 지정
 const formattedContent = computed(() => {
   return post.value?.content.replace(/\n/g, '<br>')
@@ -153,7 +153,7 @@ const deleteThread = (bookId, postId) => {
     },
   }).then((result) => {
     if (result.isConfirmed) {
-      axios.delete(`http://localhost:8000/api/v1/books/${bookId}/posts/${postId}/delete/`)
+      axios.delete(`http://13.124.181.201:8000/api/v1/books/${bookId}/posts/${postId}/delete/`)
         .then(() => {
           Swal.fire({
             icon: 'success',

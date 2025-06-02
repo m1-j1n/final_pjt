@@ -158,7 +158,7 @@ const activeTab = ref('books')
 
 const getImageUrl = (src) => {
   if (!src) return 'https://www.gravatar.com/avatar/?d=mp'
-  return src.startsWith('http') ? src : `http://localhost:8000${src}`
+  return src.startsWith('http') ? src : `http://13.124.181.201:8000${src}`
 }
 
 const goToBookDetail = (bookId) => {
@@ -171,7 +171,7 @@ const goToPostDetail = (postId) => {
 
 const toggleFollow = async () => {
   try {
-    await axios.post(`http://localhost:8000/api/v1/accounts/${userId}/follow/`, {}, {
+    await axios.post(`http://13.124.181.201:8000/api/v1/accounts/${userId}/follow/`, {}, {
       headers: { Authorization: `Token ${localStorage.getItem('token')}` }
     })
     isFollowing.value = !isFollowing.value
@@ -196,7 +196,7 @@ onMounted(async () => {
   // 1. 프로필 정보 불러오기
   const fetchUserProfile = async () => {
     try {
-      const { data } = await axios.get(`http://localhost:8000/api/v1/accounts/${userId}/profile/`, { headers })
+      const { data } = await axios.get(`http://13.124.181.201:8000/api/v1/accounts/${userId}/profile/`, { headers })
       user.value = data
       
       profileImg.value = getImageUrl(data.profile_img)
@@ -212,7 +212,7 @@ onMounted(async () => {
   // 2. 팔로우 상태 확인
   const fetchFollowStatus = async () => {
     try {
-      const { data } = await axios.get(`http://localhost:8000/api/v1/accounts/${userId}/follow-status/`, { headers })
+      const { data } = await axios.get(`hhttp://13.124.181.201:8000/api/v1/accounts/${userId}/follow-status/`, { headers })
       isFollowing.value = data.is_following
     } catch (err) {
       console.error('❌ 팔로우 상태 확인 실패:', err)

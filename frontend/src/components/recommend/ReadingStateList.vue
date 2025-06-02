@@ -60,7 +60,7 @@
   const isLoading = ref(true)
   
   onMounted(() => {
-    axios.get('http://localhost:8000/api/v1/recommend/content-based/', {
+    axios.get('http://13.124.181.201:8000/api/v1/recommend/content-based/', {
       headers: {
         Authorization: `Token ${userStore.token}`
       }

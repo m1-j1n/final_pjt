@@ -50,7 +50,7 @@ const droppedBooks = ref([])
 
 onMounted(async () => {
   try {
-    const res = await axios.get('http://localhost:8000/api/v1/recommend/dropped-books/')
+    const res = await axios.get('http://13.124.181.201:8000/api/v1/recommend/dropped-books/')
     droppedBooks.value = res.data
   } catch (err) {
     console.error('❌ 중단된 책 데이터 불러오기 실패:', err)

@@ -140,7 +140,7 @@ const deleteStatus = async () => {
 
   if (confirmed.isConfirmed) {
     try {
-      await axios.delete(`http://localhost:8000/api/v1/books/${props.bookId}/reading-status/`, {
+      await axios.delete(`http://13.124.181.201:8000/api/v1/books/${props.bookId}/reading-status/`, {
         headers: {
           Authorization: `Token ${userStore.token}`,
         },
