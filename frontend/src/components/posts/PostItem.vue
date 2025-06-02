@@ -50,7 +50,7 @@ const formatTimeAgo = (isoString) => {
 
 const postStore = usePostStore()
 const selectedPosts = ref([])
-const BASE_API_URL = 'http://localhost:8000'
+const BASE_API_URL = 'http://13.124.181.201:8000'
 
 // 포스트 이미지 불러오기
 const getImageUrl = (path) => {

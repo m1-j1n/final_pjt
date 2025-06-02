@@ -86,7 +86,7 @@ const handleSubmit = async () => {
 
   try {
     await axios.patch(
-      `http://localhost:8000/api/v1/books/${bookId}/posts/${postId}/update/`,
+      `http://13.124.181.201:8000/api/v1/books/${bookId}/posts/${postId}/update/`,
       formData,
       {
         headers: {
@@ -135,14 +135,14 @@ const handleCancel = () => {
 const existingImageUrl = ref(null) // 기존 이미지 URL
 
 onMounted(() => {
-  axios.get(`http://localhost:8000/api/v1/books/${bookId}/posts/${postId}/`)
+  axios.get(`http://13.124.181.201:8000/api/v1/books/${bookId}/posts/${postId}/`)
     .then((res) => {
       const post = res.data
       title.value = post.title
       content.value = post.content
       datetime.value = post.created_at
       if (post.cover_img) {
-        existingImageUrl.value = `http://localhost:8000${post.cover_img}`
+        existingImageUrl.value = `http://13.124.181.201:8000${post.cover_img}`
       }
     })
     .catch((err) => {

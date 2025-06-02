@@ -59,14 +59,14 @@
   
   // 댓글 정보 가져오기
   const fetchComments = async () => {
-    const res = await axios.get(`http://localhost:8000/api/v1/posts/${props.postId}/comments/`)
+    const res = await axios.get(`http://13.124.181.201:8000/api/v1/posts/${props.postId}/comments/`)
     comments.value = res.data
   }
   
   // 댓글 제출하기
   const submitComment = async () => {
     await axios.post(
-      `http://localhost:8000/api/v1/posts/${props.postId}/comments/create/`,
+      `http://13.124.181.201:8000/api/v1/posts/${props.postId}/comments/create/`,
       { content: newComment.value },
       {
         headers: {
@@ -81,7 +81,7 @@
   // 댓글 삭제하기
   const deleteComment = async (commentId) => {
   try {
-    await axios.delete(`http://localhost:8000/api/v1/comments/${commentId}/delete/`, {
+    await axios.delete(`http://13.124.181.201:8000/api/v1/comments/${commentId}/delete/`, {
       headers: {
         Authorization: `Token ${userStore.token}`,
       },

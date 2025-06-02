@@ -60,7 +60,7 @@ const avoids = computed(() =>
 
 onMounted(async () => {
   try {
-    const res = await axios.get('http://localhost:8000/api/v1/recommend/personal/', {
+    const res = await axios.get('http://13.124.181.201:8000/api/v1/recommend/personal/', {
       headers: {
         Authorization: `Token ${localStorage.getItem('token')}`,
       },

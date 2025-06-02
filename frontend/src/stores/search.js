@@ -1,15 +1,11 @@
 import axios from 'axios'
-import { useUserStore } from '@/stores/users'
-
-const BASE_API_URL = 'http://localhost:8000'
+import { API } from '@/api/api'
 
 export const searchBooks = async (query) => {
-  const userStore = useUserStore()
-
   try {
     const response = await axios({
       method: 'GET',
-      url: `${BASE_API_URL}/api/v1/books/search/`,
+      url: API.BOOK.SEARCH,
       params: { query },
     })
 

@@ -88,7 +88,7 @@ import axios from 'axios'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
-const API_URL = 'http://127.0.0.1:8000/api/v1/accounts'
+const API_URL = 'http://13.124.181.201:8000/api/v1/accounts'
 
 const lifestyles = ref([])
 const readingStyles = ref([])
@@ -110,7 +110,7 @@ onMounted(async () => {
   const [life, read, cat, avoid, user] = await Promise.all([
     axios.get(`${API_URL}/lifestyles/`, { headers }),
     axios.get(`${API_URL}/readingstyles/`, { headers }),
-    axios.get('http://127.0.0.1:8000/api/v1/categories/', { headers }),
+    axios.get('http://13.124.181.201:8000/api/v1/categories/', { headers }),
     axios.get(`${API_URL}/avoided-keywords/`, { headers }),
     axios.get(`${API_URL}/mypage/`, { headers })
   ])

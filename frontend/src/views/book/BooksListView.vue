@@ -95,7 +95,7 @@ import { searchBooks } from '@/stores/search.js'
 import BookCard from '@/components/books/BookCard.vue'
 import Swal from 'sweetalert2'
 
-const BASE_API_URL = 'http://localhost:8000'
+const BASE_API_URL = 'http://13.124.181.201:8000'
 const bookStore = useBookStore()
 
 // 검색 관련 변수

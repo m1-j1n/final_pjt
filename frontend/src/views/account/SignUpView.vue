@@ -111,12 +111,12 @@ const onSignUp = async () => {
 
   try {
   
-    const ACCOUNT_API_URL = 'http://127.0.0.1:8000/api/v1/accounts'
+    const ACCOUNT_API_URL = 'http://13.124.181.201:8000/api/v1/accounts'
     // 회원가입 요청
     await axios.post( `${ACCOUNT_API_URL}/signup/`, userInfo)
 
     // 회원가입 성공 후 로그인 시도
-    const loginRes = await axios.post('http://127.0.0.1:8000/api/v1/auth/login/', {
+    const loginRes = await axios.post('http://13.124.181.201:8000/api/v1/auth/login/', {
       username: userInfo.username,
       password: userInfo.password1,
     })
