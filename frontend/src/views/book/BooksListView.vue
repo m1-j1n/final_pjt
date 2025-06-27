@@ -88,6 +88,7 @@
 </template>
 
 <script setup>
+import { API } from '@/api/api.js'
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import { useBookStore } from '@/stores/books.js'
@@ -95,7 +96,6 @@ import { searchBooks } from '@/stores/search.js'
 import BookCard from '@/components/books/BookCard.vue'
 import Swal from 'sweetalert2'
 
-const BASE_API_URL = 'http://13.124.181.201:8000'
 const bookStore = useBookStore()
 
 // 검색 관련 변수
@@ -172,8 +172,8 @@ const fetchBooksByCategory = async (categoryId, page = 1) => {
   currentPage.value = page
 
   const url = categoryId === 0
-  ? `${BASE_API_URL}/api/v1/books/?page=${page}`
-  : `${BASE_API_URL}/api/v1/books/category/${categoryId}/?page=${page}`
+  ? API.BOOKS.BY_PAGE(page)
+  : API.BOOKS.CATEGORY(categoryId, page)
   
   try {
     const res = await axios.get(url, {

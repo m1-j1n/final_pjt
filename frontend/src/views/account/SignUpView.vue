@@ -57,6 +57,7 @@
 </template>
 
 <script setup>
+import { API } from '@/api/api.js'
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
@@ -111,12 +112,11 @@ const onSignUp = async () => {
 
   try {
   
-    const ACCOUNT_API_URL = 'http://13.124.181.201:8000/api/v1/accounts'
     // 회원가입 요청
-    await axios.post( `${ACCOUNT_API_URL}/signup/`, userInfo)
+    await axios.post(`${API.ACCOUNT.SIGNUP}`, userInfo)
 
     // 회원가입 성공 후 로그인 시도
-    const loginRes = await axios.post('http://13.124.181.201:8000/api/v1/auth/login/', {
+    const loginRes = await axios.post(`${API.AUTH.LOGIN}`, {
       username: userInfo.username,
       password: userInfo.password1,
     })
@@ -130,7 +130,6 @@ const onSignUp = async () => {
 
   } catch (err) {
     console.error('❌ 에러 응답:', err.response?.data || err)
-    // errorMessage.value = Object.values(err.response?.data || { error: '오류 발생' }).flat().join(', ')
   }
 }
 </script>

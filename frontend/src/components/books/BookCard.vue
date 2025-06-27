@@ -74,6 +74,7 @@
 </template>
 
 <script setup>
+import { API } from '@/api/api.js'
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/users.js'
@@ -95,13 +96,9 @@ const userStore = useUserStore()
 
 const toggleLike = async () => {
   try {
-    // UI 먼저 반영
     liked.value = !liked.value
-
-    // 서버 요청
     const res = await axios.post(
-      `http://13.124.181.201:8000/api/v1/books/${book.id}/like/`,
-      {},
+      API.BOOK.TOGGLE_LIKE(book.id),
       {
         headers: {
           Authorization: `Token ${userStore.token}`
@@ -109,12 +106,10 @@ const toggleLike = async () => {
       }
     )
 
-    // 3️⃣ 서버 응답 기반으로 상태 보정 (이때는 명시적으로 값을 설정)
     const updatedBook = res.data.book
     liked.value = updatedBook.liked
     likeCount.value = updatedBook.like_count
 
-    // ✅ 반응성을 위해 명시적으로 필드 지정
     book.liked = updatedBook.liked
     book.like_count = updatedBook.like_count
 
@@ -177,7 +172,7 @@ const openModal = async () => {
 
   try {
     const res = await axios.get(
-      `http://13.124.181.201:8000/api/v1/books/${book.id}/reading-status/`,
+      API.READING.STATUS(book.id),
       {
         headers: {
           Authorization: `Token ${userStore.token}`,
@@ -190,7 +185,6 @@ const openModal = async () => {
     showModal.value = true
   } catch (err) {
     if (err.response?.status === 404) {
-      // ✅ 기록 없음
       readingStatus.value = null
       modalType.value = 'create'
       showModal.value = true
@@ -209,7 +203,7 @@ const closeModal = () => {
 // 📌 저장 이벤트에서 axios 요청 수행
 const handleSave = async ({ bookId, data, mode }) => {
   try {
-    const url = `http://13.124.181.201:8000/api/v1/books/${bookId}/reading-status/`
+    const url = API.READING.STATUS(bookId)
     const config = {
       headers: {
         Authorization: `Token ${userStore.token}`,
@@ -237,7 +231,6 @@ const handleSave = async ({ bookId, data, mode }) => {
       })
     }
 
-    // ✅ 상태 즉시 반영 (GET 요청 생략)
     readingStatus.value = { ...readingStatus.value, ...data }
 
     console.log('저장 성공:', res.data)
@@ -273,11 +266,10 @@ onMounted(async () => {
     likeCount.value = book.like_count || 0
     liked.value = typeof book.liked === 'boolean' ? book.liked : false
 
-    // ✅ 로그인한 유저의 독서 기록이 있는지 미리 확인
     if (userStore.token) {
       try {
         const res = await axios.get(
-          `http://13.124.181.201:8000/api/v1/books/${book.id}/reading-status/`,
+          API.READING.STATUS(book.id),
           {
             headers: {
               Authorization: `Token ${userStore.token}`,

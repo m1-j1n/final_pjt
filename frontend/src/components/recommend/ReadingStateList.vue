@@ -47,6 +47,7 @@
 </template>
   
   <script setup>
+  import { API } from '@/api/api.js'
   import { ref, onMounted } from 'vue'
   import { useUserStore } from '@/stores/users.js'
   import { useRouter } from 'vue-router'
@@ -60,7 +61,7 @@
   const isLoading = ref(true)
   
   onMounted(() => {
-    axios.get('http://13.124.181.201:8000/api/v1/recommend/content-based/', {
+    axios.get(API.RECOMMEND.CONTENT_BASED, {
       headers: {
         Authorization: `Token ${userStore.token}`
       }

@@ -48,6 +48,7 @@
 </template>
   
   <script setup>
+  import { API } from '@/api/api.js'
   import { ref, onMounted } from 'vue'
   import axios from 'axios'
   import { useUserStore } from '@/stores/users'
@@ -59,14 +60,14 @@
   
   // 댓글 정보 가져오기
   const fetchComments = async () => {
-    const res = await axios.get(`http://13.124.181.201:8000/api/v1/posts/${props.postId}/comments/`)
+    const res = await axios.get(API.COMMENT.LIST(props.postId))
     comments.value = res.data
   }
   
   // 댓글 제출하기
   const submitComment = async () => {
     await axios.post(
-      `http://13.124.181.201:8000/api/v1/posts/${props.postId}/comments/create/`,
+      API.COMMENT.CREATE(props.postId),
       { content: newComment.value },
       {
         headers: {
@@ -81,7 +82,7 @@
   // 댓글 삭제하기
   const deleteComment = async (commentId) => {
   try {
-    await axios.delete(`http://13.124.181.201:8000/api/v1/comments/${commentId}/delete/`, {
+    await axios.delete(API.COMMENT.DELETE(commentId), {
       headers: {
         Authorization: `Token ${userStore.token}`,
       },

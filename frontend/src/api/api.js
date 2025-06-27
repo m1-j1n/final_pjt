@@ -6,6 +6,9 @@ export const API = {
     DETAIL: (bookId) => `${BASE_URL}/api/v1/books/${bookId}/`,
     SEARCH: `${BASE_URL}/api/v1/books/search/`,
     TOGGLE_LIKE: (bookId) => `${BASE_URL}/api/v1/books/${bookId}/like/`,
+    CATEGORY: (categoryId, page) => `${BASE_API}/books/category/${categoryId}/?page=${page}`,
+    BY_PAGE: (page) => `${BASE_API}/books/?page=${page}`,
+    RANDOM: (count = 3) => `${BASE_API}/books/random/?count=${count}`,
   },
 
   CATEGORY: {
@@ -19,6 +22,7 @@ export const API = {
     CREATE: (bookId) => `${BASE_URL}/api/v1/books/${bookId}/posts/create/`,
     UPDATE: (bookId, postId) => `${BASE_URL}/api/v1/books/${bookId}/posts/${postId}/update/`,
     DELETE: (bookId, postId) => `${BASE_URL}/api/v1/books/${bookId}/posts/${postId}/delete/`,
+    RECOMMEND: `${BASE_API}/post/recommend/`,
   },
 
   AUTH: {
@@ -29,10 +33,41 @@ export const API = {
   ACCOUNT: {
     SIGNUP: `${BASE_URL}/api/v1/accounts/signup/`,
     PROFILE: `${BASE_URL}/api/v1/accounts/profile/`,
+    LIFESTYLES: `${BASE_URL}/api/v1/accounts/lifestyles/`,
+    READING_STYLES: `${BASE_URL}/api/v1/accounts/readingstyles/`,
+    AVOIDED_KEYWORDS: `${BASE_URL}/api/v1/accounts/avoided-keywords/`,
+    PREFERENCE: `${BASE_URL}/api/v1/accounts/preference/`,
+    PROFILE_BY_ID: (userId) => `${BASE_URL}/api/v1/accounts/${userId}/profile/`,
+    FOLLOW: (userId) => `${BASE_URL}/api/v1/accounts/${userId}/follow/`,
+    FOLLOW_STATUS: (userId) => `${BASE_URL}/api/v1/accounts/${userId}/follow-status/`,
+    VERIFY_PASSWORD: `${BASE_URL}/api/v1/accounts/verify-password/`,
   },
 
   READING: {
     STATUS: (bookId) => `${BASE_URL}/api/v1/books/${bookId}/reading-status/`,
     CREATE: (bookId) => `${BASE_URL}/api/v1/books/${bookId}/reading-status/`,
+  },
+
+  CATEGORY: {
+    LIST: `${BASE_URL}/api/v1/categories/`,
+  },
+
+  COMMENT: {
+  LIST: (postId) => `${BASE_URL}/api/v1/posts/${postId}/comments/`,
+  CREATE: (postId) => `${BASE_URL}/api/v1/posts/${postId}/comments/create/`,
+  DELETE: (commentId) => `${BASE_URL}/api/v1/comments/${commentId}/delete/`,
+  },
+
+  RECOMMEND: {
+    BASIC: `${BASE_API}/recommend/basic/`,
+    CONTENT_BASED: `${BASE_URL}/api/v1/recommend/content-based/`,
+    DROPPED_BOOKS: `${BASE_URL}/api/v1/recommend/dropped-books/`,
+    PERSONAL: `${BASE_URL}/api/v1/recommend/personal/`,
+  },
+
+  getMediaUrl: (path) => {
+    if (!path) return ''
+    if (path.startsWith('http')) return path
+    return `https://bookchat.kr/media/${path.replace(/^\/?media\//, '')}`
   },
 }

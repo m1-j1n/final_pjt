@@ -42,6 +42,7 @@
 
 
 <script setup>
+import { API } from '@/api/api.js'
 import { ref, onMounted, computed } from 'vue'
 import axios from 'axios'
 
@@ -49,16 +50,10 @@ const posts = ref([])
 
 const uniquePosts = computed(() => posts.value.slice(0, 3))
 
-const BASE_API_URL = 'http://13.124.181.201:8000'
-const getImageUrl = (path) => {
-  if (!path) return ''
-  if (path.startsWith('http')) return path
-  return `${BASE_API_URL}/media/${path.replace(/^\/?media\//, '')}`
-}
-
+const getImageUrl = API.getMediaUrl
 onMounted(async () => {
   try {
-    const res = await axios.get('http://13.124.181.201:8000/api/v1/post/recommend/')
+    const res = await axios.get(API.POST.RECOMMEND)
     posts.value = res.data
   } catch (err) {
     console.error('추천 포스트 로딩 실패:', err)

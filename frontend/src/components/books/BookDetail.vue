@@ -76,6 +76,7 @@
 
 
 <script setup>
+import { API } from '@/api/api.js'
 import { onMounted, ref } from 'vue'
 import axios from 'axios'
 import { useRoute } from 'vue-router'
@@ -87,13 +88,13 @@ const relatedPosts = ref([])
 
 const getImageUrl = (path) => {
   if (!path) return 'https://via.placeholder.com/400x300?text=No+Image'
-  return `http://13.124.181.201:8000${path}`
+  return `${import.meta.env.VITE_API_URL}${path}`
 }
 
 
 const fetchRelatedPosts = async () => {
   try {
-    const res = await axios.get(`http://13.124.181.201:8000/api/v1/books/${bookId}/posts/list/`)
+    const res = await axios.get(API.POST.BY_BOOK(bookId))
     relatedPosts.value = res.data
   } catch (err) {
     console.error('📌 관련 포스트 불러오기 실패:', err)
@@ -102,7 +103,7 @@ const fetchRelatedPosts = async () => {
 
 onMounted(async () => {
   try {
-    const res = await axios.get(`http://13.124.181.201:8000api/v1/books/${bookId}/`)
+    const res = await axios.get(API.BOOK.DETAIL(bookId))
     book.value = res.data
   } catch (err) {
     console.error('도서 상세 조회 실패:', err)

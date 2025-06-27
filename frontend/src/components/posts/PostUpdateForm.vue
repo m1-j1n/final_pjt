@@ -32,6 +32,7 @@
 </template>
 
 <script setup>
+import { API } from '@/api/api.js'
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { usePostStore } from '@/stores/post'
@@ -85,9 +86,7 @@ const handleSubmit = async () => {
   }
 
   try {
-    await axios.patch(
-      `http://13.124.181.201:8000/api/v1/books/${bookId}/posts/${postId}/update/`,
-      formData,
+    await axios.patch(API.POST.UPDATE(bookId, postId), formData,
       {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -135,14 +134,14 @@ const handleCancel = () => {
 const existingImageUrl = ref(null) // 기존 이미지 URL
 
 onMounted(() => {
-  axios.get(`http://13.124.181.201:8000/api/v1/books/${bookId}/posts/${postId}/`)
+  axios.get(API.POST.DETAIL(bookId, postId))
     .then((res) => {
       const post = res.data
       title.value = post.title
       content.value = post.content
       datetime.value = post.created_at
       if (post.cover_img) {
-        existingImageUrl.value = `http://13.124.181.201:8000${post.cover_img}`
+        existingImageUrl.value = import.meta.env.VITE_API_URL + post.cover_img
       }
     })
     .catch((err) => {

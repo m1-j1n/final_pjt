@@ -37,6 +37,7 @@
 </template>
 
 <script setup>
+import { API } from '@/api/api.js'
 import { ref, onMounted, computed } from 'vue'
 import axios from 'axios'
 import { useUserStore } from '@/stores/users.js'
@@ -60,7 +61,7 @@ const avoids = computed(() =>
 
 onMounted(async () => {
   try {
-    const res = await axios.get('http://13.124.181.201:8000/api/v1/recommend/personal/', {
+    const res = await axios.get(API.RECOMMEND.PERSONAL, {
       headers: {
         Authorization: `Token ${localStorage.getItem('token')}`,
       },

@@ -53,6 +53,7 @@
 
 
 <script setup>
+import { API } from '@/api/api.js'
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
@@ -96,10 +97,10 @@ const avoidedKeywords = ref([])
 
 onMounted(async () => {
   const [life, read, cat, avoid] = await Promise.all([
-    axios.get('/api/v1/accounts/lifestyles/'),
-    axios.get('http://13.124.181.201:8000/api/v1/accounts/readingstyles/'),
-    axios.get('http://13.124.181.201:8000/api/v1/categories/'),
-    axios.get('http://13.124.181.201:8000/api/v1/accounts/avoided-keywords/'),
+    axios.get(API.ACCOUNT.LIFESTYLES),
+    axios.get(API.ACCOUNT.READING_STYLES),
+    axios.get(API.CATEGORY.LIST),
+    axios.get(API.ACCOUNT.AVOIDED_KEYWORDS),
   ])
   lifestyles.value = life.data
   readingStyles.value = read.data
@@ -135,7 +136,7 @@ const prevStep = () => {
 }
 const submitSurvey = async () => {
   try {
-    await axios.put('http://13.124.181.201:8000/api/v1/accounts/preference/', form.value, {
+    await axios.put(API.ACCOUNT.PREFERENCE, form.value, {
       headers: {
         Authorization: `Token ${localStorage.getItem('token')}`,
       },
