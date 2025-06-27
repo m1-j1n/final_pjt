@@ -6,9 +6,9 @@ export const API = {
     DETAIL: (bookId) => `${BASE_URL}/api/v1/books/${bookId}/`,
     SEARCH: `${BASE_URL}/api/v1/books/search/`,
     TOGGLE_LIKE: (bookId) => `${BASE_URL}/api/v1/books/${bookId}/like/`,
-    CATEGORY: (categoryId, page) => `${BASE_API}/books/category/${categoryId}/?page=${page}`,
-    BY_PAGE: (page) => `${BASE_API}/books/?page=${page}`,
-    RANDOM: (count = 3) => `${BASE_API}/books/random/?count=${count}`,
+    CATEGORY: (categoryId, page) => `${BASE_URL}/books/category/${categoryId}/?page=${page}`,
+    BY_PAGE: (page) => `${BASE_URL}/books/?page=${page}`,
+    RANDOM: (count = 3) => `${BASE_URL}/books/random/?count=${count}`,
   },
 
   CATEGORY: {
@@ -22,7 +22,7 @@ export const API = {
     CREATE: (bookId) => `${BASE_URL}/api/v1/books/${bookId}/posts/create/`,
     UPDATE: (bookId, postId) => `${BASE_URL}/api/v1/books/${bookId}/posts/${postId}/update/`,
     DELETE: (bookId, postId) => `${BASE_URL}/api/v1/books/${bookId}/posts/${postId}/delete/`,
-    RECOMMEND: `${BASE_API}/post/recommend/`,
+    RECOMMEND: `${BASE_URL}/post/recommend/`,
   },
 
   AUTH: {
@@ -48,10 +48,6 @@ export const API = {
     CREATE: (bookId) => `${BASE_URL}/api/v1/books/${bookId}/reading-status/`,
   },
 
-  CATEGORY: {
-    LIST: `${BASE_URL}/api/v1/categories/`,
-  },
-
   COMMENT: {
   LIST: (postId) => `${BASE_URL}/api/v1/posts/${postId}/comments/`,
   CREATE: (postId) => `${BASE_URL}/api/v1/posts/${postId}/comments/create/`,
@@ -59,7 +55,7 @@ export const API = {
   },
 
   RECOMMEND: {
-    BASIC: `${BASE_API}/recommend/basic/`,
+    BASIC: `${BASE_URL}/recommend/basic/`,
     CONTENT_BASED: `${BASE_URL}/api/v1/recommend/content-based/`,
     DROPPED_BOOKS: `${BASE_URL}/api/v1/recommend/dropped-books/`,
     PERSONAL: `${BASE_URL}/api/v1/recommend/personal/`,
