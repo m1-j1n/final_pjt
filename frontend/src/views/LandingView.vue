@@ -91,6 +91,7 @@
 </template>
 
 <script setup>
+import { API } from '@/api/api.js'
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
@@ -156,7 +157,7 @@ const gotoStyleRecommned = () => {
 const topBooks = ref([])
 
 onMounted(() => {
-  axios.get('http://13.124.181.201:8000/api/v1/books/', {
+  axios.get(API.BOOK.LIST, {
     headers: { Authorization: undefined }
   })
     .then(res => {

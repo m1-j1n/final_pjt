@@ -15,6 +15,7 @@
 </template>
 
 <script setup>
+import { API } from '@/api/api.js'
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import BookDetail from '@/components/books/BookDetail.vue'
@@ -30,7 +31,7 @@ const bookId = route.params.bookId
 
 onMounted(async () => {
   try {
-    const res = await axios.get(`http://13.124.181.201:8000/api/v1/books/${bookId}/`)
+    const res = await axios.get(API.BOOK.DETAIL(bookId))
     book.value = res.data
   } catch (err) {
     console.error('도서 정보 불러오기 실패:', err)

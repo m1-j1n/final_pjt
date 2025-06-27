@@ -83,12 +83,12 @@
 </template>
 
 <script setup>
+import { API } from '@/api/api.js'
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
-const API_URL = 'http://13.124.181.201:8000/api/v1/accounts'
 
 const lifestyles = ref([])
 const readingStyles = ref([])
@@ -108,11 +108,11 @@ const form = ref({
 onMounted(async () => {
   const headers = { Authorization: `Token ${localStorage.getItem('token')}` }
   const [life, read, cat, avoid, user] = await Promise.all([
-    axios.get(`${API_URL}/lifestyles/`, { headers }),
-    axios.get(`${API_URL}/readingstyles/`, { headers }),
-    axios.get('http://13.124.181.201:8000/api/v1/categories/', { headers }),
-    axios.get(`${API_URL}/avoided-keywords/`, { headers }),
-    axios.get(`${API_URL}/mypage/`, { headers })
+    axios.get(`${API.ACCOUNT.LIFESTYLE}`, { headers }),
+    axios.get(`${API.ACCOUNT.READING_STYLE}`, { headers }),
+    axios.get(`${API.CATEGORY.LIST}`, { headers }),
+    axios.get(`${API.ACCOUNT.AVOIDED_KEYWORDS}`, { headers }),
+    axios.get(`${API.ACCOUNT.PROFILE}`, { headers })
   ])
   lifestyles.value = life.data
   readingStyles.value = read.data
@@ -133,7 +133,7 @@ onMounted(async () => {
 
 const submit = async () => {
   try {
-    await axios.put(`${API_URL}/preference/`, form.value, {
+    await axios.put(`${API.ACCOUNT.PREFERENCE}`, form.value, {
       headers: {
         Authorization: `Token ${localStorage.getItem('token')}`
       }

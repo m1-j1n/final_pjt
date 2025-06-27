@@ -87,6 +87,7 @@
 
 
 <script setup>
+import { API } from '@/api/api.js'
 import axios from 'axios'
 import { RouterLink } from 'vue-router'
 import Swal from 'sweetalert2'
@@ -106,8 +107,9 @@ const userStore = useUserStore()
 const postId = Number(route.params.postId)
 const post = computed(() => postStore.posts.find(p => p.id === postId))
 const book = ref(null)
+const BASE_URL = import.meta.env.VITE_API_URL
 
-const getImageUrl = (path) => `http://13.124.181.201:8000${path}`
+const getImageUrl = (path) => `${BASE_URL}${path}`
 // 포스트 출력 형식 지정
 const formattedContent = computed(() => {
   return post.value?.content.replace(/\n/g, '<br>')
@@ -153,7 +155,7 @@ const deleteThread = (bookId, postId) => {
     },
   }).then((result) => {
     if (result.isConfirmed) {
-      axios.delete(`http://13.124.181.201:8000/api/v1/books/${bookId}/posts/${postId}/delete/`)
+      axios.delete(API.POST.DELETE(bookId, postId))
         .then(() => {
           Swal.fire({
             icon: 'success',

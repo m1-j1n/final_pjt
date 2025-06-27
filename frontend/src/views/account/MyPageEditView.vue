@@ -58,12 +58,12 @@
 </template>
 
 <script setup>
+import { API } from '@/api/api.js'
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
-const API_URL = 'http://13.124.181.201:8000/api/v1/accounts'
 
 const verified = ref(false)
 const password = ref('')
@@ -79,7 +79,7 @@ const form = ref({
 })
 
 onMounted(() => {
-  axios.get(`${API_URL}/mypage/`, {
+  axios.get(API.ACCOUNT.PROFILE, {
     headers: {
       Authorization: `Token ${localStorage.getItem('token')}`
     }
@@ -94,7 +94,7 @@ onMounted(() => {
 
 const verify = async () => {
   try {
-    await axios.post(`${API_URL}/verify-password/`, { password: password.value }, {
+    await axios.post(API.ACCOUNT.VERIFY_PASSWORD, { password: password.value }, {
       headers: {
         Authorization: `Token ${localStorage.getItem('token')}`
       }
@@ -122,7 +122,7 @@ const submit = async () => {
   }
 
   try {
-    await axios.patch(`${API_URL}/mypage/`, formData, {
+    await axios.patch(API.ACCOUNT.PROFILE, formData, {
       headers: {
         Authorization: `Token ${localStorage.getItem('token')}`,
         'Content-Type': 'multipart/form-data'
