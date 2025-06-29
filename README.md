@@ -27,7 +27,7 @@
 <img src="./README_image/ERD.png" alt="ERD 이미지" width="70%" />
 
 ### 🏗 아키텍처
-<img src="./README_image/Architecture.png" alt="아키텍처 이미지" width="70%" />g)
+<img src="./README_image/Architecture.png" alt="아키텍처 이미지" width="70%" />
 
 ---
 
