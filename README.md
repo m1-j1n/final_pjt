@@ -11,7 +11,8 @@
      '서울 힙도서관', '야외 도서관' 등 감성 독서 장소의 확산으로 독서는 개성과 멋을 표현하는 하나의 활동으로 인식되고 있습니다.
 
 - **서비스명**  
-  <img src="./README_image/mini_bookie.png" alt="서비스 로고" width="30%" /> 
+  <img src="./README_image/mini_bookie.png" alt="서비스 로고" width="20%" />
+  
   Bookie는 **Book**과 **Bestie**의 합성어입니다.  
   가장 가까운 친구처럼, 당신에게 어울리는 책을 추천합니다.
 
